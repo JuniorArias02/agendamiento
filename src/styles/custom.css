@@ -1,0 +1,61 @@
+@import "tailwindcss";
+
+.bg-custom-green-1 {
+  background-color: #5E8271;
+}
+
+.bg-custom-image-1 {
+  background-image: url('../../public/bg-wave-5.svg'); 
+  background-size: cover;
+  background-position: -150px -500px;
+  
+  
+}
+
+.bg-custom-beige-1 {
+  background-color: #FDF6EC;
+}
+
+.bg-custom-beige-2 {
+  background-color: #BBA99B;
+}
+
+.bg-custom-marron-1{
+  background-color: #B68F72;
+}
+
+.bg-custom-beige-3{
+  background-color: #D9C2AF;
+}
+
+.text-custom-marron-1{
+  color: #B68F72;
+}
+
+.border-custom-marron-1{
+  border: 2px solid #BCAA9D;
+  /* border-color: #BCAA9D; */
+}
+
+.btn-continuar:hover{
+  background-color: #B68F72;
+  
+}
+
+.text-marron-custom-2{
+  color: #8C5B4C;
+}
+
+.day-item:hover{
+  background-color: #B68F72;
+  color: white;
+}
+
+.day-items_selected{
+  background-color: #B68F72;
+  color: white;
+}
+
+.text-black-custom-1{
+  color: #4A4A4A;
+}
