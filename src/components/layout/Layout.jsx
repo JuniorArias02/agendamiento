@@ -8,12 +8,12 @@ const Layout = ({ children }) => {
       <div className="relative ">
         {/* <Navbar /> */}
         <div className="absolute w-full h-screen z-1 overflow-hidden" >
-          <img
+          {/* <img
             src="/bg-wave-2.svg"
             alt=""
             className="absolute w-full h-full object-cover -top-45 "
           />
-          <div className="absolute w-full h-screen bg-custom-beige-1 top-150" ></div>
+          <div className="absolute w-full h-screen bg-custom-beige-1 top-150" ></div> */}
         </div>
         <main className="relative w-full h-screen z-10">{children}</main>
       </div>
