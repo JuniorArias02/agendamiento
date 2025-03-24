@@ -12,7 +12,7 @@ export default function Agenda() {
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);
-    setSelectedTime(null); 
+    setSelectedTime(null);
   };
 
   const handleTimeSelect = (time) => {
@@ -31,13 +31,13 @@ export default function Agenda() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       // className="w-full flex flex-col items-center justify-center h-full"
-       className="w-full flex flex-col items-center justify-center h-full overflow-hidden"
+      className="w-full flex flex-col items-center justify-center h-full overflow-hidden"
     >
       <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
-        className="w-full flex flex-col justify-center h-80"
+        className="w-full flex flex-col justify-center h-80 "
       >
         <ArrowLeftToLine
           className="cursor-pointer ml-5"
@@ -47,12 +47,12 @@ export default function Agenda() {
         />
       </motion.div>
 
-      <div className="w-full h-full flex">
+      <div className="w-full h-full flex flex-col sm:flex-row">
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
-          className="w-[50%] p-2 flex flex-col items-center"
+          className="w-[90%] sm:w-[50%]  p-2 flex flex-col  items-center"
         >
           <Calendar onDateSelect={handleDateSelect} />
           {selectedDate && (
@@ -64,7 +64,7 @@ export default function Agenda() {
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
-          className="w-[50%] p-2"
+          className="w-[90%] sm:w-[50%]  p-2"
         >
           <div className="flex flex-col items-center justify-center p-5">
             <h2 className="montserrat-bold text-black-custom-1 text-4xl">
@@ -78,11 +78,10 @@ export default function Agenda() {
               value="Continuar"
               disabled={!selectedDate || !selectedTime}
               onClick={handleContinue}
-              className={`mt-10 font-bold py-2 px-6 cursor-pointer transition duration-300 ${
-                selectedDate && selectedTime
+              className={`mt-10 font-bold py-2 px-6 cursor-pointer transition duration-300 ${selectedDate && selectedTime
                   ? "bg-custom-marron-1"
                   : "bg-custom-beige-2 cursor-not-allowed"
-              }`}
+                }`}
               whileHover={{ scale: selectedDate && selectedTime ? 1.05 : 1 }}
               whileTap={{ scale: selectedDate && selectedTime ? 0.95 : 1 }}
             />

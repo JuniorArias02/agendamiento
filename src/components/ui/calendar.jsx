@@ -83,7 +83,7 @@ const Calendar = ({ onDateSelect, confirmedDate }) => {
           <ArrowRight />
         </button>
       </div>
-      
+
       <div className="grid grid-cols-7 text-center text-gray-700">
         {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((d) => (
           <div key={d} className="font-semibold">{d}</div>
@@ -101,7 +101,7 @@ const Calendar = ({ onDateSelect, confirmedDate }) => {
           {weeks.map((week, index) => {
             // Si hay un día seleccionado, mostrar solo su fila
             const shouldShowWeek = selectedDate ? index === selectedWeek : true;
-            
+
             return (
               <motion.div
                 key={index}
