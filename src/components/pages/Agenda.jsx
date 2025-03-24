@@ -31,7 +31,7 @@ export default function Agenda() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       // className="w-full flex flex-col items-center justify-center h-full"
-      className="w-full flex flex-col items-center justify-center h-full overflow-hidden"
+      className="w-full flex flex-col items-center justify-center h-full mt-10"
     >
       <motion.div
         initial={{ opacity: 0, x: -20 }}
@@ -47,7 +47,7 @@ export default function Agenda() {
         />
       </motion.div>
 
-      <div className="w-full h-full flex flex-col sm:flex-row">
+      <div className="w-full h-full flex flex-col sm:flex-row items-center justify-center">
         <motion.div
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}

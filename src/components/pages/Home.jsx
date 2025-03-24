@@ -16,7 +16,7 @@ export default function Home() {
 					initial={{ opacity: 0, y: -10 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-					className="montserrat-bold text-5xl text-white text-custom-marron-1"
+					className="montserrat-bold text-5xl text-white text-custom-marron-1 text-center"
 				>
 					Agenda tu cita
 				</motion.h1>
