@@ -1,14 +1,23 @@
-import { useState } from "react";
+import { useState,useEffect  } from "react";
 import { motion } from "framer-motion";
 import Calendar from "../ui/calendar";
 import { ArrowLeftToLine } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Schedule from "../ui/schedule";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Agenda() {
+  const { usuario } = useAuth();
   const navigate = useNavigate();
+
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
+
+  useEffect(() => {
+    if (!usuario) {
+      navigate("/login");
+    }
+  }, [usuario, navigate]);
 
   const handleDateSelect = (date) => {
     setSelectedDate(date);

@@ -42,7 +42,7 @@ export default function ConfirmarAgenda() {
 					Regresar
 				</motion.button>
 				<motion.button
-					onClick={() => navigate("/cita-confirmada")}
+					onClick={() => navigate("/agenda/cita-confirmada")}
 					className="confir-cita px-6 py-2 bg-custom-beige-2 text-white rounded-lg font-semibold hover:bg-opacity-90 transition cursor-pointer"
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}

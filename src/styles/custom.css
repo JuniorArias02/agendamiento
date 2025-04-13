@@ -65,3 +65,16 @@
   background-color: #B68F72;
   color: white;
 }
+.bg-custom-green{
+  background-color: #257D78;
+}
+
+.bg-custom-green:hover{
+  background-color: #359691;
+
+}
+
+
+.text-color-green{
+  color: #1a5a57;
+}
