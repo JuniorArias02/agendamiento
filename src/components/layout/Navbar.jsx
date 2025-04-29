@@ -1,17 +1,116 @@
+import { UserRound, DoorOpen, DoorClosed, Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import { useState } from "react";
 
-import {UserRound} from 'lucide-react';
+function Navbar() {
+  const navigate = useNavigate();
+  const { logout, usuario } = useAuth();
+  const [hover, setHover] = useState(false);
+  const [openMenu, setOpenMenu] = useState(false);
 
- function Navbar() {
-	return (
-		<nav className="w-full h-18  flex items-center justify-end p-4 bg-custom-green-1 ">
-			<div className="flex justify-center">
-			<h1 className=" text-black text-2xl mr-4 montserrat-regular cursor-pointer">Junior Arias</h1>
-			<UserRound size={30} className="mr-3 cursor-pointer" />
-			</div>
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
-		</nav>
-	);
+  const links = [
+    { label: "Tus Citas", to: "/tus_citas" },
+    { label: "Nueva Agenda", to: "/nueva_agenda" },
+  ];
 
-}	
+  if (usuario?.rol === "psicologa") {
+    links.push({ label: "Tus Servicio", to: "/tus_servicios" },
+      { label: "Mis Informes", to: "tus_citas" }
+    );
+  }
+
+  return (
+    <>
+      <nav className="w-full px-4 py-3 bg-custom-green-1 shadow-md flex items-center justify-between lg:flex-row flex-wrap">
+        {/* Botón hamburguesa en móvil */}
+        <button
+          className="lg:hidden text-black"
+          onClick={() => setOpenMenu(true)}
+        >
+          <Menu size={28} />
+        </button>
+
+        {/* Enlaces - solo visibles en pantallas grandes */}
+        <div className="hidden lg:flex items-center gap-6">
+          {links.map((item) => (
+            <button
+              key={item.label}
+              onClick={() => navigate(item.to)}
+              className="text-black text-base font-medium relative group transition duration-200"
+            >
+              {item.label}
+              <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-black group-hover:w-full transition-all duration-300 ease-in-out" />
+            </button>
+          ))}
+        </div>
+
+        {/* Derecha - Usuario y Logout */}
+        <div className="flex items-center gap-3 max-w-full overflow-hidden">
+          <div
+            className="flex items-center gap-2 px-3 py-1 rounded-full bg-white/60 backdrop-blur-md shadow-inner cursor-pointer hover:brightness-105 transition whitespace-nowrap overflow-hidden max-w-[140px]"
+            onClick={() => navigate("/mi_perfil")}
+          >
+            <UserRound size={20} className="text-black" />
+            <span className="text-sm font-medium text-black truncate">
+              {usuario?.nombre || "Usuario"}
+            </span>
+          </div>
+
+          <div
+            onClick={handleLogout}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+            className="cursor-pointer text-black hover:text-red-600 transition duration-200"
+          >
+            {hover ? <DoorOpen size={24} /> : <DoorClosed size={24} />}
+          </div>
+        </div>
+      </nav>
+
+      {/* Menú deslizable en móvil */}
+      <div
+        className={`fixed top-0 left-0 h-full w-64 bg-white z-50 shadow-lg transform ${openMenu ? "translate-x-0" : "-translate-x-full"
+          } transition-transform duration-300 ease-in-out lg:hidden`}
+      >
+        <div className="p-6 flex flex-col gap-4">
+          {links.map((item) => (
+            <button
+              key={item.label}
+              onClick={() => {
+                navigate(item.to);
+                setOpenMenu(false);
+              }}
+              className="text-lg text-gray-800 font-medium text-left"
+            >
+              {item.label}
+            </button>
+          ))}
+          <hr />
+          <button
+            onClick={handleLogout}
+            className="text-red-600 hover:underline text-left mt-4"
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </div>
+
+      {/* Overlay para cerrar menú */}
+      {openMenu && (
+        <div
+          className="fixed inset-0 bg-custom-black-nav bg-opacity-10 backdrop-blur-xs z-40 lg:hidden"
+          onClick={() => setOpenMenu(false)}
+        />
+      )}
+
+    </>
+  );
+}
 
 export default Navbar;

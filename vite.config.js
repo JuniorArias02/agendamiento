@@ -12,5 +12,7 @@
       cors: true, // Habilita CORS
       strictPort: true,
       allowedHosts: ['.trycloudflare.com'], // Permite cualquier subdominio de trycloudflare
-    }
+    },optimizeDeps: {
+      include: ['jspdf'],
+    },
   })

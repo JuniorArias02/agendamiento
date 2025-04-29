@@ -31,6 +31,7 @@
 .text-custom-marron-1{
   color: #B68F72;
 }
+/* bg-custom-green-1  */
 
 .border-custom-marron-1{
   border: 2px solid #BCAA9D;
@@ -78,3 +79,11 @@
 .text-color-green{
   color: #1a5a57;
 }
+
+.bg-custom-orange-1{
+  background-color:#FDBA74      ;
+}
+.bg-custom-black-nav{
+  background-color: rgba(0, 0, 0, 0.39);
+
+} 

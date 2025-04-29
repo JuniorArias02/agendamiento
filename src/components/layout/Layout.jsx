@@ -6,7 +6,7 @@ const Layout = ({ children }) => {
       {/* <div className="absolute w-full h-full bg-[url('/bg-wave-2.svg')] bg-cover bg-[position:bottom_140px] clip-[inset(43%_0_0_0)]"></div> */}
       {/* <img src="/public/bg-wave-3.svg" alt=""  className="absolute w-full -top-150 "/> */}
       <div className="relative ">
-        {/* <Navbar /> */}
+        <Navbar />
         <div className="absolute w-full h-screen z-1 overflow-hidden" >
           {/* <img
             src="/bg-wave-2.svg"

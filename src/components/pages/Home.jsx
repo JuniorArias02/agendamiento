@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import BotonAuth from "../ui/BotonAuth"; // ajusta el path si es necesario
 
 export default function Home() {
 	const navigate = useNavigate();
@@ -9,8 +10,11 @@ export default function Home() {
 			initial={{ opacity: 0, y: 20, scale: 0.9 }}
 			animate={{ opacity: 1, y: 0, scale: 1 }}
 			transition={{ duration: 0.8, ease: "easeOut" }}
-			className="w-full flex items-center justify-center h-full"
+			className="w-full h-full flex items-center justify-center relative"
 		>
+			{/* Botón en la esquina superior derecha */}
+			{/* <BotonAuth /> */}
+			{/* Contenido principal */}
 			<div className="flex flex-col items-center justify-center p-5">
 				<motion.h1
 					initial={{ opacity: 0, y: -10 }}
@@ -24,11 +28,13 @@ export default function Home() {
 					type="button"
 					value="Continuar"
 					className="btn-continuar bg-custom-beige-2 text-white mt-15 font-bold py-2 px-6 cursor-pointer transition duration-300"
-					onClick={() => navigate("/agenda")}
+					onClick={() => navigate("/seleccionar_servicios")}
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}
 				/>
 			</div>
 		</motion.div>
+
 	);
 }
+ 
