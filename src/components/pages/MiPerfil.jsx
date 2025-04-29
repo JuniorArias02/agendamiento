@@ -156,14 +156,15 @@ export default function MiPerfil() {
       {/* Cropper cuando se selecciona la imagen */}
       {mostrarCrop && (
         <ImageCropper
-          image={imagen}
-          onCropDone={(cropped) => {
-            setImagenPreview(cropped.fileUrl); // Actualizamos la imagen previsualizada
-            setImagen(cropped.blob); // Guardamos el blob de la imagen recortada
-            setMostrarCrop(false); // Cerramos el cropper
-          }}
-          onCancel={() => setMostrarCrop(false)} // Cancelamos el crop
-        />
+        image={URL.createObjectURL(imagen)}
+        onCropDone={(cropped) => {
+          setImagenPreview(cropped.fileUrl);
+          setImagen(cropped.blob);
+          setMostrarCrop(false);
+        }}
+        onCancel={() => setMostrarCrop(false)}
+      />
+      
       )}
 
       {/* Modal de la imagen */}
