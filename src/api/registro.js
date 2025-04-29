@@ -1,5 +1,5 @@
-export const URL_ENDPOINT = 'http://localhost:8888';
-// export const URL_ENDPOINT = 'https://buttons-netscape-along-belong.trycloudflare.com';
+// export const URL_ENDPOINT = 'http://localhost:8888';
+export const URL_ENDPOINT = 'https://dose-bowling-treated-happen.trycloudflare.com';
 
 
 export const REGISTRAR_USER = `${URL_ENDPOINT}/controllers/registrar_usuario.php`;
