@@ -32,6 +32,7 @@ export default function MiPerfil() {
   const cargarPerfil = async () => {
     try {
       const { data } = await axios.post(OBTENER_PERFIL, { id: usuario.id });
+      console.log("Datos del perfil:", data);
       if (data.success) {
         setForm(data.usuario);
         setImagenPreview(data.usuario.imagen_perfil || "/default.png");
@@ -80,6 +81,7 @@ export default function MiPerfil() {
       });
 
       if (data.success) {
+        // console.log("Perfil actualizado:", imagen);
         toast.success("Perfil actualizado 🎉");
       } else {
         toast.error("Error al actualizar 😥");
@@ -164,7 +166,6 @@ export default function MiPerfil() {
         }}
         onCancel={() => setMostrarCrop(false)}
       />
-      
       )}
 
       {/* Modal de la imagen */}
