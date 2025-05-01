@@ -1,5 +1,5 @@
 // export const URL_ENDPOINT = 'http://localhost:8888';
-export const URL_ENDPOINT = 'https://switches-tyler-technique-samples.trycloudflare.com';
+export const URL_ENDPOINT = 'https://surprising-merely-looking-peripherals.trycloudflare.com';
 
 
 export const REGISTRAR_USER = `${URL_ENDPOINT}/controllers/registrar_usuario.php`;
@@ -15,4 +15,3 @@ export const GUARDAR_CITA=`${URL_ENDPOINT}/controllers/guardar_cita.php`;
 export const VERIFICAR_PAGO=`${URL_ENDPOINT}/controllers/verificar_pago.php`;
 export const OBTENER_HORAS_OCUPADAS=`${URL_ENDPOINT}/controllers/obtener_horas_ocupadas.php`;
 export const OBTENER_PSICOLOGAS=`${URL_ENDPOINT}/controllers/obtener_psicologas.php`;
-// export const ACTUALIZAR_SERVICIO=`${URL_ENDPOINT}/controllers/actualizar_servicio.php`;

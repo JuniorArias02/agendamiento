@@ -8,3 +8,4 @@ export const LISTAR_SERVICIOS_PUBLICOS = `${URL_ENDPOINT}/controllers/listar_ser
 export const ACTUALIZAR_SERVICIO=`${URL_ENDPOINT}/controllers/actualizar_servicio.php`;
 export const ACTUALIZAR_PERFIL=`${URL_ENDPOINT}/controllers/actualizar_perfil.php`;
 export const OBTENER_PERFIL=`${URL_ENDPOINT}/controllers/obtener_perfil.php`;
+export const ACTUALIZAR_ESTADO_CITA=`${URL_ENDPOINT}/controllers/actualizar_estado_cita.php`;
