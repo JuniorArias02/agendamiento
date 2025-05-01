@@ -7,6 +7,7 @@ import { PENDIENTE, RETARDO, EN_PROGRESO, FINALIZADA } from "../../api/estados_c
 import axios from 'axios';
 import { ACTUALIZAR_ESTADO_CITA } from "../../api/servicios";
 import { Loader } from "lucide-react";
+import Swal from 'sweetalert2';
 
 export default function TusCitas() {
   const navigate = useNavigate();
@@ -15,11 +16,25 @@ export default function TusCitas() {
   console.log("Usuario en Dashboard:", citas);
   const [isClicked, setIsClicked] = useState(false); // Estado para el clic
 
-
   const ingresarACita = async (citaId, enlaceCita) => {
     if (isClicked) return; // Si ya está clickeado, no hacemos nada más
 
     setIsClicked(true); // Marcamos como clickeado
+
+    // Mostramos la advertencia de SweetAlert
+    const result = await Swal.fire({
+      title: 'Advertencia',
+      text: 'El estado de la cita cambiará a "en progreso". ¿Estás seguro de continuar?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Sí, continuar',
+      cancelButtonText: 'No, cancelar',
+    });
+
+    if (!result.isConfirmed) {
+      setIsClicked(false); // Habilitamos el botón si se cancela
+      return; // No hacemos nada si el usuario cancela
+    }
 
     try {
       // Primero actualizamos el estado de la cita a "en progreso" en el backend usando Axios
@@ -44,6 +59,7 @@ export default function TusCitas() {
       setIsClicked(false); // Habilitamos el botón después de un tiempo o proceso
     }
   };
+
   const esMismoDia = (fechaCita) => {
     const hoy = new Date();
     const fechaCitaObj = new Date(fechaCita);
