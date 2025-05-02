@@ -1,5 +1,5 @@
 // export const URL_ENDPOINT = 'http://localhost:8888';
-export const URL_ENDPOINT = 'https://gale-min-using-dayton.trycloudflare.com';
+export const URL_ENDPOINT = 'https://modules-sailing-jerusalem-speaks.trycloudflare.com';
 
 
 export const REGISTRAR_USER = `${URL_ENDPOINT}/controllers/registrar_usuario.php`;

@@ -8,18 +8,21 @@ import axios from 'axios';
 import { ACTUALIZAR_ESTADO_CITA } from "../../api/servicios";
 import { Loader } from "lucide-react";
 import Swal from 'sweetalert2';
+import FiltroCitas from "../ui/FiltroCitas";
+
 
 export default function TusCitas() {
   const navigate = useNavigate();
   const { usuario } = useAuth();
   const [citas, setCitas] = useState([]);
   console.log("Usuario en Dashboard:", citas);
-  const [isClicked, setIsClicked] = useState(false); // Estado para el clic
+  const [clickedStates, setClickedStates] = useState({});
+  const [filtroAbierto, setFiltroAbierto] = useState(false);
+
 
   const ingresarACita = async (citaId, enlaceCita) => {
-    if (isClicked) return; // Si ya está clickeado, no hacemos nada más
-
-    setIsClicked(true); // Marcamos como clickeado
+    if (clickedStates[citaId]) return;
+    setClickedStates(prev => ({ ...prev, [citaId]: true }));
 
     // Mostramos la advertencia de SweetAlert
     const result = await Swal.fire({
@@ -32,7 +35,8 @@ export default function TusCitas() {
     });
 
     if (!result.isConfirmed) {
-      setIsClicked(false); // Habilitamos el botón si se cancela
+      setClickedStates(prev => ({ ...prev, [citaId]: false }));
+
       return; // No hacemos nada si el usuario cancela
     }
 
@@ -56,18 +60,18 @@ export default function TusCitas() {
     } catch (error) {
       console.error("Error al actualizar el estado de la cita:", error);
     } finally {
-      setIsClicked(false); // Habilitamos el botón después de un tiempo o proceso
+      setClickedStates(prev => ({ ...prev, [citaId]: false }));
     }
   };
 
-  const esMismoDia = (fechaCita) => {
+  const esHoyOMasAntiguo = (fechaCita) => {
     const hoy = new Date();
-    const fechaCitaObj = new Date(fechaCita);
+    const fechaCitaObj = new Date(fechaCita + "T00:00:00");
 
     hoy.setHours(0, 0, 0, 0);
     fechaCitaObj.setHours(0, 0, 0, 0);
 
-    return hoy.getTime() === fechaCitaObj.getTime();
+    return fechaCitaObj.getTime() <= hoy.getTime();
   };
 
 
@@ -96,7 +100,9 @@ export default function TusCitas() {
 
   const formatearFecha = (fechaString) => {
     const opciones = { day: "2-digit", month: "long", year: "numeric" };
-    return new Date(fechaString).toLocaleDateString("es-ES", opciones);
+    const [year, month, day] = fechaString.split("-");
+    const fecha = new Date(Number(year), Number(month) - 1, Number(day));
+    return fecha.toLocaleDateString("es-ES", opciones);
   };
 
   const formatearHora = (horaString) => {
@@ -118,25 +124,12 @@ export default function TusCitas() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <div className="flex flex-wrap justify-center gap-4 mb-6">
-        {[PENDIENTE, EN_PROGRESO, FINALIZADA, RETARDO].map((estado) => (
-          <button
-            key={estado.valor}
-            onClick={() => setFiltroEstado(estado.valor)}
-            className={`px-4 py-2 rounded-full font-semibold text-white text-sm transition-all duration-200 ${filtroEstado === estado.valor ? "brightness-110 scale-105" : "opacity-80"
-              }`}
-            style={{ backgroundColor: estado.color }}
-          >
-            {estado.valor.toUpperCase()}
-          </button>
-        ))}
-        <button
-          onClick={() => setFiltroEstado(null)}
-          className="px-4 py-2 rounded-full font-semibold text-gray-700 border border-gray-400 text-sm"
-        >
-          TODOS
-        </button>
-      </div>
+      <FiltroCitas 
+       setFiltroEstado={setFiltroEstado} 
+       filtroEstado={filtroEstado} 
+       setFiltroAbierto={setFiltroAbierto} 
+       filtroAbierto={filtroAbierto}
+      />
 
       <h1 className="text-4xl font-bold text-black mb-10 text-center montserrat-bold">
         Tus Citas
@@ -176,7 +169,9 @@ export default function TusCitas() {
                     <p>
                       Fecha: <span className="font-medium text-black">{formatearFecha(cita.fecha)}</span>
                     </p>
-
+                    <p>
+                      Fecha: <span className="font-medium text-black">{cita.fecha}</span>
+                    </p>
                     <p>
                       Hora: <span className="font-medium text-black">{formatearHora(cita.hora)}</span>
                     </p>
@@ -220,13 +215,14 @@ export default function TusCitas() {
                     >
                       Contactar
                     </button>
-                    {(cita.estado_cita === PENDIENTE.valor || cita.estado_cita === RETARDO.valor || cita.estado_cita === EN_PROGRESO.valor) && cita.enlace_cita && esMismoDia(cita.fecha) && (
+                    {(cita.estado_cita === PENDIENTE.valor || cita.estado_cita === RETARDO.valor || cita.estado_cita === EN_PROGRESO.valor) && cita.enlace_cita && esHoyOMasAntiguo(cita.fecha) && (
                       <button
                         onClick={() => ingresarACita(cita.id, cita.enlace_cita)}
-                        disabled={isClicked} // Deshabilita el botón después de hacer clic
+                        disabled={clickedStates[cita.id]}
+
                         className="w-full py-2 px-4 bg-custom-blue-link text-white font-semibold rounded-full hover:bg-indigo-700 transition-all duration-200 cursor-pointer"
                       >
-                        {isClicked ? (
+                        {clickedStates[cita.id] ? (
                           <div className="flex items-center justify-center">
                             <Loader className="animate-spin mr-2" size={20} />
                             <span>Ingresando...</span>
@@ -234,6 +230,7 @@ export default function TusCitas() {
                         ) : (
                           "Ingresar a la Cita"
                         )}
+
                       </button>
                     )}
                   </div>
