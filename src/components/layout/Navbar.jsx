@@ -134,7 +134,7 @@ function Navbar() {
       {/* Overlay para cerrar menú */}
       {openMenu && (
         <div
-          className="fixed inset-0 bg-custom-black-nav bg-opacity-10 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-white/60 backdrop-blur-md bg-opacity-30 z-40 lg:hidden"
           onClick={() => setOpenMenu(false)}
         />
       )}

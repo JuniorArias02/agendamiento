@@ -1,10 +1,8 @@
 // FiltroCitas.js
-import React from 'react';
+import React, { useEffect, useRef } from "react";
 import { PENDIENTE, EN_PROGRESO, FINALIZADA, RETARDO } from "../../api/estados_citas";
 import { Filter } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef } from "react";
-
 
 const FiltroCitas = ({ setFiltroEstado, filtroEstado, setFiltroAbierto, filtroAbierto }) => {
 	const touchStartX = useRef(null);
@@ -19,10 +17,8 @@ const FiltroCitas = ({ setFiltroEstado, filtroEstado, setFiltroAbierto, filtroAb
 			const diffX = touchEndX - touchStartX.current;
 
 			if (diffX < -80 && !filtroAbierto) {
-				// swipe izquierda → abre filtro
 				setFiltroAbierto(true);
 			} else if (diffX > 80 && filtroAbierto) {
-				// swipe derecha → cierra filtro
 				setFiltroAbierto(false);
 			}
 		};
@@ -38,7 +34,7 @@ const FiltroCitas = ({ setFiltroEstado, filtroEstado, setFiltroAbierto, filtroAb
 
 	return (
 		<>
-			{/* Solo visible en móvil */}
+			{/* Botón visible solo en móvil */}
 			<div className="sm:hidden flex justify-end px-4 mb-4">
 				<button
 					onClick={() => setFiltroAbierto(true)}
@@ -56,6 +52,7 @@ const FiltroCitas = ({ setFiltroEstado, filtroEstado, setFiltroAbierto, filtroAb
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
 						className="fixed inset-0 z-50 bg-white/60 backdrop-blur-md bg-opacity-30 flex justify-end sm:hidden"
+						onClick={() => setFiltroAbierto(false)} // cerrar al tocar el fondo
 					>
 						<motion.div
 							initial={{ x: 300 }}
@@ -63,6 +60,7 @@ const FiltroCitas = ({ setFiltroEstado, filtroEstado, setFiltroAbierto, filtroAb
 							exit={{ x: 300 }}
 							transition={{ type: "spring", stiffness: 300, damping: 30 }}
 							className="w-64 bg-white shadow-lg h-full p-6 flex flex-col gap-4"
+							onClick={(e) => e.stopPropagation()} // evitar que el clic dentro cierre
 						>
 							<div className="flex justify-between items-center mb-4">
 								<h2 className="text-lg font-bold text-gray-800">Filtrar por estado</h2>
