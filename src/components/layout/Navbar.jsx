@@ -1,13 +1,43 @@
 import { UserRound, DoorOpen, DoorClosed, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import { useState } from "react";
+import { useState, useRef,useEffect } from "react";
 
 function Navbar() {
   const navigate = useNavigate();
   const { logout, usuario } = useAuth();
   const [hover, setHover] = useState(false);
   const [openMenu, setOpenMenu] = useState(false);
+
+  const touchStartX = useRef(null);
+
+  useEffect(() => {
+    const handleTouchStart = (e) => {
+      touchStartX.current = e.touches[0].clientX;
+    };
+
+    const handleTouchEnd = (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      const diffX = touchEndX - touchStartX.current;
+
+      if (diffX > 80) {
+        // swipe derecha
+        setOpenMenu(true);
+      } else if (diffX < -80 && openMenu) {
+        // swipe izquierda
+        setOpenMenu(false);
+      }
+    };
+
+    window.addEventListener("touchstart", handleTouchStart);
+    window.addEventListener("touchend", handleTouchEnd);
+
+    return () => {
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchend", handleTouchEnd);
+    };
+  }, [openMenu]);
+
 
   const handleLogout = () => {
     logout();

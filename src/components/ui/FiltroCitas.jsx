@@ -3,9 +3,39 @@ import React from 'react';
 import { PENDIENTE, EN_PROGRESO, FINALIZADA, RETARDO } from "../../api/estados_citas";
 import { Filter } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 
 const FiltroCitas = ({ setFiltroEstado, filtroEstado, setFiltroAbierto, filtroAbierto }) => {
+	const touchStartX = useRef(null);
+
+	useEffect(() => {
+		const handleTouchStart = (e) => {
+			touchStartX.current = e.touches[0].clientX;
+		};
+
+		const handleTouchEnd = (e) => {
+			const touchEndX = e.changedTouches[0].clientX;
+			const diffX = touchEndX - touchStartX.current;
+
+			if (diffX < -80 && !filtroAbierto) {
+				// swipe izquierda → abre filtro
+				setFiltroAbierto(true);
+			} else if (diffX > 80 && filtroAbierto) {
+				// swipe derecha → cierra filtro
+				setFiltroAbierto(false);
+			}
+		};
+
+		window.addEventListener("touchstart", handleTouchStart);
+		window.addEventListener("touchend", handleTouchEnd);
+
+		return () => {
+			window.removeEventListener("touchstart", handleTouchStart);
+			window.removeEventListener("touchend", handleTouchEnd);
+		};
+	}, [filtroAbierto]);
+
 	return (
 		<>
 			{/* Solo visible en móvil */}
