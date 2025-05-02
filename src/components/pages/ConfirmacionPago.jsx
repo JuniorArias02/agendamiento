@@ -10,16 +10,16 @@ export default function ConfirmacionPago() {
   
   useEffect(() => {
     const sessionId = new URLSearchParams(location.search).get("session_id");
-    console.log("Session ID extraído:", sessionId); // Log para verificar si el session_id está en la URL
+    // console.log("Session ID extraído:", sessionId); 
 
     // Evitar duplicación: Revisar si ya se procesó esta sesión
     const yaProcesado = localStorage.getItem(`procesado_${sessionId}`);
-    console.log("Ya procesado:", yaProcesado); // Verificar si localStorage tiene la clave procesado
+    // console.log("Ya procesado:", yaProcesado);
 
     if (sessionId && !yaProcesado) {
       verificarPagoYGuardarCita(sessionId);
     } else {
-      console.log("La cita ya fue procesada anteriormente.");
+      // console.log("La cita ya fue procesada anteriormente.");
     }
   }, []);
 
@@ -31,7 +31,7 @@ export default function ConfirmacionPago() {
       });
 
       if (res.data.success) {
-        console.log("✅ Pago confirmado con Stripe");
+        // console.log("✅ Pago confirmado con Stripe");
 
         // Obtener datos almacenados antes del pago
         const fecha = localStorage.getItem("fecha");
@@ -52,9 +52,9 @@ export default function ConfirmacionPago() {
         localStorage.setItem(`procesado_${sessionId}`, "true"); // Marcar la cita como procesada
         
         // alert("Cita guardada en la base de datos");
-        console.log("📅 Cita guardada en la base de datos");
+        // console.log("📅 Cita guardada en la base de datos");
       } else {
-        console.log("⚠️ El pago no fue exitoso");
+        // console.log("⚠️ El pago no fue exitoso");
         navigate("/agenda/cancelado");
       }
     } catch (error) {

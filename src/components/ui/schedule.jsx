@@ -6,12 +6,12 @@ import { OBTENER_HORAS_OCUPADAS } from "../../api/registro";
 const Schedule = ({ onSelect, isVisible, selectedDate, psicologaId}) => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [horasOcupadas, setHorasOcupadas] = useState([]);
-console.log("Psicologa ID:", psicologaId);
+// console.log("Psicologa ID:", psicologaId);
   useEffect(() => {
     if (!selectedDate || !psicologaId) return;
 
     const fecha = selectedDate.toISOString().split("T")[0];
-    console.log("Fecha seleccionada:", fecha);
+    // console.log("Fecha seleccionada:", fecha);
 
     fetch(`${OBTENER_HORAS_OCUPADAS}?fecha=${fecha}&psicologa_id=${psicologaId}`)
     .then((res) => res.json())

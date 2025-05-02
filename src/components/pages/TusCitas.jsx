@@ -15,7 +15,7 @@ export default function TusCitas() {
   const navigate = useNavigate();
   const { usuario } = useAuth();
   const [citas, setCitas] = useState([]);
-  console.log("Usuario en Dashboard:", citas);
+  // console.log("Usuario en Dashboard:", citas);
   const [clickedStates, setClickedStates] = useState({});
   const [filtroAbierto, setFiltroAbierto] = useState(false);
 
