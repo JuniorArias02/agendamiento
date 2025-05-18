@@ -9,7 +9,7 @@ import { ACTUALIZAR_ESTADO_CITA } from "../../api/servicios";
 import { Loader } from "lucide-react";
 import Swal from 'sweetalert2';
 import FiltroCitas from "../ui/FiltroCitas";
-
+import TemporizadorCita from "../ui/TemporizadorCita";
 
 export default function TusCitas() {
   const navigate = useNavigate();
@@ -77,17 +77,30 @@ export default function TusCitas() {
 
   useEffect(() => {
     if (usuario) {
-      obtenerCitas(usuario.id).then(setCitas);
+      obtenerCitas(usuario.id).then(data => {
+        if (Array.isArray(data)) {
+          setCitas(data);
+        } else {
+          setCitas([]);
+          console.error("La respuesta no es un array:", data);
+        }
+      });
     }
   }, [usuario]);
 
   useEffect(() => {
     if (usuario) {
       const interval = setInterval(() => {
-        obtenerCitas(usuario.id).then(setCitas);
-      }, 30000); // Actualiza cada 30 segundos
+        obtenerCitas(usuario.id).then(data => {
+          if (Array.isArray(data)) {
+            setCitas(data);
+          } else {
+            setCitas([]);
+            console.error("La respuesta no es un array:", data);
+          }
+        });
+      }, 30000);
 
-      // Limpiar el intervalo al desmontar el componente
       return () => clearInterval(interval);
     }
   }, [usuario]);
@@ -121,14 +134,18 @@ export default function TusCitas() {
 
   const [filtroEstado, setFiltroEstado] = useState(null);
 
+  const abrirAnotaciones = (idCita) => {
+    navigate(`/informe_psicologico/${idCita}`);
+    console.log("Abrir anotaciones para la cita con ID:", idCita);
+  };
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <FiltroCitas 
-       setFiltroEstado={setFiltroEstado} 
-       filtroEstado={filtroEstado} 
-       setFiltroAbierto={setFiltroAbierto} 
-       filtroAbierto={filtroAbierto}
+      <FiltroCitas
+        setFiltroEstado={setFiltroEstado}
+        filtroEstado={filtroEstado}
+        setFiltroAbierto={setFiltroAbierto}
+        filtroAbierto={filtroAbierto}
       />
 
       <h1 className="text-4xl font-bold text-black mb-10 text-center montserrat-bold">
@@ -169,9 +186,10 @@ export default function TusCitas() {
                     <p>
                       Fecha: <span className="font-medium text-black">{formatearFecha(cita.fecha)}</span>
                     </p>
-                    <p>
+                    {/* <p>
                       Fecha: <span className="font-medium text-black">{cita.fecha}</span>
-                    </p>
+                    </p> */}
+                    <TemporizadorCita citaId={cita.id} />
                     <p>
                       Hora: <span className="font-medium text-black">{formatearHora(cita.hora)}</span>
                     </p>
@@ -215,6 +233,12 @@ export default function TusCitas() {
                     >
                       Contactar
                     </button>
+                    <button
+                      onClick={() => abrirAnotaciones(cita.id)} // Llama a una función que puede abrir un modal o redirigir
+                      className="w-full py-2 px-4 bg-yellow-500 text-white font-semibold rounded-full hover:bg-yellow-600 transition-all duration-200 cursor-pointer"
+                    >
+                      Anotaciones
+                    </button>
                     {(cita.estado_cita === PENDIENTE.valor || cita.estado_cita === RETARDO.valor || cita.estado_cita === EN_PROGRESO.valor) && cita.enlace_cita && esHoyOMasAntiguo(cita.fecha) && (
                       <button
                         onClick={() => ingresarACita(cita.id, cita.enlace_cita)}
@@ -230,7 +254,6 @@ export default function TusCitas() {
                         ) : (
                           "Ingresar a la Cita"
                         )}
-
                       </button>
                     )}
                   </div>

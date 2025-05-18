@@ -16,6 +16,10 @@ import NuevoServicio from "./components/pages/NuevoServicio";
 import NuevaAgenda from "./components/pages/NuevaAgenda";
 import EditarServicio from "./components/pages/EditarServicio";
 import MiPerfil from "./components/pages/MiPerfil";
+import MiDisponibilidad from "./components/pages/MiDisponibilidad";
+import HistorialAccesos from "./components/pages/HistorialAccesos";
+import { InformePsicologico } from "./components/pages/InformePsicologico";
+
 function App() {
   return (
     <AuthProvider>
@@ -42,7 +46,14 @@ function App() {
           {/* perfil de usuario */}
           <Route path="/mi_perfil" element={<Layout><MiPerfil /></Layout>} />
 
+          {/* mi disponibilidad */}
+          <Route path="/mi_disponibilidad" element={<Layout><MiDisponibilidad /></Layout>} />
 
+          {/* HISTORIAL DE ACCESOS */}\
+          <Route path="/historial_accesos" element={<Layout><HistorialAccesos /></Layout>} />
+
+          {/* informe psaicologo */}
+          <Route path="/informe_psicologico/:idCita" element={<Layout><InformePsicologico /></Layout>} />
           {/* Ruta para cuando no se encuentre la página */}
           <Route path="*" element={<Navigate to="/tus_citas" replace />} />
         </Routes>

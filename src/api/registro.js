@@ -1,5 +1,6 @@
-// export const URL_ENDPOINT = 'http://localhost:8888';
-export const URL_ENDPOINT = 'https://modules-sailing-jerusalem-speaks.trycloudflare.com';
+export const URL_ENDPOINT = 'https://psicologicamentehablando.space/api';
+
+// export const URL_ENDPOINT = 'https://shoppers-gzip-greater-technician.trycloudflare.com';
 
 
 export const REGISTRAR_USER = `${URL_ENDPOINT}/controllers/registrar_usuario.php`;
@@ -14,4 +15,9 @@ export const PAYMENT=`${URL_ENDPOINT}/payment.php`;
 export const GUARDAR_CITA=`${URL_ENDPOINT}/controllers/guardar_cita.php`;
 export const VERIFICAR_PAGO=`${URL_ENDPOINT}/controllers/verificar_pago.php`;
 export const OBTENER_HORAS_OCUPADAS=`${URL_ENDPOINT}/controllers/obtener_horas_ocupadas.php`;
+export const OBTENER_DISPONIBILIDAD=`${URL_ENDPOINT}/controllers/obtener_disponibilidad.php`;
 export const OBTENER_PSICOLOGAS=`${URL_ENDPOINT}/controllers/obtener_psicologas.php`;
+export const GUARDAR_HORA_DISPONIBLE=`${URL_ENDPOINT}/controllers/guardar_disponibilidad.php`;
+export const OBTENER_HISTORIAL_ACCESOS=`${URL_ENDPOINT}/controllers/obtener_historial_accesos.php`;
+export const GUARDAR_INFORME_CITA=`${URL_ENDPOINT}/controllers/guardar_informe_cita.php`;
+export const OBTENER_INFORME_CITA=`${URL_ENDPOINT}/controllers/obtener_informe_cita.php`;

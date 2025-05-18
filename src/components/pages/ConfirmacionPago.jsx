@@ -7,7 +7,7 @@ import { GUARDAR_CITA, VERIFICAR_PAGO } from "../../api/registro";
 export default function ConfirmacionPago() {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   useEffect(() => {
     const sessionId = new URLSearchParams(location.search).get("session_id");
     // console.log("Session ID extraído:", sessionId); 
@@ -38,7 +38,7 @@ export default function ConfirmacionPago() {
         const hora = localStorage.getItem("hora");
         const usuario_id = localStorage.getItem("usuario_id");
         const servicio_id = localStorage.getItem("servicio_id"); // Obtenemos el servicio_id de localStorage
-        console.log("Datos de la cita:", { fecha, hora, usuario_id, servicio_id,session_id: sessionId });
+        console.log("Datos de la cita:", { fecha, hora, usuario_id, servicio_id, session_id: sessionId });
 
         // Enviar la cita al backend
         await axios.post(GUARDAR_CITA, {
@@ -50,7 +50,7 @@ export default function ConfirmacionPago() {
         });
 
         localStorage.setItem(`procesado_${sessionId}`, "true"); // Marcar la cita como procesada
-        
+
         // alert("Cita guardada en la base de datos");
         // console.log("📅 Cita guardada en la base de datos");
       } else {

@@ -10,10 +10,17 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/lab": "^7.0.0-beta.12",
+    "@mui/material": "^7.1.0",
+    "@mui/x-date-pickers": "^8.3.0",
     "@tailwindcss/vite": "^4.0.15",
     "axios": "^1.8.4",
     "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
     "framer-motion": "^12.9.2",
+    "html2pdf.js": "^0.10.3",
     "jspdf": "^3.0.1",
     "lucide-react": "^0.483.0",
     "medusa-payment-stripe": "^1.1.53",
@@ -23,7 +30,9 @@
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.4.0",
-    "sweetalert2": "^11.19.1",
+    "react-time-picker": "^7.0.0",
+    "react-to-print": "^3.1.0",
+    "sweetalert2": "^11.21.0",
     "tailwindcss": "^4.0.15"
   },
   "devDependencies": {

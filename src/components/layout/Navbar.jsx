@@ -44,16 +44,22 @@ function Navbar() {
     navigate("/login");
   };
 
-  const links = [
-    { label: "Tus Citas", to: "/tus_citas" },
-    { label: "Nueva Agenda", to: "/nueva_agenda" },
-  ];
+  const enlacesPsicologa = [
+  { label: "Tus Citas", to: "/tus_citas" },
+  { label: "Tus Servicios", to: "/tus_servicios" },
+  { label: "Mis Historias", to: "/tus_citas" },
+  { label: "Mi Disponibilidad", to: "/mi_disponibilidad" },
+  { label: "Mis Informes", to: "/historial_accesos" }
+];
 
-  if (usuario?.rol === "psicologa") {
-    links.push({ label: "Tus Servicio", to: "/tus_servicios" },
-      { label: "Mis Informes", to: "tus_citas" }
-    );
-  }
+const enlacesPaciente = [
+  { label: "Tus Citas", to: "/tus_citas" },
+  { label: "Nueva Agenda", to: "/nueva_agenda" },
+  { label: "Mis Informes", to: "/historial_accesos" }
+];
+
+// Dependiendo del rol, asignamos los enlaces adecuados
+const links = usuario?.rol === "psicologa" ? enlacesPsicologa : enlacesPaciente;
 
   return (
     <>
@@ -142,5 +148,5 @@ function Navbar() {
     </>
   );
 }
-
+ 
 export default Navbar;
