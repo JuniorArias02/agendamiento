@@ -18,3 +18,5 @@ export const PENDIENTE = {
 	color: "#10B981", // verde
   };
   
+
+  

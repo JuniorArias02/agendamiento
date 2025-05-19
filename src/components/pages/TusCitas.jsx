@@ -233,12 +233,15 @@ export default function TusCitas() {
                     >
                       Contactar
                     </button>
-                    <button
-                      onClick={() => abrirAnotaciones(cita.id)} // Llama a una función que puede abrir un modal o redirigir
-                      className="w-full py-2 px-4 bg-yellow-500 text-white font-semibold rounded-full hover:bg-yellow-600 transition-all duration-200 cursor-pointer"
-                    >
-                      Anotaciones
-                    </button>
+                    {usuario.rol === "psicologa" && (
+                      <button
+                        onClick={() => abrirAnotaciones(cita.id)}
+                        className="w-full py-2 px-4 bg-yellow-500 text-white font-semibold rounded-full hover:bg-yellow-600 transition-all duration-200 cursor-pointer"
+                      >
+                        Anotaciones
+                      </button>
+                    )}
+
                     {(cita.estado_cita === PENDIENTE.valor || cita.estado_cita === RETARDO.valor || cita.estado_cita === EN_PROGRESO.valor) && cita.enlace_cita && esHoyOMasAntiguo(cita.fecha) && (
                       <button
                         onClick={() => ingresarACita(cita.id, cita.enlace_cita)}
