@@ -8,8 +8,10 @@ import { ACTUALIZAR_PERFIL, OBTENER_PERFIL } from "../../api/servicios";
 import { useAuth } from "../../context/AuthContext";
 import ImageCropper from "../ui/ImageCropper"; // Asegúrate de que la ruta sea correcta
 import { Camera } from "lucide-react"; // Asegúrate de que la ruta sea correcta
-
+import Skeleton from "../layout/Skeleton";
 export default function MiPerfil() {
+  const [loading, setLoading] = useState(false);
+
   const [imagenPreview, setImagenPreview] = useState("");
   const [imagen, setImagen] = useState(null);
   const [mostrarCrop, setMostrarCrop] = useState(false);
@@ -23,18 +25,19 @@ export default function MiPerfil() {
     correo: "",
     telefono: "",
   });
-  const [loading, setLoading] = useState(true);
- 
+
   useEffect(() => {
     if (usuario?.id) cargarPerfil();
   }, [usuario]);
 
   const cargarPerfil = async () => {
+    setLoading(true);
     try {
       const { data } = await axios.post(OBTENER_PERFIL, { id: usuario.id });
       console.log("Datos del perfil:", data);
       if (data.success) {
         setForm(data.usuario);
+        setLoading(false);
         setImagenPreview(data.usuario.imagen_perfil || "/default.png");
       } else {
         toast.error("Error cargando datos 😥");
@@ -92,145 +95,143 @@ export default function MiPerfil() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-gray-500 text-lg">Cargando perfil...</div>
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6 flex items-center justify-center relative">
-  <Toaster />
+    <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center relative">
+      <Toaster />
 
-  {/* Botón Volver */}
-  <button
-    onClick={() => navigate(-1)}
-    className="absolute top-6 left-6 flex items-center text-indigo-600 hover:text-indigo-800 p-2 rounded-full bg-white shadow-md transition-all"
-  >
-    <ArrowLeft className="w-5 h-5 mr-2" />
-    Volver
-  </button>
-
-  <motion.form
-    onSubmit={handleSubmit}
-    initial={{ opacity: 0, scale: 0.95 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.5 }}
-    className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-200"
-  >
-    {/* Imagen de perfil */}
-    <div className="flex justify-center mb-6 relative">
-      <label className="cursor-pointer relative">
-        <img
-          src={imagenPreview || "/default.png"}
-          alt="Foto de perfil"
-          className="w-24 h-24 rounded-full border-4 border-green-400 shadow-md object-cover hover:scale-110 transition-transform duration-300"
-          onClick={() => setMostrarModal(true)}
-        />
-      </label>
-    </div>
-
-    {/* Inputs */}
-    {["documento", "nombre", "correo", "telefono"].map((field) => (
-      <div className="mb-4" key={field}>
-        <label className="block text-gray-700 mb-2 capitalize">{field}</label>
-        <input
-          type={field === "correo" ? "email" : "text"}
-          name={field}
-          value={form[field]}
-          onChange={handleChange}
-          className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-emerald-400 shadow-sm transition duration-200"
-          required
-        />
-      </div>
-    ))}
-
-    {/* Botón guardar */}
-    <button
-      type="submit"
-      className="flex items-center justify-center gap-2 w-full bg-gradient-to-r from-emerald-500 to-green-600 text-white py-3 rounded-full shadow-lg hover:from-emerald-600 hover:to-green-700 transition-all duration-300"
-    >
-      <Save className="w-5 h-5" />
-      Guardar Cambios
-    </button>
-  </motion.form>
-
-  {/* Cropper */}
-  {mostrarCrop && (
-    <ImageCropper
-      image={URL.createObjectURL(imagen)}
-      onCropDone={(cropped) => {
-        setImagenPreview(cropped.fileUrl);
-        setImagen(cropped.blob);
-        setMostrarCrop(false);
-      }}
-      onCancel={() => setMostrarCrop(false)}
-    />
-  )}
-
-  {/* Modal */}
-  {mostrarModal && (
-    <div className="fixed inset-0  bg-opacity-40 backdrop-blur-sm flex items-center justify-center z-50">
-      <motion.div
-        initial={{ scale: 0.8, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.3 }}
-        className="bg-white p-8 rounded-3xl max-w-md w-full shadow-2xl border border-gray-300 relative"
+      {/* Botón Volver simple y discreto */}
+      <button
+        onClick={() => navigate(-1)}
+        className="absolute top-6 left-6 text-custom-blue-1 hover:text-emerald-800 p-2 rounded-full transition cursor-pointer"
+        aria-label="Volver"
       >
-        {/* Cerrar */}
-        <button
-          onClick={() => setMostrarModal(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+        <ArrowLeft className="w-8 h-8" />
+      </button>
+
+      {loading ? (
+        <div className="bg-white p-6 rounded-xl shadow-md w-full max-w-sm border border-gray-200">
+          <div className="flex justify-center mb-5">
+            <Skeleton className="w-20 h-20 rounded-full" />
+          </div>
+          <Skeleton className="h-4 w-full mb-4" />
+          <Skeleton className="h-4 w-full mb-4" />
+          <Skeleton className="h-4 w-full mb-4" />
+          <Skeleton className="h-10 w-full" />
+        </div>
+      ) : (
+        <motion.form
+          onSubmit={handleSubmit}
+          initial={{ opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
+          className="bg-white p-6 rounded-xl shadow-md w-full max-w-sm border border-gray-200"
         >
-          <span className="text-xl">&times;</span>
-        </button>
+          {/* Imagen de perfil minimalista */}
+          <div className="flex justify-center mb-5">
+            <label className="cursor-pointer">
+              <img
+                src={imagenPreview || "/default.png"}
+                alt="Perfil"
+                className="w-20 h-20 rounded-full border-2 border-emerald-400 object-cover hover:opacity-80 transition"
+                onClick={() => setMostrarModal(true)}
+              />
+            </label>
+          </div>
 
-        {/* Contenido modal */}
-        <div className="flex flex-col items-center">
-          <img
-            src={imagenPreview || "/default.png"}
-            alt="Imagen de perfil grande"
-            className="w-32 h-32 rounded-full object-cover shadow-md border-4 border-gray-200 mb-4"
-          />
+          {/* Inputs simplificados */}
+          {["documento", "nombre", "correo", "telefono"].map((field) => (
+            <div className="mb-4" key={field}>
+              <label className="block text-gray-600 mb-1 capitalize text-sm">{field}</label>
+              <input
+                type={field === "correo" ? "email" : "text"}
+                name={field}
+                value={form[field]}
+                onChange={handleChange}
+                className="w-full px-3 py-2 rounded-md border border-gray-300 focus:ring-2 focus:ring-emerald-400 focus:outline-none text-sm"
+                required
+              />
+            </div>
+          ))}
 
-          <h3 className="text-xl font-bold text-gray-700 mb-8">Actualizar Imagen</h3>
+          {/* Botón guardar más simple */}
+          <button
+            type="submit"
+            className="w-full bg-custom-blue-5-down text-white py-2 rounded-md hover:bg-emerald-600 transition font-medium cursor-pointer flex items-center justify-center"
+          >
+            <Save className="inline w-5 h-5 mr-2" />
+            Guardar Cambios
+          </button>
+        </motion.form>
+      )}
+      {/* Modal */}
+      {mostrarModal && (
+        <div className="fixed inset-0  bg-opacity-20 backdrop-blur-sm flex items-center justify-center z-50">
 
-          {/* Botones */}
-          <div className="flex gap-4">
-            <button
-              onClick={() => {
-                setMostrarModal(false);
-                fileInputRef.current.click();
-              }}
-              className="cursor-pointer flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white px-6 py-2 rounded-full text-sm font-medium transition"
-            >
-              <Camera className="w-4 h-4" />
-              Cambiar
-            </button>
-
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.25 }}
+            className="bg-white p-6 rounded-xl shadow-lg max-w-xs w-full"
+          >
             <button
               onClick={() => setMostrarModal(false)}
-              className="flex items-center gap-2 bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-full text-sm font-medium transition cursor-pointer"
+              className="text-gray-500 hover:text-gray-800 text-xl float-right"
+              aria-label="Cerrar modal"
             >
-              Cerrar
+              &times;
             </button>
-          </div>
-        </div>
-      </motion.div>
-    </div>
-  )}
+            <div className="flex flex-col items-center mt-4">
+              <img
+                src={imagenPreview || "/default.png"}
+                alt="Perfil grande"
+                className="w-24 h-24 rounded-full object-cover mb-4 border border-gray-200"
+              />
+              <h3 className="text-gray-700 font-semibold mb-6">Actualizar Imagen</h3>
 
-  {/* Input oculto */}
-  <input
-    type="file"
-    ref={fileInputRef}
-    accept="image/*"
-    onChange={handleFileChange}
-    className="hidden"
-  />
-</div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setMostrarModal(false);
+                    fileInputRef.current.click();
+                  }}
+                  className="bg-custom-blue-5-down hover:bg-emerald-600 text-white py-2 px-5 rounded-md text-sm font-medium transition"
+                >
+                  <Camera className="inline w-4 h-4 mr-1" />
+                  Cambiar
+                </button>
+                <button
+                  onClick={() => setMostrarModal(false)}
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-5 rounded-md text-sm transition"
+                >
+                  Cerrar
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+      />
+      {/* Cropper */}
+      {mostrarCrop && (
+        <ImageCropper
+          image={URL.createObjectURL(imagen)}
+          onCropDone={(cropped) => {
+            setImagenPreview(cropped.fileUrl);
+            setImagen(cropped.blob);
+            setMostrarCrop(false);
+          }}
+          onCancel={() => setMostrarCrop(false)}
+        />
+      )}
+    </div>
 
   );
 }
