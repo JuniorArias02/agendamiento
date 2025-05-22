@@ -4,6 +4,7 @@ import axios from "axios";
 import { ArrowLeft, Download } from "lucide-react";
 import { jsPDF } from "jspdf";
 import { DETALLE_CITA } from "../../api/registro";
+import { motion } from "framer-motion";
 
 export default function DetalleCita() {
 	const { id } = useParams();
@@ -57,13 +58,18 @@ export default function DetalleCita() {
 
 	return (
 		<div className="max-w-2xl mx-auto px-4 py-8">
-			<button
+			<motion.button
 				onClick={() => navigate(-1)}
-				className="flex items-center text-custom-green hover:text-custom-marron-1 mb-6"
+				className="flex items-center text-custom-green mb-6 cursor-pointer"
+				initial={{ opacity: 0, x: -20 }}
+				animate={{ opacity: 1, x: 0 }}
+				whileHover={{ scale: 1.1, color: "#186063" }} // cambia color hover igual que tu marron
+				whileTap={{ scale: 0.95 }}
+				transition={{ type: "spring", stiffness: 300, damping: 20 }}
 			>
 				<ArrowLeft className="w-5 h-5 mr-2" />
 				Volver
-			</button>
+			</motion.button>
 
 			<h2 className="text-3xl font-bold text-center text-custom-green mb-6">
 				Factura de Cita
@@ -71,7 +77,7 @@ export default function DetalleCita() {
 
 			<div className="space-y-4 text-custom-green text-lg">
 				<p><span className="font-semibold">Paciente:</span> {cita.paciente}</p>
-				<p><span className="font-semibold">Psicóloga:</span> {cita.psicologa}</p>
+				<p><span className="font-semibold">Profecional:</span> {cita.psicologa}</p>
 				<p><span className="font-semibold">Fecha:</span> {cita.fecha}</p>
 				<p><span className="font-semibold">Hora:</span> {cita.hora}</p>
 				<p><span className="font-semibold">Estado:</span> {cita.estado}</p>
@@ -88,7 +94,7 @@ export default function DetalleCita() {
 
 			<button
 				onClick={descargarFactura}
-				className="mt-10 w-full flex items-center justify-center gap-2 py-3 bg-custom-green text-white font-semibold rounded-xl hover:bg-custom-green-1 transition"
+				className="mt-10 w-full flex items-center justify-center gap-2 py-3 bg-custom-blue-5-down text-white font-semibold rounded-xl hover:bg-custom-green-1 transition cursor-pointer"
 			>
 				<Download className="w-5 h-5" />
 				Descargar PDF

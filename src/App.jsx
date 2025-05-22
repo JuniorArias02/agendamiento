@@ -25,7 +25,8 @@ function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Layout><Home /></Layout>} />
+          {/* <Route path="/" element={<Layout><Home /></Layout>} /> */}
+          <Route path="/" element={<Home /> }/>
           <Route path="/login" element={<Login />} />
           {/* agendamiento */}
           <Route path="/tus_citas" element={<Layout><TusCitas /></Layout>} />
@@ -55,7 +56,7 @@ function App() {
           {/* informe psaicologo */}
           <Route path="/informe_psicologico/:idCita" element={<Layout><InformePsicologico /></Layout>} />
           {/* Ruta para cuando no se encuentre la página */}
-          <Route path="*" element={<Navigate to="/tus_citas" replace />} />
+          <Route path="*" element={<Navigate to="/nueva_agenda" replace />} />
         </Routes>
       </Router>
     </AuthProvider>

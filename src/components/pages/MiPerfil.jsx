@@ -24,7 +24,7 @@ export default function MiPerfil() {
     telefono: "",
   });
   const [loading, setLoading] = useState(true);
-
+ 
   useEffect(() => {
     if (usuario?.id) cargarPerfil();
   }, [usuario]);

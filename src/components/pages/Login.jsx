@@ -72,7 +72,7 @@ export default function Login() {
 
         if (data.success) {
           login(data.usuario);
-          navigate("/dashboard");
+          navigate("/nueva_agenda");
         } else {
           Swal.fire({
             icon: 'error',
