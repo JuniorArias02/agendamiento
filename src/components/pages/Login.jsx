@@ -127,145 +127,142 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F9F4F0] flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: -30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-md bg-white rounded-2xl shadow-md p-6 space-y-5"
-      >
-        <h2 className="text-2xl font-semibold text-center text-[#B68F72]">
-          {isRecovering
-            ? "Recuperar contraseña"
-            : isRegistering
-              ? "Crear cuenta"
-              : "Iniciar sesión"}
-        </h2>
+  <div className="min-h-screen bg-[#e8f5f5] flex items-center justify-center px-4">
+  <motion.div
+    initial={{ opacity: 0, y: -30 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4 }}
+    className="w-full max-w-md bg-white rounded-2xl shadow-md p-6 space-y-5"
+  >
+    <h2 className="text-2xl font-semibold text-center text-[#1c7578]">
+      {isRecovering
+        ? "Recuperar contraseña"
+        : isRegistering
+        ? "Crear cuenta"
+        : "Iniciar sesión"}
+    </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {isRecovering ? (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {isRecovering ? (
+        <>
+          <input
+            type="email"
+            placeholder="Correo"
+            value={correoRecuperar}
+            onChange={(e) => setCorreoRecuperar(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#69a3a5]"
+          />
+          <button
+            type="button"
+            onClick={handleRecuperar}
+            className="w-full bg-[#1c7578] text-white py-2 rounded-lg font-medium hover:bg-[#145d5f] transition"
+          >
+            Enviar código
+          </button>
+        </>
+      ) : (
+        <>
+          {isRegistering && (
             <>
               <input
-                type="email"
-                placeholder="Correo"
-                value={correoRecuperar}
-                onChange={(e) => setCorreoRecuperar(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#B68F72]"
-              />
-              <button
-                type="button"
-                onClick={handleRecuperar}
-                className="w-full bg-[#B68F72] text-white py-2 rounded-lg font-medium hover:bg-[#9C745C] transition"
-              >
-                Enviar código
-              </button>
-            </>
-          ) : (
-            <>
-              {isRegistering && (
-                <>
-                  <input
-                    type="text"
-                    placeholder="Nombre completo"
-                    value={nombre}
-                    onChange={(e) => setNombre(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#B68F72]"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Documento"
-                    value={documento}
-                    onChange={(e) => setDocumento(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#B68F72]"
-                  />
-
-                  {/* Selector de prefijo */}
-                  <select
-                    value={telefonoPrefijo}
-                    onChange={(e) => setTelefonoPrefijo(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#B68F72]"
-                  >
-                    <option value="">Seleccionar prefijo</option>
-                    <option value="+57">+57 (Colombia)</option>
-                    <option value="+52">+52 (México)</option>
-                    <option value="+1">+1 (Estados Unidos)</option>
-                    <option value="+54">+54 (Argentina)</option>
-                    <option value="+51">+51 (Perú)</option>
-                    <option value="+56">+56 (Chile)</option>
-                    <option value="+593">+593 (Ecuador)</option>
-                    <option value="+591">+591 (Bolivia)</option>
-                    <option value="+58">+58 (Venezuela)</option>
-                    <option value="+34">+34 (España)</option>
-                    <option value="+44">+44 (Reino Unido)</option>
-                    <option value="+353">+353 (Irlanda)</option>
-                    <option value="+33">+33 (Francia)</option>
-                    <option value="+49">+49 (Alemania)</option>
-                    <option value="+1">+1 (Canadá)</option>
-                    <option value="+61">+61 (Australia)</option>
-                    <option value="+91">+91 (India)</option>
-                    <option value="+27">+27 (Sudáfrica)</option>
-                  </select>
-                  {/* Campo de teléfono */}
-                  <input
-                    type="text"
-                    placeholder="Número de teléfono"
-                    value={telefono}
-                    onChange={(e) => setTelefono(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#B68F72]"
-                  />
-                </>
-              )}
-
-              <input
-                type="email"
-                placeholder="Correo"
-                value={correo}
-                onChange={(e) => setCorreo(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#B68F72]"
+                type="text"
+                placeholder="Nombre completo"
+                value={nombre}
+                onChange={(e) => setNombre(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#69a3a5]"
               />
               <input
-                type="password"
-                placeholder="Contraseña"
-                value={contrasena}
-                onChange={(e) => setContrasena(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#B68F72]"
+                type="text"
+                placeholder="Documento"
+                value={documento}
+                onChange={(e) => setDocumento(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#69a3a5]"
               />
-              <button
-                type="submit"
-                className="w-full bg-[#B68F72] text-white py-2 rounded-lg font-medium hover:bg-[#9C745C] transition"
+              <select
+                value={telefonoPrefijo}
+                onChange={(e) => setTelefonoPrefijo(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#69a3a5]"
               >
-                {isRegistering ? "Registrarse" : "Entrar"}
-              </button>
+                <option value="">Seleccionar prefijo</option>
+                <option value="+57">+57 (Colombia)</option>
+                <option value="+52">+52 (México)</option>
+                <option value="+1">+1 (EEUU)</option>
+                <option value="+54">+54 (Argentina)</option>
+                <option value="+51">+51 (Perú)</option>
+                <option value="+56">+56 (Chile)</option>
+                <option value="+593">+593 (Ecuador)</option>
+                <option value="+591">+591 (Bolivia)</option>
+                <option value="+58">+58 (Venezuela)</option>
+                <option value="+34">+34 (España)</option>
+                <option value="+44">+44 (Reino Unido)</option>
+                <option value="+353">+353 (Irlanda)</option>
+                <option value="+33">+33 (Francia)</option>
+                <option value="+49">+49 (Alemania)</option>
+                <option value="+1">+1 (Canadá)</option>
+                <option value="+61">+61 (Australia)</option>
+                <option value="+91">+91 (India)</option>
+                <option value="+27">+27 (Sudáfrica)</option>
+              </select>
+              <input
+                type="text"
+                placeholder="Número de teléfono"
+                value={telefono}
+                onChange={(e) => setTelefono(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#69a3a5]"
+              />
             </>
           )}
-        </form>
+          <input
+            type="email"
+            placeholder="Correo"
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#69a3a5]"
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={contrasena}
+            onChange={(e) => setContrasena(e.target.value)}
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#69a3a5]"
+          />
+          <button
+            type="submit"
+            className="w-full bg-[#1c7578] text-white py-2 rounded-lg font-medium hover:bg-[#145d5f] transition"
+          >
+            {isRegistering ? "Registrarse" : "Entrar"}
+          </button>
+        </>
+      )}
+    </form>
 
-        {!isRecovering && (
-          <p className="text-center text-sm text-[#6B6B6B]">
-            {isRegistering ? "¿Ya tienes una cuenta?" : "¿No tienes una cuenta?"}{" "}
-            <button
-              onClick={() => setIsRegistering(!isRegistering)}
-              className="text-[#B68F72] font-medium hover:underline"
-            >
-              {isRegistering ? "Inicia sesión" : "Regístrate"}
-            </button>
-          </p>
-        )}
+    {!isRecovering && (
+      <p className="text-center text-sm text-gray-600">
+        {isRegistering ? "¿Ya tienes una cuenta?" : "¿No tienes una cuenta?"}{" "}
+        <button
+          onClick={() => setIsRegistering(!isRegistering)}
+          className="text-[#1c7578] font-medium hover:underline"
+        >
+          {isRegistering ? "Inicia sesión" : "Regístrate"}
+        </button>
+      </p>
+    )}
 
-        {!isRecovering ? (
-          <p className="text-center text-sm text-[#6B6B6B]">
-            <button
-              onClick={() => {
-                setIsRecovering(true);
-                setIsRegistering(false);
-              }}
-              className="text-[#B68F72] font-medium hover:underline"
-            >
-              ¿Olvidaste tu contraseña?
-            </button>
-          </p>
-        ) : null}
-      </motion.div>
-    </div>
+    {!isRecovering && (
+      <p className="text-center text-sm text-gray-600">
+        <button
+          onClick={() => {
+            setIsRecovering(true);
+            setIsRegistering(false);
+          }}
+          className="text-[#1c7578] font-medium hover:underline"
+        >
+          ¿Olvidaste tu contraseña?
+        </button>
+      </p>
+    )}
+  </motion.div>
+</div>
+
   );
 }

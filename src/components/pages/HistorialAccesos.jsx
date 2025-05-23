@@ -22,7 +22,7 @@ const HistorialAccesos = () => {
 
 	return (
 		<div className="w-full max-w-4xl mx-auto p-4 grid gap-4">
-			<h2 className="text-2xl font-bold text-custom-marron-1 mb-2 text-center">Historial de accesos</h2>
+			<h2 className="text-2xl font-bold text-black mb-2 text-center">Historial de accesos</h2>
 			{accesos.length === 0 ? (
 				<p className="text-gray-500 text-center">No hay accesos registrados.</p>
 			) : (

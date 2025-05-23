@@ -102,7 +102,7 @@
 .bg-custom-blue-5-down:hover {
   background-color: #186063;
   transition-duration: 0.6s;
-}
+}w
 
 .text-custom-blue-3 {
   color: #1c7578;
@@ -112,4 +112,51 @@
 .text-custom-blue-3:hover {
   color: #186063;
   transition-duration: 0.6s;
+}
+.bg-custom-verDetalles {
+  background-color: #A0A4B8;
+  color: white;
+}
+
+.bg-custom-contactar {
+  background-color: #2A6F77;
+  color: white;
+}
+
+.bg-custom-ingresarCita {
+  background-color: #C97C74;
+  color: white;
+}
+
+.bg-custom-anotaciones {
+  background-color: #D7CFC4;
+  color: #333;
+}
+
+/* Hover Effects */
+.bg-custom-verDetalles:hover {
+  background-color: #8F94AB;
+}
+
+.bg-custom-contactar:hover {
+  background-color: #225A60;
+}
+
+.bg-custom-ingresarCita:hover {
+  background-color: #B86D65;
+}
+
+.bg-custom-anotaciones:hover {
+  background-color: #CBBFB1;
+}
+
+/* en tu archivo CSS global */
+.bg-crema {
+  background-color: #FFF8F0;
+}
+.text-marron-oscuro {
+  color: #5C4033;
+}
+.border-marron-claro {
+  border-color: #A47551;
 }

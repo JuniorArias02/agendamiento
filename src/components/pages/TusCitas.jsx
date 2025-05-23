@@ -10,11 +10,13 @@ import { Loader } from "lucide-react";
 import Swal from 'sweetalert2';
 import FiltroCitas from "../ui/FiltroCitas";
 import TemporizadorCita from "../ui/TemporizadorCita";
+import SkeletonCard from "../layout/SkeletonCard";
 
 export default function TusCitas() {
   const navigate = useNavigate();
   const { usuario } = useAuth();
   const [citas, setCitas] = useState([]);
+  const [loading, setLoading] = useState(true);
   // console.log("Usuario en Dashboard:", citas);
   const [clickedStates, setClickedStates] = useState({});
   const [filtroAbierto, setFiltroAbierto] = useState(false);
@@ -90,21 +92,16 @@ export default function TusCitas() {
 
   useEffect(() => {
     if (usuario) {
-      const interval = setInterval(() => {
-        obtenerCitas(usuario.id).then(data => {
-          if (Array.isArray(data)) {
-            setCitas(data);
-          } else {
-            setCitas([]);
-            console.error("La respuesta no es un array:", data);
-          }
-        });
-      }, 30000);
-
-      return () => clearInterval(interval);
+      obtenerCitas(usuario.id).then(data => {
+        if (Array.isArray(data)) {
+          setCitas(data);
+        } else {
+          setCitas([]);
+        }
+        setLoading(false);
+      });
     }
   }, [usuario]);
-
 
   const verDetalles = (idCita) => {
     // alert("Ver detalles de la cita con ID: " + idCita);
@@ -153,9 +150,17 @@ export default function TusCitas() {
       </h1>
 
       {citas.length === 0 ? (
-        <p className="text-center text-lg text-gray-500">
-          No hay citas registradas.
-        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+        </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {citas
@@ -222,21 +227,21 @@ export default function TusCitas() {
                   <div className="mt-5 flex flex-col gap-2">
                     <button
                       onClick={() => verDetalles(cita.id)}
-                      className="w-full py-2 px-4 bg-custom-marron-1 text-white font-semibold rounded-full hover:brightness-110 transition-all duration-200 cursor-pointer"
+                      className="w-full py-2 px-4 bg-custom-verDetalles text-white font-semibold rounded-full hover:brightness-110 transition-all duration-200 cursor-pointer"
                     >
                       Ver Detalles
                     </button>
 
                     <button
                       onClick={() => contactarPorWhatsApp(telefono)}
-                      className="w-full py-2 px-4 bg-custom-green-1 text-white font-semibold rounded-full hover:bg-green-600 transition-all duration-200 cursor-pointer"
+                      className="w-full py-2 px-4 bg-custom-contactar text-white font-semibold rounded-full hover:bg-green-600 transition-all duration-200 cursor-pointer"
                     >
                       Contactar
                     </button>
                     {usuario.rol === "psicologa" && (
                       <button
                         onClick={() => abrirAnotaciones(cita.id)}
-                        className="w-full py-2 px-4 bg-yellow-500 text-white font-semibold rounded-full hover:bg-yellow-600 transition-all duration-200 cursor-pointer"
+                        className="w-full py-2 px-4 bg-custom-anotaciones text-white font-semibold rounded-full hover:bg-yellow-600 transition-all duration-200 cursor-pointer"
                       >
                         Anotaciones
                       </button>
@@ -247,7 +252,7 @@ export default function TusCitas() {
                         onClick={() => ingresarACita(cita.id, cita.enlace_cita)}
                         disabled={clickedStates[cita.id]}
 
-                        className="w-full py-2 px-4 bg-custom-blue-link text-white font-semibold rounded-full hover:bg-indigo-700 transition-all duration-200 cursor-pointer"
+                        className="w-full py-2 px-4 bg-custom-ingresarCita text-white font-semibold rounded-full hover:bg-indigo-700 transition-all duration-200 cursor-pointer"
                       >
                         {clickedStates[cita.id] ? (
                           <div className="flex items-center justify-center">

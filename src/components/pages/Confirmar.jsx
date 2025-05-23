@@ -115,8 +115,15 @@ export default function ConfirmarAgenda() {
 
         {servicio.precio && (
           <p className="text-lg text-gray-700 mb-6">
-            El precio de la cita es: <strong className="text-custom-marron-1">{servicio.precio} US</strong>
+            El precio de la cita es:{" "}
+            <strong className="text-custom-marron-1">
+              {Number(servicio.precio).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              })}
+            </strong>
           </p>
+
         )}
 
         {error && <p className="text-red-500 mb-4">{error}</p>}

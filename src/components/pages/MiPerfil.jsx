@@ -11,6 +11,7 @@ import { Camera } from "lucide-react"; // Asegúrate de que la ruta sea correcta
 import Skeleton from "../layout/Skeleton";
 export default function MiPerfil() {
   const [loading, setLoading] = useState(false);
+  const [cargando, setCargando] = useState(false);
 
   const [imagenPreview, setImagenPreview] = useState("");
   const [imagen, setImagen] = useState(null);
@@ -66,6 +67,10 @@ export default function MiPerfil() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (cargando) return; // Evita que se dispare más de una vez
+
+    setCargando(true);
+
     try {
       const formData = new FormData();
       formData.append("id", usuario.id);
@@ -74,7 +79,7 @@ export default function MiPerfil() {
       formData.append("correo", form.correo);
       formData.append("telefono", form.telefono);
       if (imagen) {
-        formData.append("imagen", imagen); // Guardamos la imagen seleccionada o recortada
+        formData.append("imagen", imagen);
       }
 
       const { data } = await axios.post(ACTUALIZAR_PERFIL, formData, {
@@ -84,7 +89,6 @@ export default function MiPerfil() {
       });
 
       if (data.success) {
-        // console.log("Perfil actualizado:", imagen);
         toast.success("Perfil actualizado 🎉");
       } else {
         toast.error("Error al actualizar 😥");
@@ -92,6 +96,8 @@ export default function MiPerfil() {
     } catch (error) {
       console.error("Error al actualizar perfil:", error);
       toast.error("Error al conectar 🚨");
+    } finally {
+      setCargando(false); // Vuelve a habilitar después del proceso
     }
   };
 
@@ -157,11 +163,13 @@ export default function MiPerfil() {
           {/* Botón guardar más simple */}
           <button
             type="submit"
-            className="w-full bg-custom-blue-5-down text-white py-2 rounded-md hover:bg-emerald-600 transition font-medium cursor-pointer flex items-center justify-center"
+            className="w-full bg-custom-blue-5-down text-white py-2 rounded-md transition font-medium cursor-pointer flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={cargando}
           >
             <Save className="inline w-5 h-5 mr-2" />
-            Guardar Cambios
+            {cargando ? "Guardando..." : "Guardar Cambios"}
           </button>
+          
         </motion.form>
       )}
       {/* Modal */}

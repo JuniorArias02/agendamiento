@@ -46,7 +46,7 @@ function Navbar() {
     { label: "Tus Servicios", to: "/tus_servicios" },
     { label: "Mis Historias", to: "/tus_citas" },
     { label: "Mi Disponibilidad", to: "/mi_disponibilidad" },
-    { label: "Mis Informes", to: "/historial_accesos" }
+    { label: "Mis Accesos ", to: "/historial_accesos" }
   ];
 
   const enlacesPaciente = [
