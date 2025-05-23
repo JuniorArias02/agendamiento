@@ -37,17 +37,17 @@ const Calendar = ({ onDateSelect, confirmedDate }) => {
   };
   const handleSelectDate = (day) => {
     const today = startOfDay(new Date());
-  
+
     // Si la fecha es anterior a hoy, no hacer nada
     if (isBefore(day, today) || confirmedDate) return;
-  
+
     setSelectedDate(day);
     onDateSelect(day);
-  
+
     const weekIndex = weeks.findIndex((week) => week.includes(day));
     setSelectedWeek(weekIndex);
   };
-  
+
 
   const startMonth = startOfMonth(currentDate);
   const endMonth = endOfMonth(currentDate);
@@ -71,17 +71,17 @@ const Calendar = ({ onDateSelect, confirmedDate }) => {
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={handlePrevMonth}
-          className={`text-brown font-bold ${confirmedDate ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+          className={`font-bold text-[#1c7578] ${confirmedDate ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           disabled={!!confirmedDate}
         >
           <ArrowLeft />
         </button>
-        <h2 className="text-xl montserrat-regular text-center text-brown text-marron-custom-2">
+        <h2 className="text-xl montserrat-regular text-center text-[#1c7578]">
           {format(currentDate, "MMMM yyyy")}
         </h2>
         <button
           onClick={handleNextMonth}
-          className={`text-brown font-bold ${confirmedDate ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+          className={`font-bold text-[#1c7578] ${confirmedDate ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           disabled={!!confirmedDate}
         >
           <ArrowRight />
@@ -103,46 +103,44 @@ const Calendar = ({ onDateSelect, confirmedDate }) => {
           transition={{ duration: 0.6, ease: "easeInOut" }}
         >
           {weeks.map((week, index) => {
-  // Si hay un día seleccionado, mostrar solo su fila
-  const shouldShowWeek = selectedDate ? index === selectedWeek : true;
+            const shouldShowWeek = selectedDate ? index === selectedWeek : true;
 
-  return (
-    <motion.div
-      key={index}
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: shouldShowWeek ? 1 : 0, height: shouldShowWeek ? "auto" : 0 }}
-      exit={{ opacity: 0, height: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
-      className={`grid grid-cols-7 overflow-hidden transition-all`}
-    >
-      {week.map((day, idx) => {
-        const isPast = isBefore(day, startOfDay(new Date()));
-        return (
-          <div
-            key={idx}
-            onClick={() => !isPast && !confirmedDate && handleSelectDate(day)}
-            className={`p-2 transition duration-300 rounded-full text-center
-              ${isSameMonth(day, currentDate) ? "text-black font-semibold" : "text-gray-400"}
-              ${isSameDay(day, selectedDate) ? "day-items_selected text-white bg-blue-500" : ""}
-              ${
-                isPast
-                  ? "bg-red-300 text-white opacity-60 cursor-not-allowed"
-                  : confirmedDate
-                  ? "opacity-50 cursor-not-allowed"
-                  : "hover:bg-gray-200 hover:text-black cursor-pointer"
-              }`}
-          >
-            {format(day, "d")}
-          </div>
-        );
-      })}
-    </motion.div>
-  );
-})}
-
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: shouldShowWeek ? 1 : 0, height: shouldShowWeek ? "auto" : 0 }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className={`grid grid-cols-7 overflow-hidden transition-all`}
+              >
+                {week.map((day, idx) => {
+                  const isPast = isBefore(day, startOfDay(new Date()));
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => !isPast && !confirmedDate && handleSelectDate(day)}
+                      className={`p-2 transition duration-300 rounded-full text-center
+                    ${isSameMonth(day, currentDate) ? "text-black font-semibold" : "text-gray-400"}
+                    ${isSameDay(day, selectedDate) ? "bg-[#1c7578] text-white" : ""}
+                    ${isPast
+                          ? "bg-red-300 text-white opacity-60 cursor-not-allowed"
+                          : confirmedDate
+                            ? "opacity-50 cursor-not-allowed"
+                            : "hover:bg-[#7fc1c1] hover:text-black cursor-pointer"
+                        }`}
+                    >
+                      {format(day, "d")}
+                    </div>
+                  );
+                })}
+              </motion.div>
+            );
+          })}
         </motion.div>
       </AnimatePresence>
     </div>
+
   );
 };
 

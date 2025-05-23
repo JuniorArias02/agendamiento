@@ -87,8 +87,8 @@ const MiDisponibilidad = () => {
   };
 
   return (
-    <div className="w-full max-w-xl mx-auto p-6 rounded-lg bg-[#f3fbfb] space-y-6 shadow-md">
-      <h2 className="text-2xl font-bold text-center text-[#1c7578]">📅 Mi Disponibilidad</h2>
+    <div className="w-full max-w-4xl mx-auto px-4 py-6 space-y-8">
+      <h2 className="text-3xl font-bold text-center text-[#1c7578]">📅 Mi Disponibilidad</h2>
 
       <div>
         <label className="block text-sm font-semibold text-[#1c7578] mb-1">Selecciona una fecha</label>
@@ -109,7 +109,7 @@ const MiDisponibilidad = () => {
               type="button"
               onClick={() => toggleHora(hora)}
               className={`text-sm font-medium px-2 py-1 rounded-md border transition
-              ${horasSeleccionadas.includes(hora)
+            ${horasSeleccionadas.includes(hora)
                   ? "bg-[#1c7578] text-white hover:bg-[#145d5f]"
                   : "bg-white text-[#1c7578] border-[#69a3a5] hover:bg-[#e2f3f3]"}`}
             >
@@ -119,7 +119,7 @@ const MiDisponibilidad = () => {
         </div>
       </div>
 
-      <div className="pt-2">
+      <div>
         <label className="block text-sm font-semibold text-[#1c7578] mb-2">Agregar hora manual</label>
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <div className="flex items-center gap-3">
@@ -141,8 +141,9 @@ const MiDisponibilidad = () => {
           </div>
         </LocalizationProvider>
       </div>
+
       {horasSeleccionadas.length > 0 && (
-        <div className="mt-4">
+        <div>
           <h3 className="text-sm font-semibold text-[#1c7578] mb-1">Horas seleccionadas:</h3>
           <div className="flex flex-wrap gap-2">
             {horasSeleccionadas.map((h, index) => (
@@ -157,21 +158,21 @@ const MiDisponibilidad = () => {
         </div>
       )}
 
-
       <div className="text-center pt-4">
         <button
           type="button"
           onClick={guardarDisponibilidad}
           disabled={!fecha || horasSeleccionadas.length === 0}
           className={`font-bold px-6 py-2 rounded-md transition-all ${!fecha || horasSeleccionadas.length === 0
-              ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-              : "bg-[#1c7578] hover:bg-[#145d5f] text-white"
+            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+            : "bg-[#1c7578] hover:bg-[#145d5f] text-white"
             }`}
         >
           Guardar disponibilidad
         </button>
       </div>
     </div>
+
   );
 };
 

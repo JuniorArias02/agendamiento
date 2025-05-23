@@ -63,73 +63,75 @@ export default function Agenda() {
 
 
   return (
+   <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.8, ease: "easeOut" }}
+  className="w-full flex flex-col items-center justify-center py-8 px-4"
+>
+  <motion.div
+    initial={{ opacity: 0, x: -20 }}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
+    className="w-full mb-4"
+  >
+    <ArrowLeftToLine
+      className="cursor-pointer"
+      onClick={() => navigate("/")}
+      color="#1c7578"  // Azul base
+      size={30}
+    />
+  </motion.div>
+
+  <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
+    {/* Calendario */}
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, ease: "easeOut" }}
-      className="w-full flex flex-col items-center justify-center py-8 px-4"
+      initial={{ opacity: 0, x: -30 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
+      className="w-full sm:w-1/2 max-w-md bg-white rounded-xl shadow-lg p-6"
     >
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
-        className="w-full mb-4"
-      >
-        <ArrowLeftToLine
-          className="cursor-pointer"
-          onClick={() => navigate("/")}
-          color="#8C5B4C"
-          size={30}
+      <h3 className="text-xl font-semibold text-[#1c7578] text-center mb-4">
+        Selecciona una fecha
+      </h3>
+      <Calendar onDateSelect={handleDateSelect} />
+      {selectedDate && (
+        <Schedule
+          onSelect={handleTimeSelect}
+          isVisible={!!selectedDate}
+          selectedDate={selectedDate}
+          psicologaId={servicio?.usuario_id}
         />
-      </motion.div>
-
-      <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
-        {/* Calendario */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
-          className="w-full sm:w-1/2 max-w-md bg-white rounded-xl shadow-lg p-6"
-        >
-          <h3 className="text-xl font-semibold text-[#8C5B4C] text-center mb-4">
-            Selecciona una fecha
-          </h3>
-          <Calendar onDateSelect={handleDateSelect} />
-          {selectedDate && (
-            <Schedule
-              onSelect={handleTimeSelect}
-              isVisible={!!selectedDate}
-              selectedDate={selectedDate}
-              psicologaId={servicio?.usuario_id} // Asegúrate de que servicio tenga usuario_id
-            />
-          )}
-        </motion.div>
-
-        {/* Formulario */}
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
-          className="w-full sm:w-1/2 max-w-md bg-white rounded-xl shadow-lg p-6"
-        >
-          <h2 className="text-2xl font-bold text-[#8C5B4C] text-center mb-6">
-            Agenda tu cita
-          </h2>
-
-          <motion.input
-            type="button"
-            value="Continuar"
-            disabled={!selectedDate || !selectedTime}
-            onClick={handleContinue}
-            className={`w-full py-2 px-6 rounded-full font-semibold text-white transition duration-300 ${selectedDate && selectedTime
-              ? "bg-[#8C5B4C] hover:brightness-110 cursor-pointer"
-              : "bg-[#F4E6D4] text-gray-400 cursor-not-allowed"
-              }`}
-            whileHover={{ scale: selectedDate && selectedTime ? 1.05 : 1 }}
-            whileTap={{ scale: selectedDate && selectedTime ? 0.95 : 1 }}
-          />
-        </motion.div>
-      </div>
+      )}
     </motion.div>
+
+    {/* Formulario */}
+    <motion.div
+      initial={{ opacity: 0, x: 30 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
+      className="w-full sm:w-1/2 max-w-md bg-white rounded-xl shadow-lg p-6"
+    >
+      <h2 className="text-2xl font-bold text-[#1c7578] text-center mb-6">
+        Agenda tu cita
+      </h2>
+
+      <motion.input
+        type="button"
+        value="Continuar"
+        disabled={!selectedDate || !selectedTime}
+        onClick={handleContinue}
+        className={`w-full py-2 px-6 rounded-full font-semibold text-white transition duration-300 ${
+          selectedDate && selectedTime
+            ? "bg-[#1c7578] hover:brightness-110 cursor-pointer"
+            : "bg-[#D1E9E9] text-gray-400 cursor-not-allowed"
+        }`}
+        whileHover={{ scale: selectedDate && selectedTime ? 1.05 : 1 }}
+        whileTap={{ scale: selectedDate && selectedTime ? 0.95 : 1 }}
+      />
+    </motion.div>
+  </div>
+</motion.div>
+
   );
 }

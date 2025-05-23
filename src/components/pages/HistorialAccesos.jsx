@@ -3,7 +3,7 @@ import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import { OBTENER_HISTORIAL_ACCESOS } from "../../api/registro";
 import { Globe, CalendarClock, MonitorSmartphone, User } from "lucide-react";
-
+import SkeletonAccesos from "../layout/SkeletonAccesos";
 const HistorialAccesos = () => {
 	const { usuario } = useAuth();
 	const [accesos, setAccesos] = useState([]);
@@ -24,7 +24,7 @@ const HistorialAccesos = () => {
 		<div className="w-full max-w-4xl mx-auto p-4 grid gap-4">
 			<h2 className="text-2xl font-bold text-black mb-2 text-center">Historial de accesos</h2>
 			{accesos.length === 0 ? (
-				<p className="text-gray-500 text-center">No hay accesos registrados.</p>
+				Array.from({ length: 3 }).map((_, i) => <SkeletonAccesos key={i} />)
 			) : (
 				accesos.map((acceso) => (
 					<div

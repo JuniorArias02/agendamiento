@@ -83,42 +83,44 @@ const Schedule = ({ onSelect, isVisible, selectedDate, psicologaId }) => {
   };
 
   return (
-    <AnimatePresence>
-      {isVisible && (
-        <motion.div
-          initial={{ opacity: 0, y: -20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -20, scale: 0.95 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
-          className="w-[90%] max-w-md grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 p-4 bg-beige mx-auto rounded-lg text-center"
-        >
-          {horasDisponibles.length === 0 ? (
-            <div className="col-span-full text-gray-500 text-sm sm:text-base italic">
-              El doctor no se encuentra disponible en estas fechas 😥
-            </div>
-          ) : (
-            horasDisponibles.map((time) => (
-              <button
-                key={time}
-                onClick={() => handleSelect(time)}
-                disabled={isPast(time) || isOcupado(time)}
-                className={`cursor-pointer px-2 py-2 text-sm sm:text-base text-center rounded-md border shadow transition-colors montserrat-medium
-                ${selectedTime === time
-                    ? "bg-custom-marron-1 text-white"
-                    : isPast(time)
-                      ? "bg-red-300 text-white cursor-not-allowed"
-                      : isOcupado(time)
-                        ? "bg-custom-orange-1 text-white cursor-not-allowed"
-                        : "bg-white hover:bg-gray-200 text-black"
-                  }`}
-              >
-                {time}
-              </button>
-            ))
-          )}
-        </motion.div>
+  <AnimatePresence>
+  {isVisible && (
+    <motion.div
+      initial={{ opacity: 0, y: -20, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, y: -20, scale: 0.95 }}
+      transition={{ duration: 0.6, ease: "easeInOut" }}
+      className="w-[90%] max-w-md grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 p-4 bg-[#D9EEF6] mx-auto rounded-lg text-center" // azul muy clarito de fondo
+    >
+      {horasDisponibles.length === 0 ? (
+        <div className="col-span-full text-[#3A6280] text-sm sm:text-base italic">
+          El doctor no se encuentra disponible en estas fechas 😥
+        </div>
+      ) : (
+        horasDisponibles.map((time) => (
+          <button
+            key={time}
+            onClick={() => handleSelect(time)}
+            disabled={isPast(time) || isOcupado(time)}
+            className={`cursor-pointer px-2 py-2 text-sm sm:text-base text-center rounded-md border shadow transition-colors montserrat-medium
+              ${
+                selectedTime === time
+                  ? "bg-[#1c7578] text-white"  // azul oscuro para seleccionado
+                  : isPast(time)
+                  ? "bg-blue-200 text-white cursor-not-allowed"  // azul claro para pasado
+                  : isOcupado(time)
+                  ? "bg-blue-400 text-white cursor-not-allowed"  // azul medio para ocupado
+                  : "bg-white hover:bg-blue-100 text-[#1c7578]" // hover azul claro y texto azul
+              }`}
+          >
+            {time}
+          </button>
+        ))
       )}
-    </AnimatePresence>
+    </motion.div>
+  )}
+</AnimatePresence>
+
   );
 
 };
