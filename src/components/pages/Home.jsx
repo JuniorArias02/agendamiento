@@ -17,14 +17,14 @@ export default function Home() {
 					initial={{ opacity: 0, y: -10 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.3, duration: 0.8, ease: "easeOut" }}
-					className="montserrat-bold text-5xl text-custom-marron-1 text-center"
+					className="montserrat-bold text-5xl text-[#1c7578] text-center"
 				>
 					Agenda tu cita
 				</motion.h1>
 				<motion.input
 					type="button"
 					value="Continuar"
-					className="btn-continuar bg-custom-beige-2 text-white mt-10 font-bold py-2 px-6 cursor-pointer transition duration-300"
+					className=" bg-[#1c7578] hover:bg-[#496364] text-white mt-10 font-bold py-2 px-6 cursor-pointer transition duration-300"
 					onClick={() => navigate("/nueva_agenda")}
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}

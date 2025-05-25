@@ -4,17 +4,19 @@ import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { ELIMINAR_SERVICIO, LISTAR_SERVICIOS, } from "../../api/servicios";
 import { useNavigate } from "react-router-dom";
-
+import SkeletonService from "../layout/SkeletonService";
 export default function TuServicios() {
 	const navigate = useNavigate();
 	const { usuario } = useAuth();
 	const [servicios, setServicios] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	const cargarServicios = async () => {
+		setLoading(true);
 		const res = await axios.get(`${LISTAR_SERVICIOS}?usuario_id=${usuario.id}`);
 		setServicios(res.data.servicios);
+		setLoading(false);
 	};
-
 
 	useEffect(() => {
 		cargarServicios();
@@ -41,7 +43,13 @@ export default function TuServicios() {
 				)}
 			</div>
 
-			{servicios.length === 0 ? (
+			{loading ? (
+				<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+					{Array(6).fill(0).map((_, i) => (
+						<SkeletonService key={i} />
+					))}
+				</div>
+			) : servicios.length === 0 ? (
 				<p className="text-gray-600">No hay servicios disponibles.</p>
 			) : (
 				<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -69,7 +77,7 @@ export default function TuServicios() {
 								Psicóloga: {serv.nombre_psicologo}
 							</p>
 							<p className="text-gray-600 mb-3">{serv.descripcion}</p>
- 
+
 							<p className="text-green-700 font-semibold mb-3">
 								${serv.precio} USD · {serv.duracion} min
 							</p>

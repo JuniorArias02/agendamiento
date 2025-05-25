@@ -1,13 +1,24 @@
 {
-	"build": {
-		"env": {
-			"NODE_OPTIONS": "--no-experimental-fetch"
-		}
-	},
-	"rewrites": [
-		{
-			"source": "/(.*)",
-			"destination": "/"
-		}
-	]
+  "build": {
+    "env": {
+      "NODE_OPTIONS": "--no-experimental-fetch"
+    }
+  },
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-ancestors https://psicologicamentehablando.space"
+        }
+      ]
+    }
+  ]
 }
