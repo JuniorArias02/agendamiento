@@ -9,6 +9,8 @@ import { useAuth } from "../../context/AuthContext";
 import ImageCropper from "../ui/ImageCropper"; // Asegúrate de que la ruta sea correcta
 import { Camera } from "lucide-react"; // Asegúrate de que la ruta sea correcta
 import Skeleton from "../layout/Skeleton";
+import { setSwipe } from "../../utils/SwipeControl";
+
 export default function MiPerfil() {
   const [loading, setLoading] = useState(false);
   const [cargando, setCargando] = useState(false);
@@ -20,12 +22,20 @@ export default function MiPerfil() {
   const { usuario } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+
   const [form, setForm] = useState({
     documento: "",
     nombre: "",
     correo: "",
     telefono: "",
   });
+
+  useEffect(() => {
+    const debeDesactivarSwipe = mostrarModal || mostrarCrop;
+    setSwipe(!debeDesactivarSwipe);
+  }, [mostrarModal, mostrarCrop]);
+
+
 
   useEffect(() => {
     if (usuario?.id) cargarPerfil();
@@ -169,7 +179,7 @@ export default function MiPerfil() {
             <Save className="inline w-5 h-5 mr-2" />
             {cargando ? "Guardando..." : "Guardar Cambios"}
           </button>
-          
+
         </motion.form>
       )}
       {/* Modal */}

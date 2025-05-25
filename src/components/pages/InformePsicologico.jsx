@@ -210,8 +210,9 @@ export const InformePsicologico = () => {
 					<span>Descargar PDF</span>
 				</button>
 			</div>
-			<div className="overflow-auto max-h-screen p-2 mt-5 flex items-center justify-center ">
-				<VistaInforme ref={vistaRef} form={form}/>
+			<div className="overflow-auto p-2 mt-5 flex items-center justify-center">
+
+				<VistaInforme ref={vistaRef} form={form} />
 			</div>
 
 		</div>

@@ -78,30 +78,40 @@ export default function TusCitas() {
 
 
   useEffect(() => {
-    if (usuario) {
-      obtenerCitas(usuario.id).then(data => {
-        if (Array.isArray(data)) {
-          setCitas(data);
-        } else {
-          setCitas([]);
-          console.error("La respuesta no es un array:", data);
-        }
-      });
-    }
-  }, [usuario]);
+  if (!usuario) return;
 
-  useEffect(() => {
-    if (usuario) {
-      obtenerCitas(usuario.id).then(data => {
-        if (Array.isArray(data)) {
-          setCitas(data);
-        } else {
-          setCitas([]);
-        }
-        setLoading(false);
-      });
-    }
-  }, [usuario]);
+  const cargarCitas = () => {
+    obtenerCitas(usuario.id).then(data => {
+      if (Array.isArray(data)) {
+        setCitas(data);
+      } else {
+        setCitas([]);
+      }
+      setLoading(false);
+    });
+  };
+
+  cargarCitas(); // carga al inicio
+
+  const intervalo = setInterval(() => {
+    cargarCitas(); // recarga cada 3 minutos
+  }, 3 * 60 * 1000);
+
+  return () => clearInterval(intervalo); // limpia el intervalo al desmontar el componente
+}, [usuario]);
+
+  // useEffect(() => {
+  //   if (usuario) {
+  //     obtenerCitas(usuario.id).then(data => {
+  //       if (Array.isArray(data)) {
+  //         setCitas(data);
+  //       } else {
+  //         setCitas([]);
+  //       }
+  //       setLoading(false);
+  //     });
+  //   }
+  // }, [usuario]);
 
   const verDetalles = (idCita) => {
     // alert("Ver detalles de la cita con ID: " + idCita);

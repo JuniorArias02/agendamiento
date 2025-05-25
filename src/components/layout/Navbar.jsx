@@ -2,6 +2,7 @@ import { UserRound, DoorOpen, DoorClosed, Menu } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useState, useRef, useEffect } from "react";
+import { getSwipe } from "../../utils/SwipeControl";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -13,10 +14,12 @@ function Navbar() {
 
   useEffect(() => {
     const handleTouchStart = (e) => {
+      if (!getSwipe()) return;
       touchStartX.current = e.touches[0].clientX;
     };
 
     const handleTouchEnd = (e) => {
+      if (!getSwipe()) return;
       const touchEndX = e.changedTouches[0].clientX;
       const diffX = touchEndX - touchStartX.current;
 
