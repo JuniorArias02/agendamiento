@@ -48,7 +48,7 @@ function Navbar() {
     { label: "Inicio", to: "https://psicologicamentehablando.space/" },
     { label: "Tus Citas", to: "/tus_citas" },
     { label: "Tus Servicios", to: "/tus_servicios" },
-    { label: "Mis Historias", to: "/tus_citas" },
+    // { label: "Mis Historias", to: "/tus_citas" },
     { label: "Mi Disponibilidad", to: "/mi_disponibilidad" },
     { label: "Mis Accesos ", to: "/historial_accesos" }
   ];
