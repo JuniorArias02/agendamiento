@@ -143,7 +143,7 @@ export default function TusCitas() {
 
   const abrirAnotaciones = (idCita) => {
     navigate(`/informe_psicologico/${idCita}`);
-    console.log("Abrir anotaciones para la cita con ID:", idCita);
+    // console.log("Abrir anotaciones para la cita con ID:", idCita);
   };
 
   return (

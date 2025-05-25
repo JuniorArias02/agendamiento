@@ -45,6 +45,7 @@ function Navbar() {
   };
 
   const enlacesPsicologa = [
+    { label: "Inicio", to: "https://psicologicamentehablando.space/" },
     { label: "Tus Citas", to: "/tus_citas" },
     { label: "Tus Servicios", to: "/tus_servicios" },
     { label: "Mis Historias", to: "/tus_citas" },
@@ -53,6 +54,7 @@ function Navbar() {
   ];
 
   const enlacesPaciente = [
+    { label: "Inicio", to: "https://psicologicamentehablando.space/" },
     { label: "Tus Citas", to: "/tus_citas" },
     { label: "Nueva Agenda", to: "/nueva_agenda" },
     { label: "Mis Informes", to: "/historial_accesos" }
@@ -61,7 +63,10 @@ function Navbar() {
   let links = [];
 
   if (!usuario) {
-    links = [{ label: "Nueva Agenda", to: "/nueva_agenda" }];
+    links = [
+      { label: "Inicio", to: "https://psicologicamentehablando.space/" },
+      { label: "Nueva Agenda", to: "/nueva_agenda" }
+    ];
   } else if (usuario.rol === "psicologa") {
     links = enlacesPsicologa;
   } else if (usuario.rol === "paciente") {
@@ -84,13 +89,20 @@ function Navbar() {
           {links.map((item) => (
             <button
               key={item.label}
-              onClick={() => navigate(item.to)}
+              onClick={() => {
+                if (item.to.startsWith("http")) {
+                  window.location.href = item.to; // Redirige fuera de tu app
+                } else {
+                  navigate(item.to); // Navega dentro de tu app
+                }
+              }}
               className="text-white text-base font-medium relative group transition duration-200 cursor-pointer"
             >
               {item.label}
               <span className="absolute left-0 -bottom-1 w-0 h-[2px] bg-white group-hover:w-full transition-all duration-300 ease-in-out" />
             </button>
           ))}
+
         </div>
 
 
@@ -129,9 +141,14 @@ function Navbar() {
             <button
               key={item.label}
               onClick={() => {
-                navigate(item.to);
+                if (item.to.startsWith("http")) {
+                  window.location.href = item.to;
+                } else {
+                  navigate(item.to);
+                }
                 setOpenMenu(false);
               }}
+
               className="text-lg text-gray-800 font-medium text-left"
             >
               {item.label}

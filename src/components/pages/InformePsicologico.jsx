@@ -117,7 +117,7 @@ export const InformePsicologico = () => {
 	const handleGuardarInforme = async () => {
 		try {
 			const response = await axios.post(GUARDAR_INFORME_CITA, { ...form });
-			console.log(response.data);
+			// console.log(response.data);
 			alert('Informe guardado con éxito');
 		} catch (error) {
 			console.error('Error al guardar el informe:', error);

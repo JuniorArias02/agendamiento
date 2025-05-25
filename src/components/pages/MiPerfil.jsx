@@ -45,7 +45,7 @@ export default function MiPerfil() {
     setLoading(true);
     try {
       const { data } = await axios.post(OBTENER_PERFIL, { id: usuario.id });
-      console.log("Datos del perfil:", data);
+      // console.log("Datos del perfil:", data);
       if (data.success) {
         setForm(data.usuario);
         setLoading(false);

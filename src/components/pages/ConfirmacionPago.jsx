@@ -38,7 +38,7 @@ export default function ConfirmacionPago() {
         const hora = localStorage.getItem("hora");
         const usuario_id = localStorage.getItem("usuario_id");
         const servicio_id = localStorage.getItem("servicio_id"); // Obtenemos el servicio_id de localStorage
-        console.log("Datos de la cita:", { fecha, hora, usuario_id, servicio_id, session_id: sessionId });
+        // console.log("Datos de la cita:", { fecha, hora, usuario_id, servicio_id, session_id: sessionId });
 
         // Enviar la cita al backend
         await axios.post(GUARDAR_CITA, {
