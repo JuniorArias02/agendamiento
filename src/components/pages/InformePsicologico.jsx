@@ -1,18 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Save, Download } from 'lucide-react';
+import {
+	ArrowLeftCircle,
+	Save,
+	DownloadCloud,
+	FileText,
+	Lightbulb,
+	User2,
+	Calendar,
+	BookOpen,
+	Activity,
+	FileEdit
+} from 'lucide-react';
 import axios from 'axios';
-import Swal from 'sweetalert2'; // Importamos SweetAlert2
+import Swal from 'sweetalert2';
 import { GUARDAR_INFORME_CITA, OBTENER_INFORME_CITA } from '../../api/registro';
 import { useParams } from 'react-router-dom';
-import { jsPDF } from 'jspdf';
-import { VistaInforme } from '../ui/vistaInforme';
-import html2canvas from 'html2canvas';
+import { PDFDocument, StandardFonts } from 'pdf-lib';
 
 export const InformePsicologico = () => {
-	const { idCita } = useParams(); // Esto extrae el idCita de la URL
-	const vistaRef = useRef(); // Referencia para el componente VistaInforme
-
-	// Estado para almacenar los datos del formulario
+	const { idCita } = useParams();
 	const [form, setForm] = useState({
 		nombre: '',
 		fechaNacimiento: '',
@@ -30,190 +36,199 @@ export const InformePsicologico = () => {
 		expresion: '',
 		diagnostico: '',
 		recomendaciones: '',
-		cita_id: idCita, // Aseguramos que el cita_id esté en el estado, pero no sea editable
+		cita_id: idCita
 	});
 
-	// Estado para almacenar los datos originales y detectar cambios
 	const [originalForm, setOriginalForm] = useState({});
 
-	// Efecto para obtener los datos del informe cuando se carga el componente
 	useEffect(() => {
 		const obtenerInforme = async () => {
 			try {
-				const response = await axios.post(OBTENER_INFORME_CITA, { idCita });
-				if (!response.data || !response.data.nombre) {
-					setForm({
-						nombre: '',
-						fechaNacimiento: '',
-						edad: '',
-						escolaridad: '',
-						ocupacion: '',
-						fechaEvaluacion: '',
-						acompanantes: '',
-						descripcionIngreso: '',
-						fonotipo: '',
-						motivo: '',
-						antecedentes: '',
-						observacion: '',
-						evolucion: '',
-						expresion: '',
-						diagnostico: '',
-						recomendaciones: '',
-						cita_id: idCita, // Mantener el cita_id
-					});
-				} else {
-					setForm(response.data);
-					setOriginalForm(response.data); // Guardamos los datos originales
-				}
-			} catch (error) {
-				console.error('Error al obtener el informe:', error);
+				const { data } = await axios.post(OBTENER_INFORME_CITA, { idCita });
+				if (!data || !data.nombre) return;
+				setForm(data);
+				setOriginalForm(data);
+			} catch (err) {
+				console.error('Error al obtener informe', err);
 			}
 		};
-
 		obtenerInforme();
 	}, [idCita]);
 
-	// Efecto para calcular la edad cuando cambia la fecha de nacimiento
 	useEffect(() => {
 		if (form.fechaNacimiento) {
-			const birthDate = new Date(form.fechaNacimiento);
+			const birth = new Date(form.fechaNacimiento);
 			const today = new Date();
-			const age = today.getFullYear() - birthDate.getFullYear();
-			const month = today.getMonth() - birthDate.getMonth();
-			if (month < 0 || (month === 0 && today.getDate() < birthDate.getDate())) {
-				setForm({ ...form, edad: age - 1 });
-			} else {
-				setForm({ ...form, edad: age });
-			}
+			let age = today.getFullYear() - birth.getFullYear();
+			if (
+				today.getMonth() < birth.getMonth() ||
+				(today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
+			) age--;
+			setForm(prev => ({ ...prev, edad: age }));
+
 		}
 	}, [form.fechaNacimiento]);
 
-	// Función para manejar el cambio de los campos del formulario
 	const handleChange = (e) => {
-		setForm({ ...form, [e.target.name]: e.target.value });
+		const { name, value } = e.target;
+		setForm(prev => ({ ...prev, [name]: value }));
 	};
 
-	// Detectar si hay cambios en los campos
-	const handleDetectarCambios = () => {
-		const isChanged = Object.keys(form).some((key) => form[key] !== originalForm[key]);
-		if (isChanged) {
-			// Si hay cambios, mostramos una alerta
-			Swal.fire({
-				title: '¿Deseas guardar los cambios?',
-				text: `Se detectaron cambios en el campo: ${Object.keys(form).find(key => form[key] !== originalForm[key])}`,
-				icon: 'warning',
-				showCancelButton: true,
-				confirmButtonText: 'Guardar',
-				cancelButtonText: 'Cancelar',
-			}).then((result) => {
-				if (result.isConfirmed) {
-					handleGuardarInforme();
-				}
-			});
-		}
-	};
-
-	// Función para guardar el informe
 	const handleGuardarInforme = async () => {
-		try {
-			const response = await axios.post(GUARDAR_INFORME_CITA, { ...form });
-			// console.log(response.data);
-			alert('Informe guardado con éxito');
-		} catch (error) {
-			console.error('Error al guardar el informe:', error);
-			alert('Ocurrió un error al guardar el informe');
+		console.log("Enviando:", { ...form })
+
+		const isChanged = Object.keys(form).some((key) => form[key] !== originalForm[key])
+		if (!isChanged) {
+			Swal.fire({
+				title: 'Sin cambios',
+				text: 'No se detectaron cambios en el informe',
+				icon: 'info',
+				timer: 2000,
+				showConfirmButton: false
+			})
+			return
 		}
+
+		try {
+			const res = await axios.post(GUARDAR_INFORME_CITA, { ...form })
+			console.log("Respuesta backend:", res.data)
+			Swal.fire('Guardado', 'Informe guardado con éxito', 'success')
+			setOriginalForm(form)
+		} catch (error) {
+			console.error('Error al guardar el informe:', error)
+			Swal.fire('Error', 'Ocurrió un error al guardar el informe', 'error')
+		}
+	}
+
+	const limpiarTexto = (texto) => {
+		return String(texto ?? '')
+			.normalize("NFD")                     // separa tildes
+			.replace(/[\u0300-\u036f]/g, '')     // elimina tildes
+			.replace(/[^\x00-\x7F]/g, '')        // elimina todo lo no ASCII
+			.replace(/\n/g, ' ')                 // elimina saltos de línea
+	}
+
+	const exportarPDF = async (form) => {
+		const existingPdfBytes = await fetch('/planilla.pdf').then(res => res.arrayBuffer());
+		const pdfDoc = await PDFDocument.load(existingPdfBytes);
+		const [templatePage] = await pdfDoc.copyPages(pdfDoc, [0]);
+
+		let page = pdfDoc.getPages()[0];
+		const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+		const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+		// Configuración visual
+		const fontSize = 10;
+		const x = 20;
+		const topMargin = 680;
+		let y = topMargin;
+		const maxWidth = 470;
+		const lineHeight = 14;
+		const minY = 100;
+
+		const drawWrappedText = (label, content) => {
+			const textoLimpio = limpiarTexto(content);
+			const palabras = textoLimpio.split(' ');
+			let linea = '';
+
+			if (y < minY + lineHeight) {
+				page = pdfDoc.addPage(templatePage);
+				y = topMargin;
+			}
+
+			page.drawText(limpiarTexto(label), { x, y, size: fontSize, font: fontBold });
+			y -= lineHeight;
+
+			for (const palabra of palabras) {
+				const testLinea = linea + palabra + ' ';
+				const width = font.widthOfTextAtSize(testLinea, fontSize);
+
+				if (width > maxWidth && linea !== '') {
+					if (y < minY + lineHeight) {
+						page = pdfDoc.addPage(templatePage);
+						y = topMargin;
+					}
+					page.drawText(linea, { x, y, size: fontSize, font });
+					linea = palabra + ' ';
+					y -= lineHeight;
+				} else {
+					linea = testLinea;
+				}
+			}
+
+			if (y < minY + lineHeight) {
+				page = pdfDoc.addPage(templatePage);
+				y = topMargin;
+			}
+			page.drawText(linea, { x, y, size: fontSize, font });
+			y -= 30;
+		};
+
+		for (const [key, value] of Object.entries(form)) {
+			if (key !== 'cita_id' && value?.toString().trim()) {
+				const label = `${formatLabel(key)}:`;
+				drawWrappedText(label, value);
+			}
+		}
+
+		const pdfBytes = await pdfDoc.save();
+		const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+		const link = document.createElement('a');
+		link.href = URL.createObjectURL(blob);
+		link.download = `informe_${form.nombre}.pdf`;
+		link.click();
 	};
 
-	// Función para descargar el informe en PDF
-	const handleDescargarPDF = async () => {
-		const input = vistaRef.current;
+	const getIconForField = (key) => ({
+		nombre: <User2 size={18} className="text-[#61CE70]" />,
+		fechaNacimiento: <Calendar size={18} className="text-[#6EC1E4]" />,
+		escolaridad: <BookOpen size={18} className="text-purple-400" />,
+		diagnostico: <Activity size={18} className="text-red-400" />,
+	}[key] || <FileEdit size={18} className="text-gray-400" />);
 
-		const canvas = await html2canvas(input, { scale: 2 });
-		const imgData = canvas.toDataURL('image/png');
+	const formatLabel = (key) => key.replace(/([A-Z])/g, ' $1').replace(/^./, s => s.toUpperCase());
 
-		const pdf = new jsPDF('p', 'mm', 'a4');
-		const pdfWidth = pdf.internal.pageSize.getWidth();
-		const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-
-		pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-		pdf.save('informe_psicologico.pdf');
+	const renderField = (key, value) => {
+		const base = "w-full p-3 rounded-lg border border-gray-200 focus:ring-2 focus:ring-[#6EC1E4] focus:border-transparent transition-all";
+		if (key.includes('fecha')) return <input type="date" name={key} value={value} onChange={handleChange} className={`${base} bg-white/80`} />;
+		if (key === 'edad') return <input type="number" name={key} value={value} readOnly className={`${base} bg-gray-100`} />;
+		return <textarea name={key} value={value} onChange={handleChange} className={`${base} min-h-[80px]`} rows={key.length > 12 ? 3 : 1} />;
 	};
+
 	return (
-		<div className="p-4 bg-gray-100 min-h-screen">
-			<h2 className="text-xl font-bold mb-4">Llenar Informe Psicológico</h2>
+		<div className="min-h-screen bg-gradient-to-br from-[#f7fafc] to-[#e2e8f0] p-6">
+			<div className="mb-8 text-center">
+				<h2 className="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-[#61CE70] to-[#6EC1E4]">
+					<FileText className="inline mr-3" size={28} /> Informe Psicológico
+				</h2>
+				<p className="text-gray-500 mt-2 flex items-center justify-center">
+					<Lightbulb className="mr-2" size={16} /> Completa los campos con atención terapéutica
+				</p>
+			</div>
 
-			<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-				{/* Mapear los campos del formulario */}
-				{Object.entries(form).map(([key, value]) => (
-					// Aseguramos que cita_id no sea editable ni visible en el formulario
-					key !== 'cita_id' && (
-						<div key={key}>
-							<label className="block font-semibold capitalize">{key.replace(/([A-Z])/g, ' $1')}:</label>
-							{key === 'fechaNacimiento' || key === 'fechaEvaluacion' ? (
-								<input
-									type="date"
-									name={key}
-									value={value}
-									onChange={handleChange}
-									onBlur={handleDetectarCambios} // Detectamos cambios cuando se sale del campo
-									className="w-full p-2 border border-gray-400 rounded"
-								/>
-							) : key === 'edad' ? (
-								<input
-									type="number"
-									name={key}
-									value={value}
-									onChange={handleChange}
-									onBlur={handleDetectarCambios} // Detectamos cambios cuando se sale del campo
-									className="w-full p-2 border border-gray-400 rounded"
-									readOnly
-								/>
-							) : (
-								<textarea
-									name={key}
-									value={value}
-									onChange={handleChange}
-									onBlur={handleDetectarCambios} // Detectamos cambios cuando se sale del campo
-									className="w-full p-2 border border-gray-400 rounded resize-y"
-									rows={key.length > 12 ? 3 : 1}
-								/>
-							)}
-						</div>
-					)
+			<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+				{Object.entries(form).map(([key, val]) => key !== 'cita_id' && (
+					<div key={key} className="bg-white p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow border-l-4 border-[#6EC1E4]">
+						<label className="flex items-center gap-2 font-semibold text-gray-700 mb-2">
+							{getIconForField(key)} {formatLabel(key)}
+						</label>
+						{renderField(key, val)}
+					</div>
 				))}
 			</div>
 
-			{/* Botones de acción */}
-			<div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-4">
-
-				<button
-					onClick={() => window.history.back()}
-					className="flex items-center gap-2 px-6 py-2 bg-gray-500 text-white font-semibold rounded shadow-md hover:bg-gray-600 transition cursor-pointer"
-				>
-					<ArrowLeft size={18} />
-					<span>Retroceder</span>
+			<div className="flex flex-wrap justify-center gap-4 mt-8">
+				<button onClick={() => window.history.back()} className="flex items-center gap-2 px-6 py-3 bg-white text-gray-600 font-medium rounded-full shadow-sm hover:shadow-lg transition-all hover:bg-gray-50 border border-gray-200">
+					<ArrowLeftCircle size={20} /> Retroceder
 				</button>
-				<button
-					onClick={handleGuardarInforme}
-					className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white font-semibold rounded shadow-md hover:bg-green-700 transition cursor-pointer"
-				>
-					<Save size={18} />
-					<span>Guardar Informe</span>
+				<button onClick={handleGuardarInforme} className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#61CE70] to-[#6EC1E4] text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]">
+					<Save className="animate-pulse" size={20} /> Guardar Informe
 				</button>
-				{/* Botón para descargar PDF */}
-				<button
-					onClick={handleDescargarPDF}
-					className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white font-semibold rounded shadow-md hover:bg-blue-700 transition cursor-pointer"
-				>
-					<Download size={18} />
-					<span>Descargar PDF</span>
+				<button onClick={() => exportarPDF(form)} className="flex items-center gap-2 px-6 py-3 bg-[#6EC1E4] text-white font-medium rounded-full shadow-lg hover:shadow-xl transition-all hover:bg-[#5aa8c9]">
+					<DownloadCloud size={20} /> Generar PDF
 				</button>
 			</div>
-			<div className="overflow-auto p-2 mt-5 flex items-center justify-center">
 
-				<VistaInforme ref={vistaRef} form={form} />
-			</div>
 
 		</div>
 	);

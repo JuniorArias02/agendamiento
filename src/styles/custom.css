@@ -160,3 +160,77 @@
 .border-marron-claro {
   border-color: #A47551;
 }
+
+
+.print-friendly * {
+  background-image: none !important;
+  background-color: white !important;
+  color: black !important;
+  box-shadow: none !important;
+  border-color: #000 !important;
+}
+
+
+/* informes vista */
+.custom-redes-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem; /* espacio entre items */
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.custom-red {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  text-decoration: none;
+  color: rgb(55, 65, 81); /* gray-700 */
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.social-instagram {
+  background: linear-gradient(to right, rgb(240, 253, 244), rgb(219, 234, 254));
+}
+
+.social-instagram:hover {
+  background: linear-gradient(to right, rgb(220, 237, 237), rgb(191, 219, 254));
+  color: rgb(30, 41, 59); /* gray-900 */
+}
+
+.social-whatsapp {
+  background: linear-gradient(to right, rgb(219, 234, 254), rgb(232, 240, 254));
+}
+
+.social-whatsapp:hover {
+  background: linear-gradient(to right, rgb(191, 219, 254), rgb(219, 227, 254));
+  color: rgb(30, 41, 59);
+}
+
+.custom-icon-instagram {
+  color: rgb(59, 130, 246); /* azul */
+}
+
+.custom-icon-whatsapp {
+  color: rgb(34, 197, 94); /* verde */
+}
+
+.custom-text-container {
+  margin-left: 0.5rem;
+  text-align: left;
+}
+
+.custom-title {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.custom-subtitle {
+  font-size: 0.75rem;
+  color: rgb(107, 114, 128); /* gray-600 */
+  margin: 0;
+}

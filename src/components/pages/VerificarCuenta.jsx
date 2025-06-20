@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { VALIDAR_CODIGO } from "../../api/registro";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { LockKeyhole, CheckCircle } from "lucide-react";
 
 export default function VerificarCuenta() {
 	const navigate = useNavigate();
@@ -27,41 +28,85 @@ export default function VerificarCuenta() {
 	};
 
 	return (
-		<div className="min-h-screen flex items-center justify-center bg-[#F9F4F0] px-4">
+		<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#6EC1E4]/10 to-[#61CE70]/10 p-4 relative">
 			<motion.div
-				initial={{ opacity: 0, y: -50 }}
+				initial={{ opacity: 0, y: 20 }}
 				animate={{ opacity: 1, y: 0 }}
-				transition={{ duration: 0.6 }}
-				className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6"
+				transition={{ type: "spring", damping: 20, stiffness: 300 }}
+				className="w-full max-w-md bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/20"
 			>
-				<h2 className="text-2xl font-semibold text-center text-[#B68F72]">
-					Verificar cuenta
-				</h2>
-
-				<form onSubmit={handleSubmit} className="space-y-4">
-					<input
-						type="text"
-						value={codigo}
-						onChange={(e) => setCodigo(e.target.value)}
-						placeholder="Código de verificación"
-						className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#B68F72]"
-					/>
-
-					<motion.button
-						whileHover={{ scale: 1.05 }}
-						whileTap={{ scale: 0.95 }}
-						type="submit"
-						className="w-full bg-[#B68F72] text-white py-2 rounded-lg font-medium shadow hover:bg-[#9C745C] transition"
+				{/* Header con gradiente */}
+				<div className="bg-gradient-to-r from-[#6EC1E4] to-[#61CE70] p-6 text-center">
+					<motion.h2
+						initial={{ opacity: 0, y: -10 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.2 }}
+						className="text-2xl font-bold text-white"
 					>
-						Verificar
-					</motion.button>
-				</form>
+						Verificar tu cuenta
+					</motion.h2>
+					<motion.p
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ delay: 0.3 }}
+						className="text-white/90 mt-1"
+					>
+						Ingresa el código que te enviamos
+					</motion.p>
+				</div>
 
-				{mensaje && (
-					<p className="text-center text-sm text-[#6B6B6B] mt-4">{mensaje}</p>
-				)}
+				<div className="p-6 sm:p-8 space-y-6">
+					<form onSubmit={handleSubmit} className="space-y-6">
+						{/* Input con icono */}
+						<motion.div
+							initial={{ opacity: 0, x: -10 }}
+							animate={{ opacity: 1, x: 0 }}
+							transition={{ delay: 0.4 }}
+							className="relative"
+						>
+							<div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+								<LockKeyhole className="w-5 h-5 text-[#6EC1E4]" />
+							</div>
+							<input
+								type="text"
+								value={codigo}
+								onChange={(e) => setCodigo(e.target.value)}
+								placeholder="Código de verificación"
+								className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E0E5EC] focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 bg-white/50 outline-none transition-all"
+								required
+							/>
+						</motion.div>
+
+						{/* Botón con animación */}
+						<motion.button
+							initial={{ opacity: 0, y: 10 }}
+							animate={{ opacity: 1, y: 0 }}
+							transition={{ delay: 0.5 }}
+							whileHover={{
+								scale: 1.02,
+								boxShadow: "0 4px 15px -3px rgba(110, 193, 228, 0.4)"
+							}}
+							whileTap={{ scale: 0.98 }}
+							type="submit"
+							className="w-full bg-gradient-to-r from-[#6EC1E4] to-[#61CE70] text-white py-3 px-6 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-70"
+						>
+							<CheckCircle className="w-5 h-5" />
+							<span>Verificar ahora</span>
+						</motion.button>
+					</form>
+
+					{/* Mensaje de estado */}
+					{mensaje && (
+						<motion.div
+							initial={{ opacity: 0 }}
+							animate={{ opacity: 1 }}
+							className={`p-3 rounded-lg text-center text-sm ${mensaje.includes("éxito") ? "bg-[#61CE70]/10 text-[#61CE70]" : "bg-[#FF6B6B]/10 text-[#FF6B6B]"}`}
+						>
+							{mensaje}
+						</motion.div>
+					)}
+				</div>
 			</motion.div>
 		</div>
-
 	);
 }

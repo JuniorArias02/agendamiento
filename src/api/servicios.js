@@ -9,3 +9,6 @@ export const ACTUALIZAR_SERVICIO=`${URL_ENDPOINT}/controllers/actualizar_servici
 export const ACTUALIZAR_PERFIL=`${URL_ENDPOINT}/controllers/actualizar_perfil.php`;
 export const OBTENER_PERFIL=`${URL_ENDPOINT}/controllers/obtener_perfil.php`;
 export const ACTUALIZAR_ESTADO_CITA=`${URL_ENDPOINT}/controllers/actualizar_estado_cita.php`;
+
+// creacion de promocion 
+export const CREAR_PROMOCION = `${URL_ENDPOINT}/controllers/crear_promocion.php`;

@@ -87,85 +87,140 @@ const MiDisponibilidad = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-6 space-y-8">
-      <h2 className="text-3xl font-bold text-center text-[#1c7578]">📅 Mi Disponibilidad</h2>
+    <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mt-5">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center bg-gradient-to-r from-[#6EC1E4] to-[#61CE70] bg-clip-text text-transparent">
+        Disponibilidad
+      </h2>
 
-      <div>
-        <label className="block text-sm font-semibold text-[#1c7578] mb-1">Selecciona una fecha</label>
-        <input
-          type="date"
-          value={fecha}
-          onChange={(e) => setFecha(e.target.value)}
-          className="w-full px-4 py-2 rounded-md border border-[#69a3a5] text-[#1c7578] bg-white focus:ring-2 focus:ring-[#69a3a5] outline-none"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-semibold text-[#1c7578] mb-1">Selecciona tus horas</label>
-        <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
-          {horas.map((hora) => (
-            <button
-              key={hora}
-              type="button"
-              onClick={() => toggleHora(hora)}
-              className={`text-sm font-medium px-2 py-1 rounded-md border transition
-            ${horasSeleccionadas.includes(hora)
-                  ? "bg-[#1c7578] text-white hover:bg-[#145d5f]"
-                  : "bg-white text-[#1c7578] border-[#69a3a5] hover:bg-[#e2f3f3]"}`}
-            >
-              {hora}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-semibold text-[#1c7578] mb-2">Agregar hora manual</label>
-        <LocalizationProvider dateAdapter={AdapterDateFns}>
-          <div className="flex items-center gap-3">
-            <MobileTimePicker
-              label="Hora manual"
-              value={horaManual}
-              onChange={(newValue) => setHoraManual(newValue)}
-              renderInput={(params) => (
-                <TextField {...params} size="small" fullWidth />
-              )}
-            />
-            <Button
-              onClick={agregarHoraManual}
-              variant="contained"
-              style={{ backgroundColor: "#1c7578" }}
-            >
-              Agregar
-            </Button>
-          </div>
-        </LocalizationProvider>
-      </div>
-
-      {horasSeleccionadas.length > 0 && (
+      <div className="space-y-5">
+        {/* Selector de fecha */}
         <div>
-          <h3 className="text-sm font-semibold text-[#1c7578] mb-1">Horas seleccionadas:</h3>
-          <div className="flex flex-wrap gap-2">
-            {horasSeleccionadas.map((h, index) => (
-              <span
-                key={index}
-                className="px-2 py-1 text-sm bg-[#1c7578] text-white rounded-md"
+          <label className="block text-sm font-medium text-gray-600 mb-2">Fecha</label>
+          <div className="relative">
+            <input
+              type="date"
+              value={fecha}
+              onChange={(e) => setFecha(e.target.value)}
+              className="w-full px-4 py-2.5 rounded-xl border-2 border-gray-200 text-gray-700 bg-white focus:ring-2 focus:ring-[#6EC1E4] focus:border-[#6EC1E4] outline-none transition-all pr-10"
+            />
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6EC1E4]">
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Selector de horas */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-2">Horas disponibles</label>
+          <div className="grid grid-cols-4 gap-2">
+            {horas.map((hora) => (
+              <button
+                key={hora}
+                type="button"
+                onClick={() => toggleHora(hora)}
+                className={`text-xs sm:text-sm font-medium px-2 py-1.5 rounded-lg border transition-all duration-200
+              ${horasSeleccionadas.includes(hora)
+                    ? "bg-gradient-to-br from-[#61CE70] to-[#6EC1E4] text-white border-transparent shadow-sm"
+                    : "bg-white text-gray-600 border-gray-200 hover:border-[#6EC1E4] hover:text-[#6EC1E4]"
+                  }`}
               >
-                {h}
-              </span>
+                {hora}
+              </button>
             ))}
           </div>
         </div>
-      )}
 
-      <div className="text-center pt-4">
+        {/* Agregar hora manual */}
+        <div>
+          <label className="block text-sm font-medium text-gray-600 mb-2">Agregar hora</label>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <div className="flex gap-2">
+              <MobileTimePicker
+                value={horaManual}
+                onChange={(newValue) => setHoraManual(newValue)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    size="small"
+                    fullWidth
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: '12px',
+                        '& fieldset': {
+                          borderColor: '#E0E5EC',
+                          borderWidth: '2px',
+                        },
+                        '&:hover fieldset': {
+                          borderColor: '#6EC1E4',
+                        },
+                        '&.Mui-focused fieldset': {
+                          borderColor: '#6EC1E4',
+                        },
+                      },
+                    }}
+                  />
+                )}
+              />
+              <Button
+                onClick={agregarHoraManual}
+                variant="contained"
+                size="small"
+                sx={{
+                  borderRadius: '12px',
+                  backgroundColor: '#61CE70',
+                  '&:hover': {
+                    backgroundColor: '#4FB560',
+                  },
+                  minWidth: '90px',
+                  fontWeight: '500',
+                }}
+              >
+                Agregar
+              </Button>
+            </div>
+          </LocalizationProvider>
+        </div>
+
+        {/* Horas seleccionadas */}
+        {horasSeleccionadas.length > 0 && (
+          <div className="bg-gray-50 rounded-lg p-3">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-sm font-medium text-gray-600">Seleccionadas</span>
+              <span className="text-xs bg-[#6EC1E4] text-white px-2 py-0.5 rounded-full">
+                {horasSeleccionadas.length}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {horasSeleccionadas.map((h, index) => (
+                <div
+                  key={index}
+                  className="px-2 py-1 text-xs bg-[#6EC1E4]/10 text-[#6EC1E4] rounded-md flex items-center gap-1 border border-[#6EC1E4]/20"
+                >
+                  {h}
+                  <button
+                    onClick={() => toggleHora(h)}
+                    className="text-[#6EC1E4] hover:text-[#4A9DB5]"
+                  >
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Botón de guardar */}
         <button
           type="button"
           onClick={guardarDisponibilidad}
           disabled={!fecha || horasSeleccionadas.length === 0}
-          className={`font-bold px-6 py-2 rounded-md transition-all ${!fecha || horasSeleccionadas.length === 0
-            ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-            : "bg-[#1c7578] hover:bg-[#145d5f] text-white"
+          className={`w-full mt-4 font-medium px-4 py-2.5 rounded-xl transition-all duration-300 ${!fecha || horasSeleccionadas.length === 0
+              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+              : "bg-gradient-to-r from-[#61CE70] to-[#6EC1E4] hover:from-[#4FB560] hover:to-[#5AB7D4] text-white shadow-md hover:shadow-lg"
             }`}
         >
           Guardar disponibilidad

@@ -78,27 +78,27 @@ export default function TusCitas() {
 
 
   useEffect(() => {
-  if (!usuario) return;
+    if (!usuario) return;
 
-  const cargarCitas = () => {
-    obtenerCitas(usuario.id).then(data => {
-      if (Array.isArray(data)) {
-        setCitas(data);
-      } else {
-        setCitas([]);
-      }
-      setLoading(false);
-    });
-  };
+    const cargarCitas = () => {
+      obtenerCitas(usuario.id).then(data => {
+        if (Array.isArray(data)) {
+          setCitas(data);
+        } else {
+          setCitas([]);
+        }
+        setLoading(false);
+      });
+    };
 
-  cargarCitas(); // carga al inicio
+    cargarCitas(); // carga al inicio
 
-  const intervalo = setInterval(() => {
-    cargarCitas(); // recarga cada 3 minutos
-  }, 3 * 60 * 1000);
+    const intervalo = setInterval(() => {
+      cargarCitas(); // recarga cada 3 minutos
+    }, 3 * 60 * 1000);
 
-  return () => clearInterval(intervalo); // limpia el intervalo al desmontar el componente
-}, [usuario]);
+    return () => clearInterval(intervalo); // limpia el intervalo al desmontar el componente
+  }, [usuario]);
 
   // useEffect(() => {
   //   if (usuario) {
@@ -147,7 +147,7 @@ export default function TusCitas() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <FiltroCitas
         setFiltroEstado={setFiltroEstado}
         filtroEstado={filtroEstado}
@@ -155,34 +155,24 @@ export default function TusCitas() {
         filtroAbierto={filtroAbierto}
       />
 
-      <h1 className="text-4xl font-bold text-black mb-10 text-center montserrat-bold">
-        Tus Citas
-      </h1>
+      <div className="text-center mb-12">
+        <h1 className="text-5xl font-extrabold bg-gradient-to-r from-[#6EC1E4] to-[#61CE70] bg-clip-text text-transparent mb-3">
+          Tus Citas
+        </h1>
+        <p className="text-[#6D8BAB] text-lg">Gestiona tus citas de forma sencilla e intuitiva</p>
+      </div>
 
       {citas.length === 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {[...Array(9)].map((_, i) => <SkeletonCard key={i} />)}
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {citas
             .filter((cita) => !filtroEstado || cita.estado_cita === filtroEstado)
             .map((cita, index) => {
-
-              const nombre =
-                usuario.rol === "paciente" ? cita.psicologa : cita.paciente;
-              const telefono =
-                usuario.rol === "paciente"
-                  ? cita.psicologa_telefono
-                  : cita.paciente_telefono;
+              const nombre = usuario.rol === "paciente" ? cita.psicologa : cita.paciente;
+              const telefono = usuario.rol === "paciente" ? cita.psicologa_telefono : cita.paciente_telefono;
 
               return (
                 <motion.div
@@ -190,69 +180,92 @@ export default function TusCitas() {
                   initial={{ opacity: 0, y: 40 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1, duration: 0.4, type: "spring" }}
-                  className="bg-white/80 backdrop-blur-md border border-gray-200 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300"
+                  className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-white/20 backdrop-blur-lg"
+                  style={{
+                    background: 'linear-gradient(145deg, rgba(255,255,255,0.95) 0%, rgba(240,248,255,0.95) 100%)'
+                  }}
                 >
-                  <p className="text-lg font-semibold text-black mb-2">
-                    {usuario.rol === "paciente" ? "Psicóloga: " : "Paciente: "}
-                    <span className="text-custom-green-1 font-bold">{nombre}</span>
-                  </p>
-
-                  <div className="text-sm text-gray-700 space-y-1">
-                    <p>
-                      Fecha: <span className="font-medium text-black">{formatearFecha(cita.fecha)}</span>
-                    </p>
-                    {/* <p>
-                      Fecha: <span className="font-medium text-black">{cita.fecha}</span>
-                    </p> */}
-                    <TemporizadorCita citaId={cita.id} />
-                    <p>
-                      Hora: <span className="font-medium text-black">{formatearHora(cita.hora)}</span>
+                  <div className="flex items-start justify-between mb-4">
+                    <p className="text-xl font-bold text-gray-800">
+                      {usuario.rol === "paciente" ? "Psicóloga: " : "Paciente: "}
+                      <span className="text-[#5A6D8B]">{nombre}</span>
                     </p>
 
-                    <p>
-                      Estado: <span className="font-medium text-black">{cita.estado}</span>
-                    </p>
-                    <p>
-                      Servicio: <span className="font-medium text-black">{cita.servicio}</span>
-                    </p>
-                    <p>
-                      Estado Cita:
-                      <span
-                        className="ml-2 font-bold px-3 py-1 rounded-full text-white text-xs"
-                        style={{
-                          backgroundColor:
-                            cita.estado_cita === PENDIENTE.valor ? PENDIENTE.color :
-                              cita.estado_cita === EN_PROGRESO.valor ? EN_PROGRESO.color :
-                                cita.estado_cita === FINALIZADA.valor ? FINALIZADA.color :
-                                  cita.estado_cita === RETARDO.valor ? RETARDO.color :
-                                    "#6B7280", // Gris por defecto
-                        }}
-                      >
-                        {cita.estado_cita.replace("_", " ").toUpperCase()}
-                      </span>
-                    </p>
-
+                    <span
+                      className="font-bold px-3 py-1 rounded-full text-xs"
+                      style={{
+                        backgroundColor:
+                          cita.estado_cita === PENDIENTE.valor ? "rgba(110, 193, 228, 0.2)" :
+                            cita.estado_cita === EN_PROGRESO.valor ? "rgba(97, 206, 112, 0.2)" :
+                              cita.estado_cita === FINALIZADA.valor ? "rgba(97, 206, 112, 0.3)" :
+                                cita.estado_cita === RETARDO.valor ? "rgba(255, 107, 107, 0.2)" :
+                                  "rgba(192, 201, 209, 0.2)",
+                        color:
+                          cita.estado_cita === PENDIENTE.valor ? "#6EC1E4" :
+                            cita.estado_cita === EN_PROGRESO.valor ? "#61CE70" :
+                              cita.estado_cita === FINALIZADA.valor ? "#4CAF50" :
+                                cita.estado_cita === RETARDO.valor ? "#FF6B6B" :
+                                  "#5A6D8B"
+                      }}
+                    >
+                      {cita.estado_cita.replace("_", " ").toUpperCase()}
+                    </span>
                   </div>
 
-                  <div className="mt-5 flex flex-col gap-2">
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center">
+                      <svg className="w-5 h-5 text-[#6EC1E4] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                      </svg>
+                      <span className="text-gray-600">{formatearFecha(cita.fecha)}</span>
+                    </div>
+
+                    <TemporizadorCita citaId={cita.id} />
+
+                    <div className="flex items-center">
+                      <svg className="w-5 h-5 text-[#6EC1E4] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
+                      <span className="text-gray-600">{formatearHora(cita.hora)}</span>
+                    </div>
+
+                    <div className="flex items-center">
+                      <svg className="w-5 h-5 text-[#6EC1E4] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                      </svg>
+                      <span className="text-gray-600">{cita.servicio}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 space-y-3">
                     <button
                       onClick={() => verDetalles(cita.id)}
-                      className="w-full py-2 px-4 bg-custom-verDetalles text-white font-semibold rounded-full hover:brightness-110 transition-all duration-200 cursor-pointer"
+                      className="w-full py-3 px-4 bg-gradient-to-r from-[#6EC1E4] to-[#61CE70] text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2"
                     >
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                      </svg>
                       Ver Detalles
                     </button>
 
                     <button
                       onClick={() => contactarPorWhatsApp(telefono)}
-                      className="w-full py-2 px-4 bg-custom-contactar text-white font-semibold rounded-full hover:bg-green-600 transition-all duration-200 cursor-pointer"
+                      className="w-full py-3 px-4 bg-white border border-[#61CE70] text-[#61CE70] font-semibold rounded-xl hover:bg-[#61CE70] hover:text-white transition-all duration-200 flex items-center justify-center gap-2"
                     >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+                      </svg>
                       Contactar
                     </button>
+
                     {usuario.rol === "psicologa" && (
                       <button
                         onClick={() => abrirAnotaciones(cita.id)}
-                        className="w-full py-2 px-4 bg-custom-anotaciones text-white font-semibold rounded-full hover:bg-yellow-600 transition-all duration-200 cursor-pointer"
+                        className="w-full py-3 px-4 bg-white border border-[#6EC1E4] text-[#6EC1E4] font-semibold rounded-xl hover:bg-[#6EC1E4] hover:text-white transition-all duration-200 flex items-center justify-center gap-2"
                       >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                        </svg>
                         Anotaciones
                       </button>
                     )}
@@ -261,24 +274,27 @@ export default function TusCitas() {
                       <button
                         onClick={() => ingresarACita(cita.id, cita.enlace_cita)}
                         disabled={clickedStates[cita.id]}
-
-                        className="w-full py-2 px-4 bg-custom-ingresarCita text-white font-semibold rounded-full hover:bg-indigo-700 transition-all duration-200 cursor-pointer"
+                        className="w-full py-3 px-4 bg-gradient-to-r from-[#61CE70] to-[#6EC1E4] text-white font-semibold rounded-xl hover:opacity-90 transition-all duration-200 flex items-center justify-center gap-2"
                       >
                         {clickedStates[cita.id] ? (
-                          <div className="flex items-center justify-center">
-                            <Loader className="animate-spin mr-2" size={20} />
+                          <>
+                            <Loader className="animate-spin" size={20} />
                             <span>Ingresando...</span>
-                          </div>
+                          </>
                         ) : (
-                          "Ingresar a la Cita"
+                          <>
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                            Ingresar a la Cita
+                          </>
                         )}
                       </button>
                     )}
                   </div>
                 </motion.div>
               );
-            })
-          }
+            })}
         </div>
       )}
     </div>
