@@ -170,21 +170,13 @@ export default function TuServicios() {
 									<div className="flex items-center gap-3">
 										<div className="flex items-center text-[#61CE70] font-bold">
 											<DollarSign className="w-4 h-4 mr-1" />
-											<span>${serv.precio} USD</span>
+											<span>{serv.precio} USD</span>
 										</div>
 										<div className="flex items-center text-[#6EC1E4] font-bold">
 											<Clock className="w-4 h-4 mr-1" />
 											<span>{serv.duracion} min</span>
 										</div>
 									</div>
-
-									<button
-										className="text-[#6EC1E4] hover:text-[#61CE70] transition-colors flex items-center gap-1 text-sm font-medium"
-										onClick={() => {/* Acción para más detalles */ }}
-									>
-										<span>Ver más</span>
-										<ArrowRight className="w-4 h-4" />
-									</button>
 								</div>
 							</div>
 						</motion.div>

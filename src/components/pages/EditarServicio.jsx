@@ -3,6 +3,17 @@ import { useState } from "react";
 import axios from "axios";
 import { ACTUALIZAR_SERVICIO } from "../../api/servicios";
 import { motion } from "framer-motion";
+import {
+  PenLine,
+  Info,
+  Text,
+  AlignLeft,
+  DollarSign,
+  Clock,
+  Image,
+  ToggleLeft,
+  Save
+} from "lucide-react";
 
 export default function EditarServicio() {
   const location = useLocation();
@@ -31,84 +42,137 @@ export default function EditarServicio() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-8 bg-[#F5F9FA]">
+    <div className="min-h-screen bg-gradient-to-br from-[#f0f7fb] to-[#e2eff8] flex items-center justify-center p-4">
       <motion.form
         onSubmit={handleSubmit}
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="w-full max-w-md bg-white p-8 rounded-3xl shadow-sm space-y-6 border border-[#E0E5EC]"
+        transition={{ type: "spring", damping: 20, stiffness: 300 }}
+        className="w-full max-w-lg bg-white/90 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden border border-white/20"
       >
-        <h2 className="text-3xl font-extrabold text-[#5A6D8B] text-center mb-6">
-          Editar Servicio
-        </h2>
-
-        <input
-          type="text"
-          name="titulo"
-          value={form.titulo}
-          onChange={handleChange} 
-          placeholder="Título del servicio"
-          className="w-full px-5 py-3 rounded-xl border border-[#A0B9D0] focus:outline-none focus:ring-2 focus:ring-[#A0B9D0] transition placeholder:text-[#718096] text-[#4A5568]"
-        />
-
-        <textarea
-          name="descripcion"
-          value={form.descripcion}
-          onChange={handleChange}
-          placeholder="Descripción"
-          className="w-full px-5 py-3 rounded-xl border border-[#A0B9D0] focus:outline-none focus:ring-2 focus:ring-[#A0B9D0] transition resize-none placeholder:text-[#718096] text-[#4A5568]"
-          rows={4}
-        />
-
-        <div className="flex flex-col sm:flex-row gap-5">
-          <input
-            type="number"
-            name="precio"
-            value={form.precio}
-            onChange={handleChange}
-            placeholder="Precio (COP)"
-            className="w-full sm:w-1/2 px-5 py-3 rounded-xl border border-[#A0B9D0] focus:outline-none focus:ring-2 focus:ring-[#A0B9D0] transition placeholder:text-[#718096] text-[#4A5568]"
-          />
-
-          <input
-            type="number"
-            name="duracion"
-            value={form.duracion}
-            onChange={handleChange}
-            placeholder="Duración (min)"
-            className="w-full sm:w-1/2 px-5 py-3 rounded-xl border border-[#A0B9D0] focus:outline-none focus:ring-2 focus:ring-[#A0B9D0] transition placeholder:text-[#718096] text-[#4A5568]"
-          />
+        {/* --- Encabezado con gradiente --- */}
+        <div className="bg-gradient-to-r from-[#61CE70] to-[#6EC1E4] p-6 text-center">
+          <h2 className="text-3xl font-bold text-white flex items-center justify-center gap-3">
+            <PenLine size={28} className="text-white/90" />
+            Editar Servicio
+          </h2>
+          <p className="text-white/80 mt-2 flex items-center justify-center gap-2 text-sm">
+            <Info size={16} />
+            Completa todos los campos con atención
+          </p>
         </div>
 
-        <input
-          type="text"
-          name="imagen"
-          value={form.imagen}
-          onChange={handleChange}
-          placeholder="URL de la imagen"
-          className="w-full px-5 py-3 rounded-xl border border-[#A0B9D0] focus:outline-none focus:ring-2 focus:ring-[#A0B9D0] transition placeholder:text-[#718096] text-[#4A5568]"
-        />
+        <div className="p-8 space-y-6">
+          {/* --- Campo Título con Icono --- */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Text size={20} className="text-[#61CE70]" />
+            </div>
+            <input
+              type="text"
+              name="titulo"
+              value={form.titulo}
+              onChange={handleChange}
+              placeholder="Título del servicio"
+              className="w-full pl-10 pr-5 py-4 rounded-xl border border-gray-200 focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 transition-all placeholder:text-gray-400 text-gray-700 bg-white/50"
+            />
+          </div>
 
-        <select
-          name="activo"
-          value={form.activo}
-          onChange={handleChange}
-          className="w-full px-5 py-3 rounded-xl border border-[#A0B9D0] bg-white focus:outline-none focus:ring-2 focus:ring-[#A0B9D0] transition text-[#4A5568] font-semibold"
-        >
-          <option value={1}>Activo</option>
-          <option value={0}>Inactivo</option>
-        </select>
+          {/* --- Campo Descripción con Icono --- */}
+          <div className="relative">
+            <div className="absolute top-4 left-3">
+              <AlignLeft size={20} className="text-[#61CE70]" />
+            </div>
+            <textarea
+              name="descripcion"
+              value={form.descripcion}
+              onChange={handleChange}
+              placeholder="Descripción detallada del servicio"
+              className="w-full pl-10 pr-5 py-3 rounded-xl border border-gray-200 focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 transition-all resize-y min-h-[120px] placeholder:text-gray-400 text-gray-700 bg-white/50"
+            />
+          </div>
 
-        <motion.button
-          whileHover={{ scale: 1.03 }}
-          whileTap={{ scale: 0.98 }}
-          type="submit"
-          className="w-full bg-[#7D9CBC] text-white py-3 rounded-xl font-bold shadow-sm hover:bg-[#6B8BAB] transition"
-        >
-          Guardar cambios
-        </motion.button>
+          {/* --- Campos Precio y Duración (en línea) --- */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <DollarSign size={20} className="text-[#6EC1E4]" />
+              </div>
+              <input
+                type="number"
+                name="precio"
+                value={form.precio}
+                onChange={handleChange}
+                placeholder="Precio (COP)"
+                className="w-full pl-10 pr-5 py-4 rounded-xl border border-gray-200 focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 transition-all placeholder:text-gray-400 text-gray-700"
+              />
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Clock size={20} className="text-[#6EC1E4]" />
+              </div>
+              <input
+                type="number"
+                name="duracion"
+                value={form.duracion}
+                onChange={handleChange}
+                placeholder="Duración (minutos)"
+                className="w-full pl-10 pr-5 py-4 rounded-xl border border-gray-200 focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 transition-all placeholder:text-gray-400 text-gray-700"
+              />
+            </div>
+          </div>
+
+          {/* --- Campo Imagen con Icono --- */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Image size={20} className="text-[#61CE70]" />
+            </div>
+            <input
+              type="text"
+              name="imagen"
+              value={form.imagen}
+              onChange={handleChange}
+              placeholder="URL de la imagen (ej: https://...)"
+              className="w-full pl-10 pr-5 py-4 rounded-xl border border-gray-200 focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 transition-all placeholder:text-gray-400 text-gray-700"
+            />
+          </div>
+
+          {/* --- Selector Estado con Icono --- */}
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <ToggleLeft size={20} className="text-[#6EC1E4]" />
+            </div>
+            <select
+              name="activo"
+              value={form.activo}
+              onChange={handleChange}
+              className="w-full pl-10 pr-5 py-4 rounded-xl border border-gray-200 focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 transition-all appearance-none text-gray-700 bg-white"
+            >
+              <option value={1} className="flex items-center gap-2">
+                Activo
+              </option>
+              <option value={0} className="flex items-center gap-2">
+                Inactivo
+              </option>
+            </select>
+          </div>
+
+          {/* --- Botón con Efecto Premium --- */}
+          <motion.button
+            whileHover={{
+              scale: 1.02,
+              boxShadow: "0px 5px 15px rgba(110, 193, 228, 0.4)"
+            }}
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            className="w-full bg-gradient-to-r from-[#61CE70] to-[#6EC1E4] text-white py-4 rounded-xl font-bold text-lg shadow-lg mt-4 flex items-center justify-center gap-2"
+          >
+            <Save size={22} />
+            Guardar Cambios
+          </motion.button>
+        </div>
       </motion.form>
-    </div>  
+    </div>
   );
 }
