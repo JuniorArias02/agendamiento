@@ -76,7 +76,7 @@ export default function Login() {
         });
 
         const data = res.data;
-        console.log(data);
+        // console.log(data);
 
         if (data.success) {
           login(data.usuario);

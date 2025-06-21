@@ -75,7 +75,7 @@ export const InformePsicologico = () => {
 	};
 
 	const handleGuardarInforme = async () => {
-		console.log("Enviando:", { ...form })
+		// console.log("Enviando:", { ...form })
 
 		const isChanged = Object.keys(form).some((key) => form[key] !== originalForm[key])
 		if (!isChanged) {
@@ -91,7 +91,7 @@ export const InformePsicologico = () => {
 
 		try {
 			const res = await axios.post(GUARDAR_INFORME_CITA, { ...form })
-			console.log("Respuesta backend:", res.data)
+			// console.log("Respuesta backend:", res.data)
 			Swal.fire('Guardado', 'Informe guardado con éxito', 'success')
 			setOriginalForm(form)
 		} catch (error) {
