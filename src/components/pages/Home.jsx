@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { CalendarCheck, ArrowRightCircle, ShieldCheck } from "lucide-react";
-
+import { useAuth } from "../../context/AuthContext";
 export default function Home() {
 	const navigate = useNavigate();
-
+	const { usuario } = useAuth();
+	console.log("Usuario en Home:", usuario);
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 20, scale: 0.98 }}
@@ -61,12 +62,32 @@ export default function Home() {
 						<span>Continuar</span>
 					</motion.button>
 
-					{/* Elemento decorativo adicional */}
+					{/* Enlace "Iniciar sesión" con animación */}
 					<motion.div
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						transition={{ delay: 1, duration: 0.5 }}
-						className="flex items-center gap-2 mt-8 text-[#6D8BAB] text-sm"
+						className="w-full text-center"
+					>
+						<p className="text-[#6D8BAB] text-sm mb-2">
+							¿Ya tienes una cuenta?
+						</p>
+						<motion.a
+							href="/login"
+							whileHover={{ scale: 1.02 }}
+							whileTap={{ scale: 0.98 }}
+							className="text-[#6EC1E4] font-medium hover:text-[#5aa8d1] transition-colors duration-200 underline underline-offset-4"
+						>
+							Iniciar sesión
+						</motion.a>
+					</motion.div>
+
+					{/* Elemento decorativo adicional */}
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						transition={{ delay: 1.2, duration: 0.5 }}
+						className="flex items-center gap-2 mt-4 text-[#6D8BAB] text-sm"
 					>
 						<ShieldCheck className="w-4 h-4 text-[#61CE70]" />
 						<span>Citas 100% seguras y confidenciales</span>

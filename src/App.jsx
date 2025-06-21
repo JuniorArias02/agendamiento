@@ -19,20 +19,32 @@ import MiPerfil from "./components/pages/MiPerfil";
 import MiDisponibilidad from "./components/pages/MiDisponibilidad";
 import HistorialAccesos from "./components/pages/HistorialAccesos";
 import { InformePsicologico } from "./components/pages/InformePsicologico";
-
+import PatientRoute from "./context/PatientRoute";
+import PsicologoRoute from "./context/PsicologoRoute";
+import PublicRoute
+  from "./context/PublicRoute";
 function App() {
   return (
     <AuthProvider>
       <Router>
         <Routes>
           {/* <Route path="/" element={<Layout><Home /></Layout>} /> */}
-          <Route path="/" element={<Home /> }/>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           {/* agendamiento */}
           <Route path="/tus_citas" element={<Layout><TusCitas /></Layout>} />
           <Route path="/cita/:id" element={<Layout><DetalleCita /></Layout>} />
           <Route path="/agenda" element={<Layout><Agenda /></Layout>} />
-          <Route path="/nueva_agenda" element={<Layout><NuevaAgenda /></Layout>} />
+          {/* <Route path="/nueva_agenda" element={<Layout><NuevaAgenda /></Layout>} /> */}
+          <Route
+            path="/nueva_agenda"
+            element={
+              <PatientRoute>
+                <Layout><NuevaAgenda /></Layout>
+              </PatientRoute>
+            }
+          />
+          
           <Route path="/agenda/confirmar" element={<Layout><ConfirmarAgenda /></Layout>} />
           <Route path="/agenda/cancelado" element={<Layout><CanceladoAgenda /></Layout>} />
           <Route path="/agenda/confirmado" element={<Layout><ConfirmacionPago /></Layout>} />
@@ -48,13 +60,29 @@ function App() {
           <Route path="/mi_perfil" element={<Layout><MiPerfil /></Layout>} />
 
           {/* mi disponibilidad */}
-          <Route path="/mi_disponibilidad" element={<Layout><MiDisponibilidad /></Layout>} />
+          {/* <Route path="/mi_disponibilidad" element={<Layout><MiDisponibilidad /></Layout>} /> */}
+          <Route
+            path="/mi_disponibilidad"
+            element={
+              <PsicologoRoute>
+                <Layout><MiDisponibilidad /></Layout>
+              </PsicologoRoute>
+            }
+          />
 
           {/* HISTORIAL DE ACCESOS */}\
           <Route path="/historial_accesos" element={<Layout><HistorialAccesos /></Layout>} />
 
           {/* informe psaicologo */}
-          <Route path="/informe_psicologico/:idCita" element={<Layout><InformePsicologico /></Layout>} />
+          {/* <Route path="/informe_psicologico/:idCita" element={<Layout><InformePsicologico /></Layout>} /> */}
+          <Route
+            path="/informe_psicologico/:idCita"
+            element={
+              <PsicologoRoute>
+                <Layout><InformePsicologico /></Layout>
+              </PsicologoRoute>
+            }
+          />
           {/* Ruta para cuando no se encuentre la página */}
           <Route path="*" element={<Navigate to="/nueva_agenda" replace />} />
         </Routes>

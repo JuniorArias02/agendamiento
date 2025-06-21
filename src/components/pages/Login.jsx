@@ -45,7 +45,7 @@ export default function Login() {
           documento,
           correo,
           contrasena,
-          telefono: telefonoCompleto, // Enviamos el teléfono al backend
+          telefono: telefonoCompleto,
         });
 
         const data = res.data;
@@ -53,10 +53,6 @@ export default function Login() {
           login(data.usuario);
           navigate("/verificar_cuenta");
         } else {
-          // if (data.noVerificado) {
-          //   navigate("/verificar_cuenta");
-          //   return;
-          // }
           Swal.fire({
             icon: 'error',
             title: 'Oops...',
@@ -80,6 +76,7 @@ export default function Login() {
         });
 
         const data = res.data;
+        console.log(data);
 
         if (data.success) {
           login(data.usuario);
