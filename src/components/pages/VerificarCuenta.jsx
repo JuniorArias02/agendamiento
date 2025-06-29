@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { VALIDAR_CODIGO } from "../../api/registro";
-import axios from "axios";
+import { validarCodigo } from "../../services/auth/auth_services";
 import { useNavigate } from "react-router-dom";
 import { LockKeyhole, CheckCircle } from "lucide-react";
 
@@ -15,10 +14,10 @@ export default function VerificarCuenta() {
 		e.preventDefault();
 
 		try {
-			const res = await axios.post(VALIDAR_CODIGO, { codigo });
-			setMensaje(res.data.mensaje);
+			const res = await validarCodigo(codigo);
+			setMensaje(res.mensaje);
 
-			if (res.data.mensaje.includes("✅")) {
+			if (res.mensaje.includes("✅")) {
 				setTimeout(() => navigate("/login"), 1500);
 			}
 		} catch (err) {

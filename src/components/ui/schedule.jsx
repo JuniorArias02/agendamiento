@@ -1,8 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
-import axios from "axios";  // Usamos Axios
-import { OBTENER_HORAS_OCUPADAS, OBTENER_DISPONIBILIDAD } from "../../api/registro"; // Asegúrate de tener la ruta correcta
-
+import { obtenerHorasDisponibles, obtenerHorasOcupadas } from "../../services/citas/citas";
+import { Clock, Frown, X, Check } from "lucide-react"
 const Schedule = ({ onSelect, isVisible, selectedDate, psicologaId }) => {
   const [selectedTime, setSelectedTime] = useState(null);
   const [horasOcupadas, setHorasOcupadas] = useState([]);
@@ -13,45 +12,33 @@ const Schedule = ({ onSelect, isVisible, selectedDate, psicologaId }) => {
 
     const fecha = selectedDate.toISOString().split("T")[0];
 
-    // Primero obtenemos las horas disponibles desde la base de datos
-    axios
-      .get(`${OBTENER_DISPONIBILIDAD}?fecha=${fecha}&psicologa_id=${psicologaId}`)
-      .then((response) => {
-        const data = response.data;
+    obtenerHorasDisponibles(fecha, psicologaId)
+      .then((data) => {
         if (data.horas_disponibles) {
           const convertidas = data.horas_disponibles.map((hora24) => {
             const [h, m] = hora24.split(":").map(Number);
-            let hora = h % 12;
+            let hora = h % 12 || 12;
             const modifier = h >= 12 ? "PM" : "AM";
-            if (hora === 0) hora = 12;
             return `${hora}:${m < 10 ? '0' + m : m} ${modifier}`;
           });
           setHorasDisponibles(convertidas);
         }
       })
-      .catch((error) => {
-        console.error("Error al obtener las horas disponibles:", error);
-      });
+      .catch((error) => console.error("Error al obtener horas disponibles:", error));
 
-    // Luego obtenemos las horas ocupadas
-    axios
-      .get(`${OBTENER_HORAS_OCUPADAS}?fecha=${fecha}&psicologa_id=${psicologaId}`)
-      .then((response) => {
-        const data = response.data;
+    obtenerHorasOcupadas(fecha, psicologaId)
+      .then((data) => {
         if (data.horas_ocupadas) {
           const convertidas = data.horas_ocupadas.map((hora24) => {
             const [h, m] = hora24.split(":").map(Number);
-            let hora = h % 12;
+            let hora = h % 12 || 12;
             const modifier = h >= 12 ? "PM" : "AM";
-            if (hora === 0) hora = 12;
             return `${hora}:${m < 10 ? '0' + m : m} ${modifier}`;
           });
           setHorasOcupadas(convertidas);
         }
       })
-      .catch((error) => {
-        console.error("Error al obtener las horas ocupadas:", error);
-      });
+      .catch((error) => console.error("Error al obtener horas ocupadas:", error));
 
   }, [selectedDate, psicologaId]);
 
@@ -83,44 +70,59 @@ const Schedule = ({ onSelect, isVisible, selectedDate, psicologaId }) => {
   };
 
   return (
-  <AnimatePresence>
-  {isVisible && (
-    <motion.div
-      initial={{ opacity: 0, y: -20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.95 }}
-      transition={{ duration: 0.6, ease: "easeInOut" }}
-      className="w-[90%] max-w-md grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 p-4 bg-[#D9EEF6] mx-auto rounded-lg text-center" // azul muy clarito de fondo
-    >
-      {horasDisponibles.length === 0 ? (
-        <div className="col-span-full text-[#3A6280] text-sm sm:text-base italic">
-          El doctor no se encuentra disponible en estas fechas 😥
-        </div>
-      ) : (
-        horasDisponibles.map((time) => (
-          <button
-            key={time}
-            onClick={() => handleSelect(time)}
-            disabled={isPast(time) || isOcupado(time)}
-            className={`cursor-pointer px-2 py-2 text-sm sm:text-base text-center rounded-md border shadow transition-colors montserrat-medium
-              ${
-                selectedTime === time
-                  ? "bg-[#1c7578] text-white"  // azul oscuro para seleccionado
-                  : isPast(time)
-                  ? "bg-blue-200 text-white cursor-not-allowed"  // azul claro para pasado
-                  : isOcupado(time)
-                  ? "bg-blue-400 text-white cursor-not-allowed"  // azul medio para ocupado
-                  : "bg-white hover:bg-blue-100 text-[#1c7578]" // hover azul claro y texto azul
-              }`}
-          >
-            {time}
-          </button>
-        ))
-      )}
-    </motion.div>
-  )}
-</AnimatePresence>
+    <AnimatePresence>
+      {isVisible && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className="mt-4 bg-[#F5FAFC] rounded-xl p-4 border border-[#D9EEF6]"
+        >
+          <div className="flex items-center gap-2 mb-3 text-[#1c7578]">
+            <Clock size={18} />
+            <h3 className="font-medium">Horarios disponibles</h3>
+          </div>
 
+          {horasDisponibles.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center justify-center p-3 text-[#3A6280] text-sm"
+            >
+              <Frown className="mb-1" size={20} />
+              <p>No hay horarios disponibles</p>
+            </motion.div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {horasDisponibles.map((time) => {
+                const disabled = isPast(time) || isOcupado(time)
+                const isSelected = selectedTime === time
+
+                return (
+                  <motion.button
+                    key={time}
+                    onClick={() => !disabled && handleSelect(time)}
+                    disabled={disabled}
+                    className={`py-2 text-sm rounded-lg flex items-center justify-center gap-1 transition-all
+                      ${isSelected ? "bg-[#1c7578] text-white" :
+                        disabled ? "bg-gray-100 text-gray-400" :
+                          "bg-white text-[#1c7578] hover:bg-[#D9EEF6] border border-[#D9EEF6]"}
+                    `}
+                    whileHover={!disabled ? { scale: 1.03 } : {}}
+                    whileTap={!disabled ? { scale: 0.97 } : {}}
+                  >
+                    {isSelected && <Check size={14} />}
+                    {time.slice(0, 5)}
+                    {isOcupado(time) && <X size={14} className="ml-1" />}
+                  </motion.button>
+                )
+              })}
+            </div>
+          )}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 
 };

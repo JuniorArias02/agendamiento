@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
-import { OBTENER_HISTORIAL_ACCESOS } from "../../api/registro";
+import { obtenerHistorialAccesos } from "../../services/historial/historial";
 import { Globe, CalendarClock, MonitorSmartphone, User } from "lucide-react";
-import SkeletonAccesos from "../layout/SkeletonAccesos";
 import { motion } from "framer-motion";
-
+import SkeletonAccesos from "../skeleton/SkeletonAccesos";
 const HistorialAccesos = () => {
 	const { usuario } = useAuth();
 	const [accesos, setAccesos] = useState([]);
@@ -13,11 +11,9 @@ const HistorialAccesos = () => {
 	useEffect(() => {
 		if (!usuario?.id) return;
 
-		axios.get(`${OBTENER_HISTORIAL_ACCESOS}?usuario_id=${usuario.id}`)
-			.then(res => {
-				setAccesos(res.data.accesos || []);
-			})
-			.catch(err => {
+		obtenerHistorialAccesos(usuario.id)
+			.then(setAccesos)
+			.catch((err) => {
 				console.error("Error cargando accesos:", err);
 			});
 	}, [usuario]);

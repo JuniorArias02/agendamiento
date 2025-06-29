@@ -3,13 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Save } from "lucide-react";
 import { motion } from "framer-motion";
 import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
-import { ACTUALIZAR_PERFIL, OBTENER_PERFIL } from "../../api/servicios";
 import { useAuth } from "../../context/AuthContext";
 import ImageCropper from "../ui/ImageCropper"; // Asegúrate de que la ruta sea correcta
 import { Camera } from "lucide-react"; // Asegúrate de que la ruta sea correcta
-import Skeleton from "../layout/Skeleton";
 import { setSwipe } from "../../utils/SwipeControl";
+import { obtenerPerfil, actualizarPerfil } from "../../services/perfil/perfil";
+import Skeleton from "../skeleton/Skeleton";
 
 export default function MiPerfil() {
   const [loading, setLoading] = useState(false);
@@ -44,22 +43,20 @@ export default function MiPerfil() {
   const cargarPerfil = async () => {
     setLoading(true);
     try {
-      const { data } = await axios.post(OBTENER_PERFIL, { id: usuario.id });
-      // console.log("Datos del perfil:", data);
+      const data = await obtenerPerfil(usuario.id);
       if (data.success) {
         setForm(data.usuario);
-        setLoading(false);
         setImagenPreview(data.usuario.imagen_perfil || "/default.png");
       } else {
         toast.error("Error cargando datos 😥");
       }
     } catch (error) {
-      console.error("Error al cargar perfil:", error);
       toast.error("Error al conectar 🚨");
     } finally {
       setLoading(false);
     }
   };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -77,8 +74,7 @@ export default function MiPerfil() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (cargando) return; // Evita que se dispare más de una vez
-
+    if (cargando) return;
     setCargando(true);
 
     try {
@@ -88,15 +84,10 @@ export default function MiPerfil() {
       formData.append("nombre", form.nombre);
       formData.append("correo", form.correo);
       formData.append("telefono", form.telefono);
-      if (imagen) {
-        formData.append("imagen", imagen);
-      }
+      if (imagen) formData.append("imagen", imagen);
 
-      const { data } = await axios.post(ACTUALIZAR_PERFIL, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      formData.append("imagen_perfil_actual", usuario.imagen_perfil || "");
+      const data = await actualizarPerfil(formData);
 
       if (data.success) {
         toast.success("Perfil actualizado 🎉");
@@ -104,13 +95,11 @@ export default function MiPerfil() {
         toast.error("Error al actualizar 😥");
       }
     } catch (error) {
-      console.error("Error al actualizar perfil:", error);
       toast.error("Error al conectar 🚨");
     } finally {
-      setCargando(false); // Vuelve a habilitar después del proceso
+      setCargando(false);
     }
   };
-
 
   return (
     <div className="min-h-screen bg-gray-50 p-6 flex items-center justify-center relative">

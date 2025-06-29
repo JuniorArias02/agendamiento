@@ -5,7 +5,6 @@ import { useAuth } from "../../context/AuthContext";
 export default function Home() {
 	const navigate = useNavigate();
 	const { usuario } = useAuth();
-	// console.log("Usuario en Home:", usuario);
 	return (
 		<motion.div
 			initial={{ opacity: 0, y: 20, scale: 0.98 }}

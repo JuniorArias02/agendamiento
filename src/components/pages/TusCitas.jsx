@@ -1,23 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { obtenerCitas } from "../../services/citas";
 import { motion } from "framer-motion";
 import { PENDIENTE, RETARDO, EN_PROGRESO, FINALIZADA } from "../../api/estados_citas";
-import axios from 'axios';
-import { ACTUALIZAR_ESTADO_CITA } from "../../api/servicios";
-import { Loader } from "lucide-react";
+import { Loader, Repeat, Clock } from "lucide-react";
 import Swal from 'sweetalert2';
 import FiltroCitas from "../ui/FiltroCitas";
 import TemporizadorCita from "../ui/TemporizadorCita";
-import SkeletonCard from "../layout/SkeletonCard";
+import { actualizarEstadoCita, obtenerCitas } from "../../services/citas/citas";
+import SkeletonCard from "../skeleton/SkeletonCard";
 
 export default function TusCitas() {
   const navigate = useNavigate();
   const { usuario } = useAuth();
   const [citas, setCitas] = useState([]);
   const [loading, setLoading] = useState(true);
-  // console.log("Usuario en Dashboard:", citas);
   const [clickedStates, setClickedStates] = useState({});
   const [filtroAbierto, setFiltroAbierto] = useState(false);
 
@@ -26,7 +23,6 @@ export default function TusCitas() {
     if (clickedStates[citaId]) return;
     setClickedStates(prev => ({ ...prev, [citaId]: true }));
 
-    // Mostramos la advertencia de SweetAlert
     const result = await Swal.fire({
       title: 'Advertencia',
       text: 'El estado de la cita cambiará a "en progreso". ¿Estás seguro de continuar?',
@@ -38,33 +34,24 @@ export default function TusCitas() {
 
     if (!result.isConfirmed) {
       setClickedStates(prev => ({ ...prev, [citaId]: false }));
-
-      return; // No hacemos nada si el usuario cancela
+      return;
     }
 
     try {
-      // Primero actualizamos el estado de la cita a "en progreso" en el backend usando Axios
-      await axios.post(`${ACTUALIZAR_ESTADO_CITA}?id=${citaId}`, {
-        estado_cita: "en progreso",
-      });
-
-      // Ahora abrimos el enlace de la cita
+      await actualizarEstadoCita(citaId, "en progreso");
       window.open(enlaceCita, "_blank");
-
-      // Opcional: Actualizamos el estado local de las citas en React para reflejar el cambio inmediato
-      setCitas((prevCitas) =>
-        prevCitas.map((cita) =>
-          cita.id === citaId
-            ? { ...cita, estado_cita: "en progreso" } // Actualizamos el estado de la cita en la UI
-            : cita
+      setCitas((prev) =>
+        prev.map((c) =>
+          c.id === citaId ? { ...c, estado_cita: "en progreso" } : c
         )
       );
     } catch (error) {
-      console.error("Error al actualizar el estado de la cita:", error);
+      console.error("Error al actualizar estado:", error);
     } finally {
       setClickedStates(prev => ({ ...prev, [citaId]: false }));
     }
   };
+
 
   const esHoyOMasAntiguo = (fechaCita) => {
     const hoy = new Date();
@@ -81,37 +68,17 @@ export default function TusCitas() {
     if (!usuario) return;
 
     const cargarCitas = () => {
-      obtenerCitas(usuario.id).then(data => {
-        if (Array.isArray(data)) {
-          setCitas(data);
-        } else {
-          setCitas([]);
-        }
+      obtenerCitas(usuario.id).then((data) => {
+        setCitas(data);
         setLoading(false);
       });
     };
 
-    cargarCitas(); // carga al inicio
+    cargarCitas();
 
-    const intervalo = setInterval(() => {
-      cargarCitas(); // recarga cada 3 minutos
-    }, 3 * 60 * 1000);
-
-    return () => clearInterval(intervalo); // limpia el intervalo al desmontar el componente
+    const intervalo = setInterval(cargarCitas, 3 * 60 * 1000);
+    return () => clearInterval(intervalo);
   }, [usuario]);
-
-  // useEffect(() => {
-  //   if (usuario) {
-  //     obtenerCitas(usuario.id).then(data => {
-  //       if (Array.isArray(data)) {
-  //         setCitas(data);
-  //       } else {
-  //         setCitas([]);
-  //       }
-  //       setLoading(false);
-  //     });
-  //   }
-  // }, [usuario]);
 
   const verDetalles = (idCita) => {
     // alert("Ver detalles de la cita con ID: " + idCita);
@@ -144,6 +111,10 @@ export default function TusCitas() {
   const abrirAnotaciones = (idCita) => {
     navigate(`/informe_psicologico/${idCita}`);
     // console.log("Abrir anotaciones para la cita con ID:", idCita);
+  };
+
+  const reagendarCita = (cita) => {
+    navigate("/reagendar_cita", { state: { cita } });
   };
 
   return (
@@ -196,13 +167,13 @@ export default function TusCitas() {
                       style={{
                         backgroundColor:
                           cita.estado_cita === PENDIENTE.valor ? "rgba(110, 193, 228, 0.2)" :
-                            cita.estado_cita === EN_PROGRESO.valor ? "rgba(97, 206, 112, 0.2)" :
+                            cita.estado_cita === EN_PROGRESO.valor ? "rgba(97, 172, 206, 0.2)" :
                               cita.estado_cita === FINALIZADA.valor ? "rgba(97, 206, 112, 0.3)" :
                                 cita.estado_cita === RETARDO.valor ? "rgba(255, 107, 107, 0.2)" :
                                   "rgba(192, 201, 209, 0.2)",
                         color:
                           cita.estado_cita === PENDIENTE.valor ? "#6EC1E4" :
-                            cita.estado_cita === EN_PROGRESO.valor ? "#61CE70" :
+                            cita.estado_cita === EN_PROGRESO.valor ? "#6DC3DC" :
                               cita.estado_cita === FINALIZADA.valor ? "#4CAF50" :
                                 cita.estado_cita === RETARDO.valor ? "#FF6B6B" :
                                   "#5A6D8B"
@@ -227,6 +198,22 @@ export default function TusCitas() {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                       </svg>
                       <span className="text-gray-600">{formatearHora(cita.hora)}</span>
+                    </div>
+
+
+                    <div className="flex flex-col gap-1 w-full">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-[#6EC1E4]" />
+                        <span className="text-sm text-gray-600">
+                          Progreso: {cita.sesiones_completadas}/{cita.total_sesiones}
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-[#6EC1E4] h-2 rounded-full"
+                          style={{ width: `${((cita.sesiones_completadas) / cita.total_sesiones) * 100}%` }}
+                        ></div>
+                      </div>
                     </div>
 
                     <div className="flex items-center">
@@ -269,6 +256,19 @@ export default function TusCitas() {
                         Anotaciones
                       </button>
                     )}
+
+                    {usuario.rol === "psicologa" &&
+                      cita.estado_cita === "finalizada" &&
+                      cita.total_sesiones > 1 &&
+                      cita.sesiones_completadas < cita.total_sesiones && (
+                        <button
+                          onClick={() => reagendarCita(cita)}
+                          className="w-full py-3 px-4 bg-[#FFB84C] text-white font-semibold rounded-xl hover:bg-[#F5A623] transition-all duration-200 flex items-center justify-center gap-2"
+                        >
+                          <Repeat className="w-5 h-5" />
+                          Reagendar siguiente sesión
+                        </button>
+                      )}
 
                     {(cita.estado_cita === PENDIENTE.valor || cita.estado_cita === RETARDO.valor || cita.estado_cita === EN_PROGRESO.valor) && cita.enlace_cita && esHoyOMasAntiguo(cita.fecha) && (
                       <button

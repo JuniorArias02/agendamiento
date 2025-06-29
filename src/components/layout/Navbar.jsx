@@ -2,8 +2,10 @@ import { Menu, UserRound, DoorOpen, DoorClosed, X } from 'lucide-react';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useState, useRef, useEffect } from "react";
-import { getSwipe } from "../../utils/SwipeControl";  
+import { getSwipe } from "../../utils/SwipeControl";
 import { AnimatePresence, motion } from "framer-motion";
+import { RUTAS } from '../../routers/routers';
+
 function Navbar() {
   const navigate = useNavigate();
   const { logout, usuario } = useAuth();
@@ -45,27 +47,26 @@ function Navbar() {
   };
 
   const enlacesPsicologa = [
-    { label: "Inicio", to: "https://psicologicamentehablando.space/" },
-    { label: "Tus Citas", to: "/tus_citas" },
-    { label: "Tus Servicios", to: "/tus_servicios" },
-    // { label: "Mis Historias", to: "/tus_citas" },
-    { label: "Mi Disponibilidad", to: "/mi_disponibilidad" },
-    { label: "Mis Accesos ", to: "/historial_accesos" }
+    { label: "Inicio", to:RUTAS.INICIO },
+    { label: "Tus Citas", to: RUTAS.TUS_CITAS.ROOT },
+    { label: "Tus Servicios", to: RUTAS.SERVICIOS.TUS },
+    { label: "Mi Disponibilidad", to: RUTAS.DISPONIBILIDAD },
+    { label: "Mis Accesos", to: RUTAS.HISTORIAL_ACCESOS },
+    { label: "Generar Codigo De Descuento", to: RUTAS.DESCUENTOS },
   ];
 
   const enlacesPaciente = [
     { label: "Inicio", to: "https://psicologicamentehablando.space/" },
-    { label: "Tus Citas", to: "/tus_citas" },
-    { label: "Nueva Agenda", to: "/nueva_agenda" },
-    { label: "Mis Informes", to: "/historial_accesos" }
+    { label: "Tus Citas", to: RUTAS.TUS_CITAS.ROOT },
+    { label: "Nueva Agenda", to: RUTAS.AGENDA.NUEVA },
+    { label: "Mis Informes", to: RUTAS.HISTORIAL_ACCESOS },
   ];
-
   let links = [];
 
   if (!usuario) {
     links = [
       { label: "Inicio", to: "https://psicologicamentehablando.space/" },
-      { label: "Nueva Agenda", to: "/nueva_agenda" }
+      { label: "Nueva Agenda", to: RUTAS.AGENDA.NUEVA }
     ];
   } else if (usuario.rol === "psicologa") {
     links = enlacesPsicologa;
@@ -89,104 +90,104 @@ function Navbar() {
   );
 
   const MobileMenu = ({ openMenu, setOpenMenu, links, navigate, usuario, handleLogout }) => (
-  <AnimatePresence>
-    {openMenu && (
-      <>
-        {/* Menú principal */}
-        <motion.div
-          initial={{ x: "-100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "-100%" }}
-          transition={{ type: "spring", damping: 25, stiffness: 300 }}
-          className="fixed top-0 left-0 h-full w-64 bg-[#6EC1E4] z-50 shadow-lg lg:hidden"
-        >
-          <div className="p-6 flex flex-col gap-6 h-full">
-            {/* Encabezado */}
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="flex justify-between items-center"
-            >
-              <div className="text-lg font-semibold text-white">Menú</div>
-              <button
-                onClick={() => setOpenMenu(false)}
-                className="focus:outline-none p-1 hover:bg-white/10 rounded-full transition"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <X size={24} color="white" />
-              </button>
-            </motion.div>
-
-            {/* Enlaces */}
-            <nav className="flex flex-col gap-4 flex-grow">
-              {links.map((item, index) => (
-                <motion.button
-                  key={item.label}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.05 * index }}
-                  onClick={() => {
-                    if (item.to.startsWith("http")) {
-                      window.location.href = item.to;
-                    } else {
-                      navigate(item.to);
-                    }
-                    setOpenMenu(false);
-                  }}
-                  className="text-lg text-white font-medium text-left py-2 focus:outline-none focus:bg-white/10 rounded px-2 hover:bg-white/10 transition-colors"
-                  whileHover={{ x: 5 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  {item.label}
-                </motion.button>
-              ))}
-            </nav>
-
-            {/* Pie de página */}
-            {usuario && (
+    <AnimatePresence>
+      {openMenu && (
+        <>
+          {/* Menú principal */}
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "-100%" }}
+            transition={{ type: "spring", damping: 25, stiffness: 300 }}
+            className="fixed top-0 left-0 h-full w-64 bg-[#6EC1E4] z-50 shadow-lg lg:hidden"
+          >
+            <div className="p-6 flex flex-col gap-6 h-full">
+              {/* Encabezado */}
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 + 0.02 * links.length }}
-                className="mt-auto pt-4 border-t border-white/30"
+                transition={{ delay: 0.1 }}
+                className="flex justify-between items-center"
               >
-                <motion.div 
-                  className="flex items-center gap-3 mb-4 px-2 py-1.5"
-                  whileHover={{ x: 3 }}
-                >
-                  <UserRound size={20} className="text-white" />
-                  <span className="text-white font-medium truncate">
-                    {usuario.nombre}
-                  </span>
-                </motion.div>
-                <motion.button
-                  onClick={handleLogout}
-                  className="w-full text-left text-red-200 hover:text-white px-2 py-2 focus:outline-none rounded hover:bg-white/10 transition-colors"
-                  whileHover={{ x: 3 }}
+                <div className="text-lg font-semibold text-white">Menú</div>
+                <button
+                  onClick={() => setOpenMenu(false)}
+                  className="focus:outline-none p-1 hover:bg-white/10 rounded-full transition"
+                  whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Cerrar sesión
-                </motion.button>
+                  <X size={24} color="white" />
+                </button>
               </motion.div>
-            )}
-          </div>
-        </motion.div>
 
-        {/* Fondo oscuro */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          onClick={() => setOpenMenu(false)}
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
-          transition={{ duration: 0.2 }}
-        />
-      </>
-    )}
-  </AnimatePresence>
-); 
+              {/* Enlaces */}
+              <nav className="flex flex-col gap-4 flex-grow">
+                {links.map((item, index) => (
+                  <motion.button
+                    key={item.label}
+                    initial={{ x: -20, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.05 * index }}
+                    onClick={() => {
+                      if (item.to.startsWith("http")) {
+                        window.location.href = item.to;
+                      } else {
+                        navigate(item.to);
+                      }
+                      setOpenMenu(false);
+                    }}
+                    className="text-lg text-white font-medium text-left py-2 focus:outline-none focus:bg-white/10 rounded px-2 hover:bg-white/10 transition-colors"
+                    whileHover={{ x: 5 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    {item.label}
+                  </motion.button>
+                ))}
+              </nav>
+
+              {/* Pie de página */}
+              {usuario && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 + 0.02 * links.length }}
+                  className="mt-auto pt-4 border-t border-white/30"
+                >
+                  <motion.div
+                    className="flex items-center gap-3 mb-4 px-2 py-1.5"
+                    whileHover={{ x: 3 }}
+                  >
+                    <UserRound size={20} className="text-white" />
+                    <span className="text-white font-medium truncate">
+                      {usuario.nombre}
+                    </span>
+                  </motion.div>
+                  <motion.button
+                    onClick={handleLogout}
+                    className="w-full text-left text-red-200 hover:text-white px-2 py-2 focus:outline-none rounded hover:bg-white/10 transition-colors"
+                    whileHover={{ x: 3 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Cerrar sesión
+                  </motion.button>
+                </motion.div>
+              )}
+            </div>
+          </motion.div>
+
+          {/* Fondo oscuro */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setOpenMenu(false)}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+            transition={{ duration: 0.2 }}
+          />
+        </>
+      )}
+    </AnimatePresence>
+  );
 
   return (
     <>

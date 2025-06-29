@@ -11,9 +11,8 @@ import {
 	Activity,
 	FileEdit
 } from 'lucide-react';
-import axios from 'axios';
 import Swal from 'sweetalert2';
-import { GUARDAR_INFORME_CITA, OBTENER_INFORME_CITA } from '../../api/registro';
+import { guardarInformeCita, obtenerInformeCita } from '../../services/informes/informes';
 import { useParams } from 'react-router-dom';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 
@@ -44,7 +43,7 @@ export const InformePsicologico = () => {
 	useEffect(() => {
 		const obtenerInforme = async () => {
 			try {
-				const { data } = await axios.post(OBTENER_INFORME_CITA, { idCita });
+				const data = await obtenerInformeCita(idCita);
 				if (!data || !data.nombre) return;
 				setForm(data);
 				setOriginalForm(data);
@@ -54,6 +53,7 @@ export const InformePsicologico = () => {
 		};
 		obtenerInforme();
 	}, [idCita]);
+
 
 	useEffect(() => {
 		if (form.fechaNacimiento) {
@@ -75,9 +75,7 @@ export const InformePsicologico = () => {
 	};
 
 	const handleGuardarInforme = async () => {
-		// console.log("Enviando:", { ...form })
-
-		const isChanged = Object.keys(form).some((key) => form[key] !== originalForm[key])
+		const isChanged = Object.keys(form).some((key) => form[key] !== originalForm[key]);
 		if (!isChanged) {
 			Swal.fire({
 				title: 'Sin cambios',
@@ -85,20 +83,18 @@ export const InformePsicologico = () => {
 				icon: 'info',
 				timer: 2000,
 				showConfirmButton: false
-			})
-			return
+			});
+			return;
 		}
 
 		try {
-			const res = await axios.post(GUARDAR_INFORME_CITA, { ...form })
-			// console.log("Respuesta backend:", res.data)
-			Swal.fire('Guardado', 'Informe guardado con éxito', 'success')
-			setOriginalForm(form)
+			await guardarInformeCita(form);
+			Swal.fire('Guardado', 'Informe guardado con éxito', 'success');
+			setOriginalForm(form);
 		} catch (error) {
-			console.error('Error al guardar el informe:', error)
-			Swal.fire('Error', 'Ocurrió un error al guardar el informe', 'error')
+			Swal.fire('Error', 'Ocurrió un error al guardar el informe', 'error');
 		}
-	}
+	};
 
 	const limpiarTexto = (texto) => {
 		return String(texto ?? '')

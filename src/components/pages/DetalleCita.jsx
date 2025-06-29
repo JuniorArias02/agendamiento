@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { ArrowLeft, Download } from "lucide-react";
 import { jsPDF } from "jspdf";
-import { DETALLE_CITA } from "../../api/registro";
 import { motion } from "framer-motion";
+import { obtenerDetalleCita } from "../../services/citas/citas";
 
 export default function DetalleCita() {
 	const { id } = useParams();
@@ -14,18 +13,25 @@ export default function DetalleCita() {
 
 	const primaryColor = '#61CE70';
 	const secondaryColor = '#6EC1E4';
-0
+	0
 
 	useEffect(() => {
-		axios.get(`${DETALLE_CITA}?id=${id}`)
-			.then((res) => {
-				if (res.data.success) {
-					setCita(res.data.cita);
+		const cargarCita = async () => {
+			try {
+				const res = await obtenerDetalleCita(id);
+				if (res.success) {
+					setCita(res.cita);
 				}
+			} catch (error) {
+				console.error("Error cargando cita:", error);
+			} finally {
 				setLoading(false);
-			})
-			.catch(() => setLoading(false));
+			}
+		};
+
+		cargarCita();
 	}, [id]);
+
 	const descargarFactura = () => {
 		const doc = new jsPDF({
 			orientation: "portrait",

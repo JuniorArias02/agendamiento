@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { REGISTRAR_USER, LOGIN, RECUPERAR_CONTRASENA } from "../../api/registro";
+import { registrarUsuario, loginUsuario, recuperarContrasena } from "../../services/auth/auth_services";
 import axios from "axios";
 import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
@@ -36,11 +36,10 @@ export default function Login() {
     if (isRecovering) return;
 
     if (isRegistering) {
-
       const telefonoCompleto = telefonoPrefijo + telefono.replace(/\s/g, '');
 
       try {
-        const res = await axios.post(REGISTRAR_USER, {
+        const data = await registrarUsuario({
           nombre,
           documento,
           correo,
@@ -48,7 +47,6 @@ export default function Login() {
           telefono: telefonoCompleto,
         });
 
-        const data = res.data;
         if (data.success) {
           login(data.usuario);
           navigate("/verificar_cuenta");
@@ -59,7 +57,6 @@ export default function Login() {
             text: data.message,
           });
         }
-
       } catch (error) {
         console.error("Error en el registro:", error);
         Swal.fire({
@@ -70,13 +67,7 @@ export default function Login() {
       }
     } else {
       try {
-        const res = await axios.post(LOGIN, {
-          correo,
-          contrasena,
-        });
-
-        const data = res.data;
-        // console.log(data);
+        const data = await loginUsuario({ correo, contrasena });
 
         if (data.success) {
           login(data.usuario);
@@ -86,8 +77,8 @@ export default function Login() {
             icon: 'error',
             title: 'Oops...',
             text: data.message,
-
           });
+
           if (data.noVerificado) {
             navigate("/verificar_cuenta");
             return;
@@ -106,11 +97,9 @@ export default function Login() {
 
   const handleRecuperar = async () => {
     try {
-      const res = await axios.post(RECUPERAR_CONTRASENA, {
-        correo: correoRecuperar,
-      });
+      const data = await recuperarContrasena({ correo: correoRecuperar });
 
-      if (res.data.success) {
+      if (data.success) {
         Swal.fire({
           icon: 'success',
           title: 'Código enviado',
@@ -121,7 +110,7 @@ export default function Login() {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: res.data.message || "No se pudo enviar el correo.",
+          text: data.message || "No se pudo enviar el correo.",
         });
       }
     } catch (error) {

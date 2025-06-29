@@ -1,8 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight } from "lucide-react";
 import { isBefore, startOfDay } from "date-fns";
-
+import { ChevronLeft, ChevronRight, ArrowLeft, ArrowRight } from "lucide-react"
 import {
   startOfMonth, endOfMonth, startOfWeek, endOfWeek,
   format, addDays, isSameMonth, isSameDay, addMonths
@@ -67,80 +66,76 @@ const Calendar = ({ onDateSelect, confirmedDate }) => {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4 bg-cream rounded-lg">
+    <div className="bg-white rounded-xl p-4 shadow-sm border border-[#E8F4F8]">
       <div className="flex justify-between items-center mb-4">
         <button
           onClick={handlePrevMonth}
-          className={`font-bold text-[#1c7578] ${confirmedDate ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           disabled={!!confirmedDate}
+          className={`p-2 rounded-full ${confirmedDate ? "text-gray-400" : "text-[#1c7578] hover:bg-[#F5FAFC]"}`}
         >
-          <ArrowLeft />
+          <ChevronLeft size={20} />
         </button>
-        <h2 className="text-xl montserrat-regular text-center text-[#1c7578]">
+
+        <motion.h2
+          className="text-lg font-semibold text-[#1c7578]"
+          key={monthKey}
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
           {format(currentDate, "MMMM yyyy")}
-        </h2>
+        </motion.h2>
+
         <button
           onClick={handleNextMonth}
-          className={`font-bold text-[#1c7578] ${confirmedDate ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
           disabled={!!confirmedDate}
+          className={`p-2 rounded-full ${confirmedDate ? "text-gray-400" : "text-[#1c7578] hover:bg-[#F5FAFC]"}`}
         >
-          <ArrowRight />
+          <ChevronRight size={20} />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 text-center text-gray-700">
-        {["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"].map((d) => (
-          <div key={d} className="font-semibold">{d}</div>
+      <div className="grid grid-cols-7 text-center text-xs text-[#3A6280] mb-2">
+        {["L", "M", "X", "J", "V", "S", "D"].map((d) => (
+          <div key={d} className="py-1 font-medium">{d}</div>
         ))}
       </div>
 
       <AnimatePresence mode="wait">
         <motion.div
           key={monthKey}
-          initial={{ opacity: 0, y: -20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -20, scale: 0.95 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.3, ease: "easeOut" }}
+          className="grid grid-cols-7 gap-1"
         >
-          {weeks.map((week, index) => {
-            const shouldShowWeek = selectedDate ? index === selectedWeek : true;
+          {weeks.map((week, weekIndex) => (
+            week.map((day, dayIndex) => {
+              const isPast = isBefore(day, startOfDay(new Date()))
+              const isSelected = isSameDay(day, selectedDate)
 
-            return (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: shouldShowWeek ? 1 : 0, height: shouldShowWeek ? "auto" : 0 }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className={`grid grid-cols-7 overflow-hidden transition-all`}
-              >
-                {week.map((day, idx) => {
-                  const isPast = isBefore(day, startOfDay(new Date()));
-                  return (
-                    <div
-                      key={idx}
-                      onClick={() => !isPast && !confirmedDate && handleSelectDate(day)}
-                      className={`p-2 transition duration-300 rounded-full text-center
-                    ${isSameMonth(day, currentDate) ? "text-black font-semibold" : "text-gray-400"}
-                    ${isSameDay(day, selectedDate) ? "bg-[#1c7578] text-white" : ""}
-                    ${isPast
-                          ? "bg-red-300 text-white opacity-60 cursor-not-allowed"
-                          : confirmedDate
-                            ? "opacity-50 cursor-not-allowed"
-                            : "hover:bg-[#7fc1c1] hover:text-black cursor-pointer"
-                        }`}
-                    >
-                      {format(day, "d")}
-                    </div>
-                  );
-                })}
-              </motion.div>
-            );
-          })}
+              return (
+                <motion.button
+                  key={`${weekIndex}-${dayIndex}`}
+                  onClick={() => !isPast && !confirmedDate && handleSelectDate(day)}
+                  disabled={isPast || confirmedDate}
+                  className={`aspect-square rounded-full text-sm flex items-center justify-center transition-all
+                    ${isSameMonth(day, currentDate) ? "text-[#3A6280]" : "text-gray-300"}
+                    ${isSelected ? "!bg-[#1c7578] !text-white scale-105" : ""}
+                    ${isPast ? "opacity-40 cursor-not-allowed" : "hover:bg-[#F5FAFC] cursor-pointer"}
+                  `}
+                  whileHover={!isPast && !confirmedDate ? { scale: 1.05 } : {}}
+                  whileTap={!isPast && !confirmedDate ? { scale: 0.95 } : {}}
+                >
+                  {format(day, "d")}
+                </motion.button>
+              )
+            })
+          ))}
         </motion.div>
       </AnimatePresence>
     </div>
-
   );
 };
 

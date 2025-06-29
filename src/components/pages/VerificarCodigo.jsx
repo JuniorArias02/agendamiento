@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { CAMBIAR_CONTRASENA } from "../../api/registro";
+import { cambiarContrasena } from "../../services/auth/auth_services";
 import { motion } from "framer-motion";
 import { Key, Lock, RefreshCw } from "lucide-react";
 
@@ -14,23 +14,18 @@ export default function VerificarCodigo() {
     e.preventDefault();
 
     try {
-      const res = await axios.post(CAMBIAR_CONTRASENA, {
-        codigo,
-        nuevaContrasena
-      });
+      const data = await cambiarContrasena({ codigo, nuevaContrasena });
 
-      if (res.data.success) {
+      if (data.success) {
         alert("✅ Contraseña cambiada con éxito");
         navigate("/login");
       } else {
-        alert("❌ " + res.data.message);
+        alert("❌ " + data.message);
       }
     } catch (error) {
-      console.error("Error al verificar código:", error);
       alert("Hubo un error al cambiar la contraseña.");
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#6EC1E4]/10 to-[#61CE70]/10 p-4 relative overflow-hidden">
       {/* Elementos decorativos de fondo */}

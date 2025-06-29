@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Calendar from "../ui/calendar";
-import { ArrowLeftToLine } from "lucide-react";
+import { ArrowLeftToLine, CalendarDays, CalendarCheck, ClipboardList, Tag, Lock, Clock, CheckCircle } from "lucide-react"
 import { useNavigate } from "react-router-dom";
 import Schedule from "../ui/schedule";
 import { useAuth } from "../../context/AuthContext";
@@ -27,7 +27,7 @@ export default function Agenda() {
       navigate("/seleccionar_servicios"); // o redirige a /explorar o donde tú quieras
     }
   }, [servicio, navigate]);
-  
+
 
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
@@ -60,78 +60,151 @@ export default function Agenda() {
       console.error("Datos incompletos: servicio o usuario_id no están disponibles.");
     }
   };
-
+  const formatFechaBD = (date) => {
+    return new Date(date).toLocaleDateString('es-ES', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    })
+  }
 
   return (
-   <motion.div
-  initial={{ opacity: 0, y: 20 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ duration: 0.8, ease: "easeOut" }}
-  className="w-full flex flex-col items-center justify-center py-8 px-4"
->
-  <motion.div
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
-    className="w-full mb-4"
-  >
-    <ArrowLeftToLine
-      className="cursor-pointer"
-      onClick={() => navigate("/")}
-      color="#1c7578"  // Azul base
-      size={30}
-    />
-  </motion.div>
-
-  <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
-    {/* Calendario */}
     <motion.div
-      initial={{ opacity: 0, x: -30 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
-      className="w-full sm:w-1/2 max-w-md bg-white rounded-xl shadow-lg p-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="w-full max-w-6xl mx-auto flex flex-col p-4 sm:p-6"
     >
-      <h3 className="text-xl font-semibold text-[#1c7578] text-center mb-4">
-        Selecciona una fecha
-      </h3>
-      <Calendar onDateSelect={handleDateSelect} />
-      {selectedDate && (
-        <Schedule
-          onSelect={handleTimeSelect}
-          isVisible={!!selectedDate}
-          selectedDate={selectedDate}
-          psicologaId={servicio?.usuario_id}
-        />
-      )}
+      {/* Header */}
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="flex items-center gap-4 mb-6"
+      >
+        <button
+          onClick={() => navigate("/")}
+          className="text-[#1c7578] hover:bg-[#F5FAFC] p-2 rounded-full"
+        >
+          <ArrowLeftToLine size={24} />
+        </button>
+        <div className="flex items-center gap-2">
+          <CalendarDays size={24} className="text-[#1c7578]" />
+          <h1 className="text-xl font-bold text-[#1c7578]">Agenda tu cita</h1>
+        </div>
+      </motion.div>
+
+      {/* Contenido */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Sección Calendario */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="flex-1"
+        >
+          <Calendar
+            onDateSelect={handleDateSelect}
+            selectedDate={selectedDate}
+          />
+
+          {selectedDate && (
+            <Schedule
+              onSelect={handleTimeSelect}
+              isVisible={!!selectedDate}
+              selectedDate={selectedDate}
+              psicologaId={servicio?.usuario_id}
+            />
+          )}
+        </motion.div>
+
+        {/* Resumen */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4, duration: 0.5 }}
+          className="lg:max-w-xs w-full bg-white rounded-xl shadow-sm border border-[#E8F4F8] p-5 sticky top-4"
+        >
+          <div className="flex flex-col items-center mb-5">
+            <CalendarCheck size={28} className="text-[#1c7578] mb-2" />
+            <h2 className="text-lg font-bold text-[#1c7578]">Resumen de cita</h2>
+          </div>
+
+          <div className="space-y-4 mb-6">
+            {servicio && (
+              <div className="flex items-start gap-3">
+                <ClipboardList size={18} className="text-[#3A6280] mt-0.5" />
+                <div>
+                  <p className="text-xs text-gray-500">Servicio</p>
+                  <p className="text-sm font-medium text-[#1c7578]">{servicio.titulo}</p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex items-start gap-3">
+              <CalendarDays size={18} className="text-[#3A6280] mt-0.5" />
+              <div>
+                <p className="text-xs text-gray-500">Fecha</p>
+                <p className={`text-sm font-medium ${selectedDate ? "text-[#1c7578]" : "text-gray-400"}`}>
+                  {selectedDate ? formatFechaBD(selectedDate) : "No seleccionada"}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3">
+              <Clock size={18} className="text-[#3A6280] mt-0.5" />
+              <div>
+                <p className="text-xs text-gray-500">Hora</p>
+                <p className={`text-sm font-medium ${selectedTime ? "text-[#1c7578]" : "text-gray-400"}`}>
+                  {selectedTime || "No seleccionada"}
+                </p>
+              </div>
+            </div>
+
+            {servicio?.precio && (
+              <div className="flex items-start gap-3">
+                <Tag size={18} className="text-[#3A6280] mt-0.5" />
+                <div>
+                  <p className="text-xs text-gray-500">Precio</p>
+                  <p className="text-sm font-medium text-[#1c7578]">
+                    {Number(servicio.precio).toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    })}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <motion.button
+            onClick={handleContinue}
+            disabled={!selectedDate || !selectedTime}
+            className={`w-full py-3 rounded-lg font-medium flex items-center justify-center gap-2
+              ${selectedDate && selectedTime ?
+                "bg-[#1c7578] text-white hover:bg-[#3A6280]" :
+                "bg-gray-100 text-gray-400 cursor-not-allowed"}
+            `}
+            whileHover={selectedDate && selectedTime ? { scale: 1.02 } : {}}
+            whileTap={selectedDate && selectedTime ? { scale: 0.98 } : {}}
+          >
+            {selectedDate && selectedTime ? (
+              <>
+                <CheckCircle size={18} />
+                Confirmar cita
+              </>
+            ) : (
+              <>
+                <Lock size={18} />
+                Completa los datos
+              </>
+            )}
+          </motion.button>
+        </motion.div>
+      </div>
     </motion.div>
 
-    {/* Formulario */}
-    <motion.div
-      initial={{ opacity: 0, x: 30 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
-      className="w-full sm:w-1/2 max-w-md bg-white rounded-xl shadow-lg p-6"
-    >
-      <h2 className="text-2xl font-bold text-[#1c7578] text-center mb-6">
-        Agenda tu cita
-      </h2>
-
-      <motion.input
-        type="button"
-        value="Continuar"
-        disabled={!selectedDate || !selectedTime}
-        onClick={handleContinue}
-        className={`w-full py-2 px-6 rounded-full font-semibold text-white transition duration-300 ${
-          selectedDate && selectedTime
-            ? "bg-[#1c7578] hover:brightness-110 cursor-pointer"
-            : "bg-[#D1E9E9] text-gray-400 cursor-not-allowed"
-        }`}
-        whileHover={{ scale: selectedDate && selectedTime ? 1.05 : 1 }}
-        whileTap={{ scale: selectedDate && selectedTime ? 0.95 : 1 }}
-      />
-    </motion.div>
-  </div>
-</motion.div>
 
   );
 }

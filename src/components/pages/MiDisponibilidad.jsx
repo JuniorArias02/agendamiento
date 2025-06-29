@@ -2,8 +2,7 @@ import { useState } from "react";
 import { TextField, Button } from "@mui/material";
 import { LocalizationProvider, MobileTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import axios from 'axios';
-import { GUARDAR_HORA_DISPONIBLE } from "../../api/registro";
+import { guardarHorasDisponibles } from "../../services/citas/citas";
 import { useAuth } from "../../context/AuthContext";
 import Swal from 'sweetalert2';
 
@@ -52,11 +51,7 @@ const MiDisponibilidad = () => {
     };
 
     try {
-      const res = await axios.post(GUARDAR_HORA_DISPONIBLE, payload, {
-        headers: { "Content-Type": "application/json" }
-      });
-
-      const data = res.data;
+      const data = await guardarHorasDisponibles(payload);
 
       if (data.status === "ok") {
         Swal.fire({
@@ -76,7 +71,6 @@ const MiDisponibilidad = () => {
         });
       }
     } catch (err) {
-      console.error(err);
       Swal.fire({
         icon: 'warning',
         title: 'Error de conexión',
@@ -219,8 +213,8 @@ const MiDisponibilidad = () => {
           onClick={guardarDisponibilidad}
           disabled={!fecha || horasSeleccionadas.length === 0}
           className={`w-full mt-4 font-medium px-4 py-2.5 rounded-xl transition-all duration-300 ${!fecha || horasSeleccionadas.length === 0
-              ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-              : "bg-gradient-to-r from-[#61CE70] to-[#6EC1E4] hover:from-[#4FB560] hover:to-[#5AB7D4] text-white shadow-md hover:shadow-lg"
+            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+            : "bg-gradient-to-r from-[#61CE70] to-[#6EC1E4] hover:from-[#4FB560] hover:to-[#5AB7D4] text-white shadow-md hover:shadow-lg"
             }`}
         >
           Guardar disponibilidad
