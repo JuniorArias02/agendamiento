@@ -21,7 +21,6 @@ export default function VistaDescuentos() {
 
     try {
       const res = await generarCodigoDescuento({ porcentaje: parseInt(porcentaje) });
-	  console.log(res);
       setCodigoGenerado(res.codigo);
       setMensaje("¡Código generado con éxito!");
       setCopiado(false);

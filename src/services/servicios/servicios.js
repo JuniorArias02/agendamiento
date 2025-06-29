@@ -28,7 +28,6 @@ export const eliminarServicioPorId = async (datos) => {
 export const listarServiciosPublicos = async () => {
   try {
     const res = await axios.get(LISTAR_SERVICIOS_PUBLICOS);
-    console.log(res);
     return res.data?.servicios ?? [];
   } catch (error) {
     console.error("Error al listar servicios públicos:", error);

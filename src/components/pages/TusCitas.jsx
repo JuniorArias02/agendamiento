@@ -110,7 +110,6 @@ export default function TusCitas() {
 
   const abrirAnotaciones = (idCita) => {
     navigate(`/informe_psicologico/${idCita}`);
-    // console.log("Abrir anotaciones para la cita con ID:", idCita);
   };
 
   const reagendarCita = (cita) => {
@@ -133,9 +132,13 @@ export default function TusCitas() {
         <p className="text-[#6D8BAB] text-lg">Gestiona tus citas de forma sencilla e intuitiva</p>
       </div>
 
-      {citas.length === 0 ? (
+      {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {[...Array(9)].map((_, i) => <SkeletonCard key={i} />)}
+        </div>
+      ) : citas.length === 0 ? (
+        <div className="text-center text-gray-600 text-lg py-12">
+          No tienes citas registradas aún 🗓️
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">

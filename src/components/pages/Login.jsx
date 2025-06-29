@@ -233,11 +233,45 @@ export default function Login() {
                           className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E0E5EC] focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 bg-white/50 outline-none appearance-none"
                           required
                         >
-                          <option value="">Prefijo</option>
-                          <option value="+57">+57 (CO)</option>
-                          <option value="+52">+52 (MX)</option>
-                          <option value="+1">+1 (US)</option>
-                          {/* Resto de opciones... */}
+                          {/* América Latina */}
+                          <option value="+54">+54 (AR) Argentina</option>
+                          <option value="+591">+591 (BO) Bolivia</option>
+                          <option value="+55">+55 (BR) Brasil</option>
+                          <option value="+56">+56 (CL) Chile</option>
+                          <option value="+57">+57 (CO) Colombia</option>
+                          <option value="+506">+506 (CR) Costa Rica</option>
+                          <option value="+53">+53 (CU) Cuba</option>
+                          <option value="+593">+593 (EC) Ecuador</option>
+                          <option value="+503">+503 (SV) El Salvador</option>
+                          <option value="+502">+502 (GT) Guatemala</option>
+                          <option value="+504">+504 (HN) Honduras</option>
+                          <option value="+52">+52 (MX) México</option>
+                          <option value="+505">+505 (NI) Nicaragua</option>
+                          <option value="+507">+507 (PA) Panamá</option>
+                          <option value="+595">+595 (PY) Paraguay</option>
+                          <option value="+51">+51 (PE) Perú</option>
+                          <option value="+598">+598 (UY) Uruguay</option>
+                          <option value="+58">+58 (VE) Venezuela</option>
+
+                          {/* Europa */}
+                          <option value="+43">+43 (AT) Austria</option>
+                          <option value="+32">+32 (BE) Bélgica</option>
+                          <option value="+359">+359 (BG) Bulgaria</option>
+                          <option value="+420">+420 (CZ) Chequia</option>
+                          <option value="+45">+45 (DK) Dinamarca</option>
+                          <option value="+34">+34 (ES) España</option>
+                          <option value="+33">+33 (FR) Francia</option>
+                          <option value="+49">+49 (DE) Alemania</option>
+                          <option value="+30">+30 (GR) Grecia</option>
+                          <option value="+39">+39 (IT) Italia</option>
+                          <option value="+31">+31 (NL) Países Bajos</option>
+                          <option value="+351">+351 (PT) Portugal</option>
+                          <option value="+40">+40 (RO) Rumanía</option>
+                          <option value="+46">+46 (SE) Suecia</option>
+                          <option value="+44">+44 (UK) Reino Unido</option>
+
+                          {/* Otros comunes */}
+                          <option value="+1">+1 (US/CA) Estados Unidos / Canadá</option>
                         </select>
                         <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6EC1E4]" />
                       </div>

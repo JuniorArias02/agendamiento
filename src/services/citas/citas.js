@@ -8,7 +8,6 @@ export const obtenerHorasDisponibles = async (fecha, psicologa_id) => {
       fecha,
       psicologa_id
     });
-    console.log(response);
     return response.data;
   } catch (error) {
     console.error("Error obteniendo horas disponibles:", error);
@@ -23,7 +22,6 @@ export const obtenerHorasOcupadas = async (fecha, psicologa_id) => {
       fecha,
       psicologa_id
     });
-    console.log(response)
     return response.data;
   } catch (error) {
     console.error("Error obteniendo horas ocupadas:", error);
@@ -60,7 +58,6 @@ export const obtenerCitas = async (usuarioId, estado = null) => {
     if (estado) body.estado_cita = estado;
 
     const res = await axios.post(OBTENER_CITA, body);
-    console.log(res)
     return Array.isArray(res.data) ? res.data : [];
   } catch (error) {
     console.error("Error al obtener citas:", error);
@@ -84,7 +81,6 @@ export const actualizarEstadoCita = async (citaId, estado) => {
 export const guardarCita = async (datos) => {
   try {
     const res = await axios.post(GUARDAR_CITA, datos);
-    console.log("Respuesta de guardar cita:", res);
     return res.data;
   } catch (error) {
     console.error("Error al guardar cita:", error);

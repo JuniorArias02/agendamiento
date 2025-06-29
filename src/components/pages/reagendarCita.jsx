@@ -27,15 +27,6 @@ export default function ReagendarCita() {
 	const [horasDisponibles, setHorasDisponibles] = useState([]);
 
 
-	// Efecto de sonido para interacciones
-	const playClickSound = () => {
-		if (typeof window !== 'undefined') {
-			const audio = new Audio('/sounds/soft-click.mp3');
-			audio.volume = 0.3;
-			audio.play().catch(e => console.log("Audio error:", e));
-		}
-	};
-
 	const generateCalendarDays = () => {
 		const days = [];
 		const today = new Date();
@@ -146,7 +137,6 @@ export default function ReagendarCita() {
 
 	const handleAddHour = () => {
 		if (newHour && !horasDisponibles.includes(newHour)) {
-			playClickSound();
 			const horaFormateada = newHour.slice(0, 5);
 			setHorasDisponibles([...horasDisponibles, horaFormateada].sort());
 			setNewHour("");
@@ -155,7 +145,6 @@ export default function ReagendarCita() {
 	};
 
 	const handleRemoveHour = (hourToRemove) => {
-		playClickSound();
 		setHorasDisponibles(horasDisponibles.filter(h => h !== hourToRemove));
 		if (hora === hourToRemove) {
 			setHora("");
@@ -236,7 +225,6 @@ export default function ReagendarCita() {
 								{date ? (
 									<button
 										onClick={() => {
-											playClickSound();
 											setSelectedDate(date);
 											setHora("");
 										}}
@@ -269,7 +257,6 @@ export default function ReagendarCita() {
 						<h3 className="font-medium text-gray-700 text-lg">Horario disponible</h3>
 						<button
 							onClick={() => {
-								playClickSound();
 								setShowAddHour(!showAddHour);
 							}}
 							className="text-[#64CBA0] hover:text-[#4da789] flex items-center gap-1 text-sm bg-[#64CBA0]/10 px-3 py-1.5 rounded-lg transition-all hover:bg-[#64CBA0]/20"
@@ -297,7 +284,6 @@ export default function ReagendarCita() {
 							</button>
 							<button
 								onClick={() => {
-									playClickSound();
 									setShowAddHour(false);
 								}}
 								className="bg-gray-200 text-gray-700 p-2 rounded-lg hover:bg-gray-300 transition-colors"
@@ -319,7 +305,6 @@ export default function ReagendarCita() {
 										key={h}
 										onClick={() => {
 											if (!isOccupied) {
-												playClickSound();
 												setHora(h);
 											}
 										}}

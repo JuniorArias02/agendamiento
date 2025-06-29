@@ -4,8 +4,6 @@ import { useAuth } from "./AuthContext";
 export default function PatientRoute({ children }) {
   const { usuario } = useAuth();
 
-  // console.log("Usuario en PatientRoute:", usuario);
-  
   if (!usuario) {
     return children;
   }

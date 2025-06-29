@@ -12,8 +12,7 @@ export default function Agenda() {
   const navigate = useNavigate();
 
   const location = useLocation();
-  const servicio = location.state?.servicio;
-  // console.log("Servicio seleccionado:", servicio);
+  const servicio = location.state?.servicio; 
 
   useEffect(() => {
     if (!usuario) {
@@ -35,7 +34,6 @@ export default function Agenda() {
   const handleDateSelect = (date) => {
     setSelectedDate(date);
     setSelectedTime(null);
-    // console.log("Fecha seleccionada:", date);
   };
 
   const handleTimeSelect = (time) => {

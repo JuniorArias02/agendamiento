@@ -15,7 +15,6 @@ export default function ConfirmacionPago() {
     try {
       setLoading(true)
       const res = await verificarPago(sessionId)
-      console.log("Respuesta de verificación de pago:", res)
       
       if (res?.success) {
         const citaGuardada = await guardarCita({ session_id: sessionId })
