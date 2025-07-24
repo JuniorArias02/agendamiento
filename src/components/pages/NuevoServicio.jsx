@@ -29,12 +29,15 @@ export default function NuevoServicio() {
     formData.append("precio", precio);
     formData.append("duracion", duracion);
     formData.append("numero_sesiones", numeroSesiones);
-
-    formData.append("imagen_url", imagenUrl); 
     formData.append("usuario_id", usuario.id);
 
+    if (imagen) {
+      formData.append("imagen", imagen); // acá va el archivo real
+    }
+
     try {
-      await crearServicio(formData);
+      await crearServicio(formData); // tu función ya debe usar fetch con `multipart/form-data`
+
       await Swal.fire({
         icon: "success",
         title: "¡Servicio creado!",
@@ -42,13 +45,14 @@ export default function NuevoServicio() {
         showConfirmButton: false,
         background: '#fff',
         backdrop: `
-          rgba(100,203,160,0.4)
-          url("/images/confetti.gif")
-          center top
-          no-repeat
-        `,
+        rgba(100,203,160,0.4)
+        url("/images/confetti.gif")
+        center top
+        no-repeat
+      `,
         timer: 2000
       });
+
       navigate(-1);
     } catch (error) {
       console.error(error);
@@ -66,6 +70,7 @@ export default function NuevoServicio() {
       setIsSubmitting(false);
     }
   };
+
 
   return (
     <div className="max-w-2xl mx-auto p-6 sm:p-8">
@@ -211,42 +216,25 @@ export default function NuevoServicio() {
 
 
               <div className="space-y-1">
-                <label htmlFor="imagenUrl" className="text-sm font-medium text-gray-700">
-                  URL de la imagen
-                </label>
                 <div className="flex items-center gap-2">
-                  <input
-                    type="url"
-                    id="imagenUrl"
-                    value={imagenUrl} // Asegúrate de tener este estado en tu componente: const [imagenUrl, setImagenUrl] = useState("");
-                    onChange={(e) => setImagenUrl(e.target.value)}
-                    className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#64CBA0] focus:border-transparent shadow-sm text-gray-700 placeholder-gray-400 transition-all duration-200"
-                    placeholder="https://ejemplo.com/imagen.jpg"
-                  />
-                  {imagenUrl && (
-                    <button
-                      type="button"
-                      onClick={() => setImagenUrl("")}
-                      className="p-2 text-gray-500 hover:text-red-500 transition-colors"
-                      aria-label="Limpiar URL"
-                    >
-                      <X size={18} />
-                    </button>
-                  )}
-                </div>
-                {imagenUrl && (
-                  <div className="mt-2">
-                    <p className="text-xs text-gray-500 mb-1">Vista previa:</p>
-                    <img
-                      src={imagenUrl}
-                      alt="Preview"
-                      className="max-w-full h-auto max-h-40 rounded-lg border border-gray-200"
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/300x200?text=Imagen+no+disponible';
+                  <div className="space-y-1">
+                    <label htmlFor="imagen" className="text-sm font-medium text-gray-700">
+                      Imagen del servicio
+                    </label>
+                    <input
+                      type="file"
+                      id="imagen"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files[0];
+                        setImagen(file); // asegúrate de tener `const [imagen, setImagen] = useState(null);`
+                        setPreview(URL.createObjectURL(file));
                       }}
+                      className="w-full px-4 py-2 border rounded-xl border-gray-200 shadow-sm text-gray-700"
                     />
                   </div>
-                )}
+
+                </div>
               </div>
 
 

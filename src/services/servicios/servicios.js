@@ -37,6 +37,9 @@ export const listarServiciosPublicos = async () => {
 
 export const crearServicio = async (formData) => {
   try {
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ':', pair[1]);
+    }
     const res = await axios.post(CREAR_SERVICIO, formData, {
       headers: {
         "Content-Type": "multipart/form-data",

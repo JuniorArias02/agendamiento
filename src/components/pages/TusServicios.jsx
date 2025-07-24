@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {Sparkles, HeartPulse, ClipboardList , Pencil, Trash2, PlusCircle, PauseCircle, Heart, User, DollarSign,CircleDashed ,AlignLeft ,Banknote ,CalendarDays ,Monitor , Clock, ArrowRight, CheckCircle } from "lucide-react";
+import { Sparkles, HeartPulse, ClipboardList, Pencil, Trash2, PlusCircle, PauseCircle, Heart, User, DollarSign, CircleDashed, AlignLeft, Banknote, CalendarDays, Monitor, Clock, ArrowRight, CheckCircle } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { obtenerServiciosPorUsuario, eliminarServicioPorId } from "../../services/servicios/servicios";
 import SkeletonServicios from "../skeleton/SkeletonServicios";
+import { PATH_IMAGEN } from "../../api/conexion";
 export default function TuServicios() {
 	const navigate = useNavigate();
 	const { usuario } = useAuth();
@@ -16,6 +17,7 @@ export default function TuServicios() {
 		setLoading(true);
 		try {
 			const data = await obtenerServiciosPorUsuario(usuario.id);
+			console.log("Servicios cargados:", data.servicios);
 			setServicios(data.servicios);
 		} catch (err) {
 			console.error(err);
@@ -129,10 +131,11 @@ export default function TuServicios() {
 								{serv.imagen ? (
 									<>
 										<img
-											src={serv.imagen}
+											src={`${PATH_IMAGEN}/${serv.imagen}`}
 											alt={serv.titulo}
 											className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
 										/>
+
 										<div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
 									</>
 								) : (

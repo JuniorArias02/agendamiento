@@ -12,7 +12,7 @@ export default function Agenda() {
   const navigate = useNavigate();
 
   const location = useLocation();
-  const servicio = location.state?.servicio; 
+  const servicio = location.state?.servicio;
 
   useEffect(() => {
     if (!usuario) {
@@ -105,14 +105,15 @@ export default function Agenda() {
           <Calendar
             onDateSelect={handleDateSelect}
             selectedDate={selectedDate}
+            servicioId={servicio?.id}
           />
 
           {selectedDate && (
             <Schedule
-              onSelect={handleTimeSelect}
-              isVisible={!!selectedDate}
               selectedDate={selectedDate}
               psicologaId={servicio?.usuario_id}
+              isVisible={!!selectedDate}
+              onSelect={handleTimeSelect}
             />
           )}
         </motion.div>

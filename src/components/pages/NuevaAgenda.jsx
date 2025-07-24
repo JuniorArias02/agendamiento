@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Sparkles, Clock, User } from "lucide-react";
 import { listarServiciosPublicos } from "../../services/servicios/servicios";
 import SkeletonServicios from "../skeleton/SkeletonServicios";
+import { PATH_IMAGEN } from "../../api/conexion";
 import { Heart, HeartPulse, CircleDashed, AlignLeft, Banknote, CalendarDays, GraduationCap, Monitor, Star, ArrowRight } from "lucide-react";
 export default function NuevaAgenda() {
 	const [servicios, setServicios] = useState([]);
@@ -64,7 +65,7 @@ export default function NuevaAgenda() {
 									{s.imagen ? (
 										<>
 											<img
-												src={s.imagen}
+												src={`${PATH_IMAGEN}/${s.imagen}`}
 												alt={s.titulo}
 												className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
 											/>

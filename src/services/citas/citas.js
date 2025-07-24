@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { REAGENDAR_CITA, CREAR_CITA_PENDIENTE, GUARDAR_CITA, ACTUALIZAR_ESTADO_CITA, DETALLE_CITA, GUARDAR_HORA_DISPONIBLE, OBTENER_CITA, OBTENER_DISPONIBILIDAD, OBTENER_HORAS_OCUPADAS } from "../../api/controllers/citas/citas";
+import {OBTENER_FECHA_DISPONIBLE, REAGENDAR_CITA, CREAR_CITA_PENDIENTE, GUARDAR_CITA, ACTUALIZAR_ESTADO_CITA, DETALLE_CITA, GUARDAR_HORA_DISPONIBLE, OBTENER_CITA, OBTENER_DISPONIBILIDAD, OBTENER_HORAS_OCUPADAS } from "../../api/controllers/citas/citas";
 
 export const obtenerHorasDisponibles = async (fecha, psicologa_id) => {
   try {
@@ -8,6 +8,7 @@ export const obtenerHorasDisponibles = async (fecha, psicologa_id) => {
       fecha,
       psicologa_id
     });
+    console.log("Horas disponibles:", response);
     return response.data;
   } catch (error) {
     console.error("Error obteniendo horas disponibles:", error);
@@ -109,3 +110,13 @@ export const reagendarCita = async (datos) => {
   }
 };
 
+
+export const obtenerFechasDisponbiles = async (datos) => {
+  try {
+    const res = await axios.post(OBTENER_FECHA_DISPONIBLE, datos);
+    return res.data;
+  } catch (error) {
+    console.error("Error al guardar cita:", error);
+    throw error;
+  }
+};
