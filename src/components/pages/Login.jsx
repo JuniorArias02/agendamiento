@@ -16,6 +16,7 @@ import {
   Lock,
   UserPlus
 } from "lucide-react";
+import { RUTAS } from "../../routers/routers";
 
 export default function Login() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -346,6 +347,17 @@ export default function Login() {
               transition={{ delay: 0.4 }}
               className="text-center space-y-3"
             >
+              {/* Botón para ver servicios */}
+              <p className="text-sm text-[#5A6D8B]">
+                <button
+                  onClick={() => navigate(RUTAS.AGENDA.NUEVA)}
+                  className="text-[#6EC1E4] font-medium hover:underline focus:outline-none"
+                >
+                  Ver Servicios
+                </button>
+              </p>
+
+              {/* Alternar entre registro/login */}
               <p className="text-sm text-[#5A6D8B]">
                 {isRegistering ? "¿Ya tienes una cuenta?" : "¿No tienes una cuenta?"}{" "}
                 <button
@@ -359,6 +371,7 @@ export default function Login() {
                 </button>
               </p>
 
+              {/* Recuperar contraseña */}
               <p className="text-sm text-[#5A6D8B]">
                 <button
                   onClick={() => {

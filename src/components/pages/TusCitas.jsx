@@ -226,7 +226,8 @@ export default function TusCitas() {
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
                           className="bg-[#6EC1E4] h-2 rounded-full"
-                          style={{ width: `${((cita.sesiones_completadas) / cita.total_sesiones) * 100}%` }}
+                          style={{ width: `${(cita.sesiones_completadas / cita.total_sesiones) * 100}%` }}
+
                         ></div>
                       </div>
                     </div>
