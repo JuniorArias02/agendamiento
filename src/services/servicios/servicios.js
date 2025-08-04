@@ -54,7 +54,20 @@ export const crearServicio = async (formData) => {
 
 export const actualizarServicio = async (datos) => {
   try {
-    const res = await axios.post(ACTUALIZAR_SERVICIO, datos);
+    const formData = new FormData();
+
+    for (const key in datos) {
+      if (datos[key] !== undefined && datos[key] !== null) {
+        formData.append(key, datos[key]);
+      }
+    }
+
+    const res = await axios.post(ACTUALIZAR_SERVICIO, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
     return res.data;
   } catch (error) {
     console.error("Error al actualizar servicio:", error);

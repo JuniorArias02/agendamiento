@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { actualizarServicio } from "../../services/servicios/servicios";
 import { motion } from "framer-motion";
 import { PenLine, Save, X, ImagePlus, Check } from "lucide-react";
+import { PATH_IMAGEN } from "../../api/conexion";
 import Swal from "sweetalert2";
 
 export default function EditarServicio() {
@@ -26,7 +27,7 @@ export default function EditarServicio() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
-    
+
     // Actualizar preview si cambia la URL de la imagen
     if (name === 'imagen') {
       setPreviewImage(value);
@@ -39,7 +40,7 @@ export default function EditarServicio() {
 
     try {
       await actualizarServicio(form);
-      
+
       await Swal.fire({
         title: "¡Actualizado!",
         text: "El servicio se actualizó correctamente",
@@ -54,7 +55,7 @@ export default function EditarServicio() {
           no-repeat
         `
       });
-      
+
       navigate("/tus_servicios");
     } catch (error) {
       console.error("Error al actualizar el servicio:", error);
@@ -70,16 +71,7 @@ export default function EditarServicio() {
     }
   };
 
-  // Validar URL de imagen
-  const isValidImageUrl = (url) => {
-    if (!url) return false;
-    try {
-      new URL(url);
-      return /\.(jpg|jpeg|png|gif|webp)$/i.test(url);
-    } catch {
-      return false;
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f0f9f5] to-[#e6f4f9] flex items-center justify-center p-4">
@@ -107,20 +99,19 @@ export default function EditarServicio() {
 
         <div className="p-6 space-y-5">
           {/* Vista previa de imagen */}
-          {isValidImageUrl(previewImage) && (
+          {previewImage && (
             <div className="flex justify-center mb-4">
               <div className="relative w-full h-48 rounded-lg overflow-hidden border-2 border-[#64CBA0]/20">
                 <img
-                  src={previewImage}
+                  src={`${PATH_IMAGEN}/${previewImage}`}
                   alt="Preview del servicio"
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/400x200?text=Imagen+no+disponible';
-                  }}
+
                 />
               </div>
             </div>
           )}
+
 
           {/* --- Campo Título --- */}
           <div className="space-y-1">
@@ -199,17 +190,19 @@ export default function EditarServicio() {
                 <ImagePlus size={18} />
               </div>
               <input
-                type="url"
-                name="imagen"
-                value={form.imagen}
-                onChange={handleChange}
-                placeholder="https://ejemplo.com/imagen.jpg"
-                className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-[#64CBA0] focus:border-transparent placeholder:text-gray-400 text-gray-700"
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    setForm({ ...form, imagen: file });
+                    setPreviewImage(URL.createObjectURL(file));
+                  }
+                }}
+                className="block w-full px-3 py-2 border border-gray-200 rounded-xl text-sm text-gray-700 bg-white"
               />
             </div>
-            {form.imagen && !isValidImageUrl(form.imagen) && (
-              <p className="text-xs text-red-500 mt-1">Por favor ingresa una URL válida de imagen (jpg, png, gif)</p>
-            )}
+          
           </div>
 
           {/* --- Campo Estado --- */}
@@ -252,9 +245,9 @@ export default function EditarServicio() {
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             type="submit"
-            disabled={isSubmitting || !isValidImageUrl(form.imagen)}
+            disabled={isSubmitting}
             className={`w-full py-4 px-6 rounded-xl font-bold text-white transition-all mt-6
-              ${isSubmitting || !isValidImageUrl(form.imagen)
+    ${isSubmitting
                 ? 'bg-gray-300 cursor-not-allowed'
                 : 'bg-gradient-to-r from-[#64CBA0] to-[#6BC3D7] hover:shadow-lg'
               }`}
@@ -274,6 +267,7 @@ export default function EditarServicio() {
               </span>
             )}
           </motion.button>
+
         </div>
       </motion.form>
     </div>
