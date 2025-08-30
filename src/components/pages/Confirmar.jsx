@@ -30,6 +30,26 @@ export default function ConfirmarAgenda() {
     }
   }, [selectedDate, selectedTime, navigate]);
 
+  useEffect(() => {
+    const convertirUSDaCOP = async () => {
+      if (servicio?.precio) {
+        try {
+          const res = await fetch("https://api.frankfurter.dev/v1/latest?base=USD&symbols=COP");
+          const data = await res.json();
+          const tasa = data?.rates?.COP;
+          if (tasa) setPrecioFinal(servicio.precio * tasa);
+          else setPrecioFinal(servicio.precio * 4000); // fallback
+        } catch {
+          console.error("Error al obtener tasa de cambio");
+          setPrecioFinal(servicio.precio * 4000);
+        }
+      }
+    };
+    convertirUSDaCOP();
+  }, [servicio?.precio]);
+
+
+
   const formatFechaBD = (fecha) => {
     const date = new Date(fecha);
     const año = date.getFullYear();
@@ -112,7 +132,7 @@ export default function ConfirmarAgenda() {
       });
 
       checkout.open(async (result) => {
-      
+
         try {
           // 4️⃣ Verificar pago con tu backend usando transactionId
           const transactionId = result?.transaction?.id;
