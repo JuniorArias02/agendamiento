@@ -2,13 +2,12 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "../../context/AuthContext";
-import { HiArrowLeft, HiCheck } from 'react-icons/hi';
-import { iniciarPago, actualizarSessionId } from "../../services/pagos/pago";
-import { CalendarCheck, Clock, ClipboardList, Tag, AlertCircle, Loader2, ArrowLeftCircle, CheckCircle } from "lucide-react";
-import { guardarCitaPendientes } from "../../services/citas/citas";
+import { iniciarPago } from "../../services/pagos/pago";
+import { guardarCitaPendientes, guardarCita } from "../../services/citas/citas";
 import { validarCodigoDescuento } from "../../services/descuento/descuento";
-import { AArrowDown,XCircle  } from "lucide-react";
-
+import axios from "axios";
+import { CalendarCheck, Clock, ClipboardList, Tag, AlertCircle, Loader2, ArrowLeftCircle, CheckCircle } from "lucide-react";
+import { VERIFICAR_PAGO_WOMPI } from "../../api/controllers/pagos/pagos";
 export default function ConfirmarAgenda() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -16,11 +15,10 @@ export default function ConfirmarAgenda() {
   const selectedTime = location.state?.selectedTime;
   const servicio = location.state?.servicio;
   const [codigo, setCodigo] = useState("");
-  const [codigoValido, setCodigoValido] = useState(null); // true o false
+  const [codigoValido, setCodigoValido] = useState(null);
   const [precioFinal, setPrecioFinal] = useState(servicio.precio);
   const [codigoUsado, setCodigoUsado] = useState(null);
   const [porcentajeUsado, setPorcentajeUsado] = useState(null);
-  setPorcentajeUsado
   const { usuario } = useAuth();
 
   const [loading, setLoading] = useState(false);
@@ -35,27 +33,28 @@ export default function ConfirmarAgenda() {
   const formatFechaBD = (fecha) => {
     const date = new Date(fecha);
     const año = date.getFullYear();
-    const mes = String(date.getMonth() + 1).padStart(2, '0');
-    const dia = String(date.getDate()).padStart(2, '0');
+    const mes = String(date.getMonth() + 1).padStart(2, "0");
+    const dia = String(date.getDate()).padStart(2, "0");
     return `${año}-${mes}-${dia}`;
   };
 
   const formatHoraBD = (hora) => {
     if (hora.includes("AM") || hora.includes("PM")) {
-      const [time, modifier] = hora.split(' ');
-      let [hours, minutes] = time.split(':');
+      const [time, modifier] = hora.split(" ");
+      let [hours, minutes] = time.split(":");
       hours = parseInt(hours, 10);
-      if (modifier === 'PM' && hours !== 12) {
+      if (modifier === "PM" && hours !== 12) {
         hours += 12;
       }
-      if (modifier === 'AM' && hours === 12) {
+      if (modifier === "AM" && hours === 12) {
         hours = 0;
       }
-      return `${String(hours).padStart(2, '0')}:${minutes}:00`;
+      return `${String(hours).padStart(2, "0")}:${minutes}:00`;
     } else {
       return `${hora}:00`;
     }
   };
+
   const handleConfirmar = async () => {
     if (!selectedDate || !selectedTime) return;
     setLoading(true);
@@ -69,55 +68,79 @@ export default function ConfirmarAgenda() {
       const fechaFormateada = formatFechaBD(selectedDate);
       const horaFormateada = formatHoraBD(selectedTime);
 
-      if (codigo.trim() !== "") {
-        const res = await validarCodigoDescuento({ codigo });
-        if (res.status === "ok") {
-          const porcentaje = res.porcentaje;
-          const descuento = (servicio.precio * porcentaje) / 100;
-          const nuevoPrecio = servicio.precio - descuento;
-
-          setPrecioFinal(nuevoPrecio);
-          setCodigoValido(true);
-          setCodigoUsado(res.codigo);
-          setPorcentajeUsado(res.porcentaje);
-        } else {
-          setCodigoValido(false);
-          setPrecioFinal(servicio.precio);
-          throw new Error("Código de descuento inválido o expirado");
-        }
-      }
-
+      // 1️⃣ Guardar cita pendiente
       const resCita = await guardarCitaPendientes({
         usuario_id: usuario.id,
         servicio_id: servicio.id,
         fecha: fechaFormateada,
         hora: horaFormateada,
         codigo_descuento: codigoUsado,
-        porcentaje_descuento: porcentajeUsado
+        porcentaje_descuento: porcentajeUsado,
       });
 
       if (resCita.status !== "ok") {
         throw new Error(resCita.message || "Error al guardar la cita pendiente");
       }
 
-      // 💸 Asegúrate que se pase el precio final a Stripe
+      const reference = resCita.reference;
+
+      // 2️⃣ Pedir datos del pago a backend
+      const redirectUrl = `${window.location.origin}/agenda/resultado`;
       const response = await iniciarPago({
-        monto: Math.round(precioFinal * 100),
+        monto: Math.round(precioFinal),
         titulo: servicio.titulo,
-        servicio_id: servicio.id
+        servicio_id: servicio.id,
+        reference,
+        redirect_url: redirectUrl,
       });
 
-      const session_id = response.data.session_id;
-      await actualizarSessionId({ usuario_id: usuario.id, session_id });
-
-      localStorage.setItem("session_id", session_id);
-
-      if (response.data.url) {
-        window.location.href = response.data.url;
-      } else {
-        throw new Error("Error al crear la sesión de pago.");
+      if (response.data.status !== "ok") {
+        throw new Error(response.data.message || "Error al iniciar pago con Wompi");
       }
 
+
+      const { amount_in_cents, currency, integrity_signature } = response.data;
+
+      // 3️⃣ Abrir el widget de Wompi
+      const checkout = new WidgetCheckout({
+        currency,
+        amountInCents: amount_in_cents,
+        reference,
+        publicKey: "pub_test_k5hdWX1ahXc06Pyhu0VEZXOYQIBXGdcg",
+        redirectUrl,
+        signature: { integrity: integrity_signature },
+      });
+
+      checkout.open(async (result) => {
+        console.log("Resultado Wompi:", result);
+
+        try {
+          // 4️⃣ Verificar pago con tu backend usando transactionId
+          const transactionId = result?.transaction?.id;
+          if (!transactionId) {
+            throw new Error("No se recibió transactionId de Wompi");
+          }
+
+          const res = await axios.post(
+            VERIFICAR_PAGO_WOMPI,
+            { transactionId },
+            { headers: { "Content-Type": "application/json" } }
+          );
+
+          console.log("Validación Wompi:", res.data);
+
+          if (res.data?.success) {
+            // 5️⃣ Marcar cita como definitiva
+            await guardarCita({ reference, transactionId });
+            navigate("/agenda/confirmado", { state: { reference } });
+          } else {
+            navigate("/agenda/cancelado");
+          }
+        } catch (err) {
+          console.error("Error al verificar pago:", err);
+          navigate("/agenda/cancelado");
+        }
+      });
     } catch (err) {
       setError("Hubo un error al procesar el pago. Intenta de nuevo.");
       console.error(err);
@@ -125,7 +148,6 @@ export default function ConfirmarAgenda() {
       setLoading(false);
     }
   };
-
 
   const aplicarDescuento = async () => {
     try {
@@ -140,8 +162,7 @@ export default function ConfirmarAgenda() {
         setCodigoValido(true);
         setCodigoUsado(res.codigo);
         setPorcentajeUsado(res.porcentaje);
-      }
-      else {
+      } else {
         setCodigoValido(false);
         setPrecioFinal(servicio.precio);
       }
@@ -158,7 +179,7 @@ export default function ConfirmarAgenda() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="w-full h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#f0f9f5] to-[#e6f4f9] p-5"
+      className="w-full flex flex-col items-center justify-center bg-gradient-to-br from-[#f0f9f5] to-[#e6f4f9] p-5"
     >
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-white/30">
         {/* Header con gradiente */}

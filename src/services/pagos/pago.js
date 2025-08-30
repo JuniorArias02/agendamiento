@@ -1,23 +1,29 @@
 import axios from "axios";
-import { VERIFICAR_PAGO, PAYMENT,ACTUALIZAR_SESSION_ID } from "../../api/controllers/pagos/pagos";
+import { VERIFICAR_PAGO, PAYMENT, ACTUALIZAR_SESSION_ID } from "../../api/controllers/pagos/pagos";
 
-export const verificarPago = async (sessionId) => {
-	try {
-		const res = await axios.post(VERIFICAR_PAGO, { session_id: sessionId });
-		return res.data;
-	} catch (error) {
-		console.error("Error al verificar el pago:", error);
-		throw error;
-	}
-};
-
-export const iniciarPago = async ({ monto, titulo, servicio_id, session_id }) => {
+export async function verificarPago(reference) {
+  try {
+    const res = await axios.get(
+      `https://sandbox.wompi.co/v1/transactions?reference=${reference}`
+    );
+    const tx = res.data.data[0]; // la más reciente
+    return {
+      success: tx && tx.status === "APPROVED",
+      transaction: tx,
+    };
+  } catch (err) {
+    console.error("Error al verificar pago Wompi:", err);
+    return { success: false };
+  }
+}
+export const iniciarPago = async ({ monto, titulo, servicio_id, reference, redirect_url }) => {
   try {
     const response = await axios.post(PAYMENT, {
       monto,
       titulo,
       servicio_id,
-      session_id
+      reference,
+      redirect_url
     });
     return response;
   } catch (error) {
@@ -26,9 +32,9 @@ export const iniciarPago = async ({ monto, titulo, servicio_id, session_id }) =>
   }
 };
 
-export const actualizarSessionId = async ({ usuario_id, session_id }) => {
+export const actualizarSessionId = async ({ usuario_id, reference }) => {
   try {
-    const res = await axios.post(ACTUALIZAR_SESSION_ID, { usuario_id, session_id });
+    const res = await axios.post(ACTUALIZAR_SESSION_ID, { usuario_id, reference });
     return res.data;
   } catch (error) {
     console.error("Error actualizando session_id:", error);

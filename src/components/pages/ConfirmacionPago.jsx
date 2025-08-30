@@ -11,38 +11,40 @@ export default function ConfirmacionPago() {
   const [citaData, setCitaData] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  const verificarPagoYGuardarCita = useCallback(async (sessionId) => {
+  const verificarPagoYGuardarCita = useCallback(async (reference) => {
     try {
-      setLoading(true)
-      const res = await verificarPago(sessionId)
-      
-      if (res?.success) {
-        const citaGuardada = await guardarCita({ session_id: sessionId })
-        localStorage.setItem(`procesado_${sessionId}`, "true")
-        setCitaData(citaGuardada?.data || null)
+      setLoading(true);
 
+      // 🚀 Consultar Wompi con la referencia
+      const res = await verificarPago(reference);
+
+      if (res?.success) {
+        const citaGuardada = await guardarCita({ reference });
+        localStorage.setItem(`procesado_${reference}`, "true");
+        setCitaData(citaGuardada?.data || null);
       } else {
-        console.warn("El pago no fue exitoso")
-        navigate("/agenda/cancelado")
+        console.warn("El pago no fue exitoso");
+        navigate("/agenda/cancelado");
       }
     } catch (error) {
-      console.error("Error al verificar el pago:", error)
-      navigate("/agenda/cancelado")
+      console.error("Error al verificar el pago:", error);
+      navigate("/agenda/cancelado");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [navigate])
+  }, [navigate]);
 
   useEffect(() => {
-    const sessionId = new URLSearchParams(location.search).get("session_id")
-    const yaProcesado = localStorage.getItem(`procesado_${sessionId}`)
-    
-    if (sessionId && !yaProcesado) {
-      verificarPagoYGuardarCita(sessionId)
+    const reference = new URLSearchParams(location.search).get("reference");
+    const yaProcesado = localStorage.getItem(`procesado_${reference}`);
+
+    if (reference && !yaProcesado) {
+      verificarPagoYGuardarCita(reference);
     } else {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [location.search, verificarPagoYGuardarCita])
+  }, [location.search, verificarPagoYGuardarCita]);
+
 
   if (loading) {
     return (
@@ -90,7 +92,7 @@ export default function ConfirmacionPago() {
         {/* Detalles de la cita */}
         <div className="p-6">
           <h3 className="text-lg font-semibold text-[#1c7578] mb-4">Detalles de tu cita</h3>
-          
+
           <div className="space-y-4">
             {citaData?.fecha && (
               <div className="flex items-start gap-3">
