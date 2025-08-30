@@ -112,8 +112,7 @@ export default function ConfirmarAgenda() {
       });
 
       checkout.open(async (result) => {
-        console.log("Resultado Wompi:", result);
-
+      
         try {
           // 4️⃣ Verificar pago con tu backend usando transactionId
           const transactionId = result?.transaction?.id;
@@ -126,8 +125,6 @@ export default function ConfirmarAgenda() {
             { transactionId },
             { headers: { "Content-Type": "application/json" } }
           );
-
-          console.log("Validación Wompi:", res.data);
 
           if (res.data?.success) {
             // 5️⃣ Marcar cita como definitiva

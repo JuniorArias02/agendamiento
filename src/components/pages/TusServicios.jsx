@@ -17,7 +17,6 @@ export default function TuServicios() {
 		setLoading(true);
 		try {
 			const data = await obtenerServiciosPorUsuario(usuario.id);
-			console.log("Servicios cargados:", data.servicios);
 			setServicios(data.servicios);
 		} catch (err) {
 			console.error(err);

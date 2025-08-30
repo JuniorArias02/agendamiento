@@ -1,0 +1,251 @@
+# Query: console
+# ContextLines: 1
+
+57 resultados - Archivos de 23
+
+src\components\pages\Agenda.jsx:
+  57      } else {
+  58:       console.error("Datos incompletos: servicio o usuario_id no están disponibles.");
+  59      }
+
+src\components\pages\ConfirmacionPago.jsx:
+  25        } else {
+  26:         console.warn("El pago no fue exitoso");
+  27          navigate("/agenda/cancelado");
+
+  29      } catch (error) {
+  30:       console.error("Error al verificar el pago:", error);
+  31        navigate("/agenda/cancelado");
+
+src\components\pages\Confirmar.jsx:
+  114        checkout.open(async (result) => {
+  115:     
+  116  
+
+  129 
+  131  
+
+  139          } catch (err) {
+  140:           console.error("Error al verificar pago:", err);
+  141            navigate("/agenda/cancelado");
+
+  145        setError("Hubo un error al procesar el pago. Intenta de nuevo.");
+  146:       console.error(err);
+  147      } finally {
+
+src\components\pages\DetalleCita.jsx:
+  25  			} catch (error) {
+  26: 				console.error("Error cargando cita:", error);
+  27  			} finally {
+
+src\components\pages\EditarServicio.jsx:
+  60      } catch (error) {
+  61:       console.error("Error al actualizar el servicio:", error);
+  62        Swal.fire({
+
+src\components\pages\HistorialAccesos.jsx:
+  16  			.catch((err) => {
+  17: 				console.error("Error cargando accesos:", err);
+  18  			});
+
+src\components\pages\InformePsicologico.jsx:
+  50  			} catch (err) {
+  51: 				console.error('Error al obtener informe', err);
+  52  			}
+
+src\components\pages\Login.jsx:
+   61        } catch (error) {
+   62:         console.error("Error en el registro:", error);
+   63          Swal.fire({
+
+   88        } catch (error) {
+   89:         console.error("Error en el login:", error);
+   90          Swal.fire({
+
+  117      } catch (error) {
+  118:       console.error(error);
+  119        Swal.fire({
+
+src\components\pages\NuevoServicio.jsx:
+  57      } catch (error) {
+  58:       console.error(error);
+  59        Swal.fire({
+
+src\components\pages\reagendarCita.jsx:
+   84  				} catch (err) {
+   85: 					console.error("❌ No se pudieron cargar las horas disponibles");
+   86  				}
+
+  189  		} catch (err) {
+  190: 			console.error("Error al reagendar:", err);
+  191  			setMensaje("❌ Error al reagendar");
+
+src\components\pages\TusCitas.jsx:
+  59      } catch (error) {
+  60:       console.error("Error al actualizar estado:", error);
+  61      } finally {
+
+src\components\pages\TusServicios.jsx:
+  19  			const data = await obtenerServiciosPorUsuario(usuario.id);
+  21  			setServicios(data.servicios);
+  22  		} catch (err) {
+  23: 			console.error(err);
+  24  		}
+
+  37  		} catch (err) {
+  38: 			console.error(err);
+  39  		}
+
+src\components\pages\VerificarCuenta.jsx:
+  24  			setMensaje("Hubo un error, intenta más tarde.");
+  25: 			console.error(err);
+  26  		}
+
+src\components\ui\calendar.jsx:
+  39        } catch (error) {
+  40:         console.error("Error cargando días disponibles:", error);
+  41          setAvailableDates([]);
+
+src\components\ui\schedule.jsx:
+  26        })
+  27:       .catch((error) => console.error("Error al obtener horas disponibles:", error));
+  28  
+
+  40        })
+  41:       .catch((error) => console.error("Error al obtener horas ocupadas:", error));
+  42  
+
+src\services\auth\auth_services.js:
+   8    } catch (error) {
+   9:     console.error("Error registrando:", error);
+  10      throw error;
+
+  19    } catch (error) {
+  20:     console.error("Error logueando:", error);
+  21      throw error;
+
+  30    } catch (error) {
+  31:     console.error("Error recuperando contraseña:", error);
+  32      throw error;
+
+  40    } catch (error) {
+  41:     console.error("Error validando el código:", error);
+  42      throw error;
+
+  50    } catch (error) {
+  51:     console.error("Error al cambiar contraseña:", error);
+  52      throw error;
+
+src\services\citas\citas.js:
+   10      });
+   11:     console.log("Horas disponibles:", response);
+   12      return response.data;
+   13    } catch (error) {
+   14:     console.error("Error obteniendo horas disponibles:", error);
+   15      throw error;
+
+   27    } catch (error) {
+   28:     console.error("Error obteniendo horas ocupadas:", error);
+   29      throw error;
+
+   40    } catch (error) {
+   41:     console.error("Error guardando disponibilidad:", error);
+   42      throw error;
+
+   50    } catch (error) {
+   51:     console.error("Error al obtener detalle de cita:", error);
+   52      throw error;
+
+   63    } catch (error) {
+   64:     console.error("Error al obtener citas:", error);
+   65      return [];
+
+   76    } catch (error) {
+   77:     console.error("Error al actualizar estado de cita:", error);
+   78      throw error;
+
+   86    } catch (error) {
+   87:     console.error("Error al guardar cita:", error);
+   88      throw error;
+
+   97    } catch (error) {
+   98:     console.error("Error al guardar cita:", error);
+   99      throw error;
+
+  107    } catch (error) {
+  108:     console.error("Error al guardar cita:", error);
+  109      throw error;
+
+  118    } catch (error) {
+  119:     console.error("Error al guardar cita:", error);
+  120      throw error;
+
+src\services\descuento\descuento.js:
+   9    } catch (error) {
+  10:     console.error("Error generando el código de descuento:", error);
+  11      throw error;
+
+  19    } catch (error) {
+  20:     console.error("Error validando el código de descuento:", error);
+  21      throw error;
+
+src\services\historial\historial.js:
+   9    } catch (error) {
+  10:     console.error("Error obteniendo historial de accesos:", error);
+  11      throw error;
+
+src\services\informes\informes.js:
+   9    } catch (error) {
+  10:     console.error("Error al obtener informe:", error);
+  11      throw error;
+
+  20    } catch (error) {
+  21:     console.error("Error al guardar informe:", error);
+  22      throw error;
+
+src\services\pagos\pago.js:
+  14    } catch (err) {
+  15:     console.error("Error al verificar pago Wompi:", err);
+  16      return { success: false };
+
+  29    } catch (error) {
+  30:     console.error("Error al iniciar pago:", error);
+  31      throw error;
+
+  39    } catch (error) {
+  40:     console.error("Error actualizando session_id:", error);
+  41      throw error;
+
+src\services\perfil\perfil.js:
+   8    } catch (error) {
+   9:     console.error("Error al obtener perfil:", error);
+  10      throw error;
+
+  22    } catch (error) {
+  23:     console.error("Error al actualizar perfil:", error);
+  24      throw error;
+
+src\services\servicios\servicios.js:
+  11    } catch (error) {
+  12:     console.error("Error al listar servicios:", error);
+  13      throw error;
+
+  22    } catch (error) {
+  23:     console.error("Error al eliminar servicio:", error);
+  24      throw error;
+
+  32    } catch (error) {
+  33:     console.error("Error al listar servicios públicos:", error);
+  34      throw error;
+
+  40      for (let pair of formData.entries()) {
+  41:       console.log(pair[0] + ':', pair[1]);
+  42      }
+
+  49    } catch (error) {
+  50:     console.error("Error al crear servicio:", error);
+  51      throw error;
+
+  72    } catch (error) {
+  73:     console.error("Error al actualizar servicio:", error);
+  74      throw error;
