@@ -171,7 +171,7 @@ function Navbar() {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-[#61CE70] to-[#6EC1E4] z-50 shadow-lg lg:hidden"
+            className="fixed top-0 left-0 h-full w-64bg-gradient-to-b from-[#1A535C] to-[#4ECDC4] z-50 shadow-lg lg:hidden"
           >
             <div className="p-6 flex flex-col gap-6 h-full">
               {/* Encabezado */}
@@ -247,7 +247,7 @@ function Navbar() {
   return (
     <>
       {/* Navbar superior (solo para móvil) */}
-      <nav className="w-full px-4 sm:px-6 py-3 bg-gradient-to-r from-[#61CE70] to-[#6EC1E4] shadow-lg flex items-center justify-between fixed top-0 z-40 lg:hidden">
+      <nav className="w-full px-4 sm:px-6 py-3 bg-gradient-to-b from-[#1A535C] to-[#4ECDC4] shadow-lg flex items-center justify-between fixed top-0 z-40 lg:hidden">
         {/* Botón para abrir menú móvil */}
         <button
           className="text-white focus:outline-none"
