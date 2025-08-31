@@ -171,7 +171,7 @@ function Navbar() {
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed top-0 left-0 h-full w-64 bg-gradient-to-b from-[#1A535C] to-[#4ECDC4] z-50 shadow-lg lg:hidden"
+            className="fixed top-0 left-0 h-full w-70 bg-gradient-to-b from-[#1A535C] to-[#4ECDC4] z-50 shadow-lg lg:hidden"
           >
             <div className="p-6 flex flex-col gap-6 h-full">
               {/* Encabezado */}
