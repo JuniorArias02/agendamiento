@@ -159,9 +159,19 @@ export default function ConfirmarAgenda() {
         }
       });
     } catch (err) {
-      setError("Hubo un error al procesar el pago. Intenta de nuevo.");
-      console.error(err);
-    } finally {
+      console.error("Error en handleConfirmar:", err);
+
+      let mensaje = "Ocurrió un error inesperado.";
+
+      if (err.response?.data?.message) {
+        mensaje = err.response.data.message; // viene del backend
+      } else if (err.message) {
+        mensaje = err.message; // viene de un throw new Error()
+      }
+
+      setError(mensaje);
+    }
+    finally {
       setLoading(false);
     }
   };
