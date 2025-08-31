@@ -1,4 +1,2 @@
-// export const URL_ENDPOINT = 'http://localhost:8888';
-// export const PATH_IMAGEN = 'http://localhost:8888';
-export const URL_ENDPOINT = 'https://psicologicamentehablando.space/AgendamientoApi';
-export const PATH_IMAGEN = 'https://psicologicamentehablando.space/AgendamientoApi';
+export const URL_ENDPOINT = import.meta.env.VITE_URL_PATH;
+export const PATH_IMAGEN = import.meta.env.VITE_URL_IMAGE;
