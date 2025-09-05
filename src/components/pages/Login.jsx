@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { useAuth } from "../../context/AuthContext";
@@ -97,17 +97,43 @@ export default function Login() {
     }
   };
 
+  const [animated, setAnimated] = useState(false);
+
+  useEffect(() => {
+    // Activar animaciones después de un breve retraso
+    const timer = setTimeout(() => {
+      setAnimated(true);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+
   return (
     <div className="min-h-screen flex">
       {/* Lado izquierdo - Contenido visual */}
       <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-700 via-teal-600 to-green-500 relative overflow-hidden">
-        {/* Fondos con formas sutiles */}
-        <div className="absolute -top-20 -left-20 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl"></div>
+        {/* Fondos con formas sutiles y animadas */}
+        <div className={`absolute -top-20 -left-20 w-80 h-80 bg-white/5 rounded-full blur-3xl transition-all duration-1000 ${animated ? 'opacity-100' : 'opacity-0'}`}></div>
+        <div className={`absolute bottom-0 right-0 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl transition-all duration-1000 delay-300 ${animated ? 'opacity-100' : 'opacity-0'}`}></div>
+
+        {/* Copos decorativos animados */}
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute w-2 h-2 bg-white/30 rounded-full"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animation: `float ${6 + Math.random() * 10}s infinite ease-in-out`,
+              animationDelay: `${Math.random() * 5}s`,
+              opacity: 0.3 + Math.random() * 0.4
+            }}
+          ></div>
+        ))}
 
         {/* Contenedor principal */}
         <div className="relative z-10 flex flex-col justify-center items-center w-full h-full px-12 text-white">
-
           {/* Logo y nombre */}
           <div className="absolute top-8 left-8 flex items-center space-x-3">
             <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm overflow-hidden">
@@ -119,62 +145,44 @@ export default function Login() {
             </div>
             <span className="text-xl font-semibold">PsicologicamenteHablando</span>
           </div>
-          {/* Foto de la doctora */}
-          <div className="mb-8 relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/30 shadow-xl">
-              <img
-                src="perfil.png"
-                alt="Dra. Psicóloga"
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
 
-          {/* Carrusel moderno */}
-          <div className="w-full max-w-md mx-auto relative">
-            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl">
-              <div className="text-center">
-                <h2 className="text-2xl font-bold mb-4">Bienestar Mental Integral</h2>
-                <p className="text-white/90 mb-6">Te acompañamos en tu camino hacia el equilibrio emocional y mental.</p>
+          {/* Mensaje central con animación */}
+          <div className={`text-center max-w-md transform transition-all duration-700 ${animated ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+            <h2 className="text-3xl font-bold mb-4">Bienvenida a tu espacio seguro</h2>
+            <p className="text-lg opacity-90 mb-6">Donde tu bienestar mental es la prioridad</p>
+
+            {/* Elementos decorativos de texto */}
+            <div className="flex justify-center space-x-6 mt-8">
+              <div className={`transition-all duration-1000 delay-500 ${animated ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="text-4xl mb-2">🌿</div>
+                <p className="text-sm">Crecimiento</p>
               </div>
-
-              {/* Contenedor del carrusel */}
-              <div className="relative h-40 overflow-hidden rounded-xl">
-                <div className="absolute inset-0 flex flex-col space-y-4 carrusel-container">
-                  {[
-                    "✨ Atención personalizada y confidencial",
-                    "💖 Enfocado en tu crecimiento personal",
-                    "🌱 Herramientas para tu día a día",
-                    "📅 Sesiones online y presenciales",
-                    "🕊️ Espacio seguro de expresión",
-                    "🌟 Profesionales certificados"
-                  ].map((message, index) => (
-                    <div
-                      key={index}
-                      className="carrusel-item bg-white/5 p-4 rounded-lg border border-white/10 backdrop-blur-sm flex-shrink-0"
-                    >
-                      <div className="text-center font-medium">
-                        {message}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className={`transition-all duration-1000 delay-700 ${animated ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="text-4xl mb-2">💚</div>
+                <p className="text-sm">Bienestar</p>
               </div>
-
-              {/* Indicadores del carrusel */}
-              <div className="flex justify-center space-x-2 mt-4">
-                {[0, 1, 2, 3, 4, 5].map((dot) => (
-                  <div key={dot} className="w-2 h-2 bg-white/30 rounded-full carrusel-dot"></div>
-                ))}
+              <div className={`transition-all duration-1000 delay-900 ${animated ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="text-4xl mb-2">✨</div>
+                <p className="text-sm">Armonía</p>
               </div>
             </div>
           </div>
 
-          {/* Elemento decorativo */}
+          {/* Elemento decorativo inferior */}
           <div className="absolute bottom-8 text-center text-sm text-white/70">
             <p>Tu bienestar mental es nuestra prioridad</p>
           </div>
         </div>
+
+        {/* Estilos para las animaciones */}
+        <style>
+          {`
+          @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+          }
+        `}
+        </style>
       </div>
       {/* Lado derecho - Formulario */}
       <div className="w-full lg:w-1/2 flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-50">
