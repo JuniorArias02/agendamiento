@@ -53,7 +53,6 @@ function Navbar() {
 
   // Definición de enlaces con iconos
   const enlacesPsicologa = [
-    { label: "Inicio", to: RUTAS.INICIO, icon: <Home size={20} /> },
     { label: "Tus Citas", to: RUTAS.TUS_CITAS.ROOT, icon: <Calendar size={20} /> },
     { label: "Tus Servicios", to: RUTAS.SERVICIOS.TUS, icon: <BarChart3 size={20} /> },
     { label: "Mi Disponibilidad", to: RUTAS.DISPONIBILIDAD, icon: <Clock size={20} /> },
@@ -62,7 +61,6 @@ function Navbar() {
   ];
 
   const enlacesPaciente = [
-    { label: "Inicio", to: "https://psicologicamentehablando.space/", icon: <Home size={20} /> },
     { label: "Tus Citas", to: RUTAS.TUS_CITAS.ROOT, icon: <Calendar size={20} /> },
     { label: "Nueva Agenda", to: RUTAS.AGENDA.NUEVA, icon: <CalendarPlus size={20} /> },
     { label: "Mis Informes", to: RUTAS.HISTORIAL_ACCESOS, icon: <FileText size={20} /> },
@@ -72,7 +70,6 @@ function Navbar() {
 
   if (!usuario) {
     links = [
-      { label: "Inicio", to: "https://psicologicamentehablando.space/", icon: <Home size={20} /> },
       { label: "Nueva Agenda", to: RUTAS.AGENDA.NUEVA, icon: <CalendarPlus size={20} /> }
     ];
   } else if (usuario.rol === "psicologa") {

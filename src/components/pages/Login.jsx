@@ -1,33 +1,37 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { registrarUsuario, loginUsuario, recuperarContrasena } from "../../services/auth/auth_services";
-import axios from "axios";
-import { useAuth } from "../../context/AuthContext";
 import Swal from "sweetalert2";
+import { useAuth } from "../../context/AuthContext";
+import { registrarUsuario, loginUsuario, recuperarContrasena } from "../../services/auth/auth_services";
+import { RUTAS } from "../../routers/routers";
+
+// Importamos los componentes de Lucide para los iconos
 import {
+  Brain,
+  Eye,
+  EyeOff,
   Mail,
-  LogIn,
-  Send,
+  Lock,
   User,
   IdCard,
   Phone,
-  ChevronDown,
-  Lock,
-  UserPlus
+  ArrowLeft,
+  Calendar
 } from "lucide-react";
-import { RUTAS } from "../../routers/routers";
 
 export default function Login() {
   const [isRegistering, setIsRegistering] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
+  const [mostrarContrasena, setMostrarContrasena] = useState(false);
+
   const [nombre, setNombre] = useState("");
   const [documento, setDocumento] = useState("");
   const [correo, setCorreo] = useState("");
   const [contrasena, setContrasena] = useState("");
   const [telefono, setTelefono] = useState("");
-  const [telefonoPrefijo, setTelefonoPrefijo] = useState("");
+  const [telefonoPrefijo, setTelefonoPrefijo] = useState("+57");
   const [correoRecuperar, setCorreoRecuperar] = useState("");
+
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -38,7 +42,6 @@ export default function Login() {
 
     if (isRegistering) {
       const telefonoCompleto = telefonoPrefijo + telefono.replace(/\s/g, '');
-
       try {
         const data = await registrarUsuario({
           nombre,
@@ -52,19 +55,11 @@ export default function Login() {
           login(data.usuario);
           navigate("/verificar_cuenta");
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: data.message,
-          });
+          Swal.fire({ icon: 'error', title: 'Oops...', text: data.message });
         }
       } catch (error) {
         console.error("Error en el registro:", error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Hubo un error registrando el usuario.',
-        });
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Hubo un error registrando el usuario.' });
       }
     } else {
       try {
@@ -74,12 +69,7 @@ export default function Login() {
           login(data.usuario);
           navigate("/nueva_agenda");
         } else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: data.message,
-          });
-
+          Swal.fire({ icon: 'error', title: 'Oops...', text: data.message });
           if (data.noVerificado) {
             navigate("/verificar_cuenta");
             return;
@@ -87,11 +77,7 @@ export default function Login() {
         }
       } catch (error) {
         console.error("Error en el login:", error);
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: 'Hubo un error al iniciar sesión.',
-        });
+        Swal.fire({ icon: 'error', title: 'Error', text: 'Hubo un error al iniciar sesión.' });
       }
     }
   };
@@ -99,295 +85,359 @@ export default function Login() {
   const handleRecuperar = async () => {
     try {
       const data = await recuperarContrasena({ correo: correoRecuperar });
-
       if (data.success) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Código enviado',
-          text: "Se ha enviado un código a tu correo.",
-        });
+        Swal.fire({ icon: 'success', title: 'Código enviado', text: "Se ha enviado un código a tu correo." });
         navigate("/verificar_codigo");
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: data.message || "No se pudo enviar el correo.",
-        });
+        Swal.fire({ icon: 'error', title: 'Error', text: data.message || "No se pudo enviar el correo." });
       }
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Error al enviar el código.',
-      });
+      Swal.fire({ icon: 'error', title: 'Error', text: 'Error al enviar el código.' });
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#6EC1E4]/10 to-[#61CE70]/10 flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Elementos decorativos de fondo */}
-      <div className="absolute -top-20 -left-20 w-64 h-64 rounded-full bg-[#6EC1E4]/20 blur-3xl"></div>
-      <div className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full bg-[#61CE70]/20 blur-3xl"></div>
+    <div className="min-h-screen flex">
+      {/* Lado izquierdo - Contenido visual */}
+      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-emerald-700 via-teal-600 to-green-500 relative overflow-hidden">
+        {/* Fondos con formas sutiles */}
+        <div className="absolute -top-20 -left-20 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl"></div>
 
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ type: "spring", damping: 20, stiffness: 300 }}
-        className="w-full max-w-md bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden border border-white/20"
-      >
-        {/* Header con gradiente */}
-        <div className="bg-gradient-to-r from-[#6EC1E4] to-[#61CE70] p-6 text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-2xl font-bold text-white"
-          >
-            {isRecovering
-              ? "Recuperar contraseña"
-              : isRegistering
-                ? "Crear cuenta"
-                : "Iniciar sesión"}
-          </motion.h2>
+        {/* Contenedor principal */}
+        <div className="relative z-10 flex flex-col justify-center items-center w-full h-full px-12 text-white">
+
+          {/* Logo y nombre */}
+          <div className="absolute top-8 left-8 flex items-center space-x-3">
+            <div className="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center backdrop-blur-sm overflow-hidden">
+              <img
+                src="/logo1.png"
+                alt="Logo PsicologicamenteHablando"
+                className="w-full h-full object-contain p-1"
+              />
+            </div>
+            <span className="text-xl font-semibold">PsicologicamenteHablando</span>
+          </div>
+          {/* Foto de la doctora */}
+          <div className="mb-8 relative">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/30 shadow-xl">
+              <img
+                src="perfil.png"
+                alt="Dra. Psicóloga"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+
+          {/* Carrusel moderno */}
+          <div className="w-full max-w-md mx-auto relative">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 shadow-xl">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold mb-4">Bienestar Mental Integral</h2>
+                <p className="text-white/90 mb-6">Te acompañamos en tu camino hacia el equilibrio emocional y mental.</p>
+              </div>
+
+              {/* Contenedor del carrusel */}
+              <div className="relative h-40 overflow-hidden rounded-xl">
+                <div className="absolute inset-0 flex flex-col space-y-4 carrusel-container">
+                  {[
+                    "✨ Atención personalizada y confidencial",
+                    "💖 Enfocado en tu crecimiento personal",
+                    "🌱 Herramientas para tu día a día",
+                    "📅 Sesiones online y presenciales",
+                    "🕊️ Espacio seguro de expresión",
+                    "🌟 Profesionales certificados"
+                  ].map((message, index) => (
+                    <div
+                      key={index}
+                      className="carrusel-item bg-white/5 p-4 rounded-lg border border-white/10 backdrop-blur-sm flex-shrink-0"
+                    >
+                      <div className="text-center font-medium">
+                        {message}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Indicadores del carrusel */}
+              <div className="flex justify-center space-x-2 mt-4">
+                {[0, 1, 2, 3, 4, 5].map((dot) => (
+                  <div key={dot} className="w-2 h-2 bg-white/30 rounded-full carrusel-dot"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Elemento decorativo */}
+          <div className="absolute bottom-8 text-center text-sm text-white/70">
+            <p>Tu bienestar mental es nuestra prioridad</p>
+          </div>
         </div>
+      </div>
+      {/* Lado derecho - Formulario */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="w-full max-w-md">
+          {/* Logo móvil */}
+          <div className="lg:hidden flex justify-center mb-8">
+            <div className="bg-indigo-600 p-4 rounded-2xl">
+              <Brain size={40} className="text-white" />
+            </div>
+          </div>
+          {/* Formulario */}
+          <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
+            <div className="text-center mb-7">
+              <h2 className="text-2xl font-bold text-gray-800">
+                {isRecovering ? 'Recuperar Acceso' : isRegistering ? 'Crear Cuenta' : 'Iniciar Sesión'}
+              </h2>
+              <p className="text-gray-500 mt-2">
+                {isRecovering
+                  ? 'Te enviaremos un código de recuperación'
+                  : isRegistering
+                    ? 'Completa tus datos para registrarte'
+                    : 'Ingresa a tu cuenta para continuar'
+                }
+              </p>
+            </div>
 
-        <div className="p-6 sm:p-8 space-y-6">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            {isRecovering ? (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="space-y-5"
-              >
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="w-5 h-5 text-[#6EC1E4]" />
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {isRecovering ? (
+                <div className="space-y-5">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="text-gray-400" size={20} />
+                    </div>
+                    <input
+                      type="email"
+                      value={correoRecuperar}
+                      onChange={(e) => setCorreoRecuperar(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 focus:bg-white"
+                      placeholder="Correo electrónico"
+                      required
+                    />
                   </div>
-                  <input
-                    type="email"
-                    placeholder="Correo electrónico"
-                    value={correoRecuperar}
-                    onChange={(e) => setCorreoRecuperar(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E0E5EC] focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 bg-white/50 outline-none transition-all"
-                    required
-                  />
-                </div>
 
-                <motion.button
-                  type="button"
-                  onClick={handleRecuperar}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-gradient-to-r from-[#6EC1E4] to-[#61CE70] text-white py-3 px-6 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  <Send className="w-5 h-5" />
-                  <span>Enviar código</span>
-                </motion.button>
-              </motion.div>
-            ) : (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-                className="space-y-5"
-              >
-                {isRegistering && (
-                  <>
-                    <div className="relative">
+                  <button
+                    type="button"
+                    onClick={handleRecuperar}
+                    className="w-full bg-emerald-600 text-white py-3.5 px-4 rounded-xl hover:bg-emerald-700 transition-all duration-300 font-medium flex items-center justify-center gap-2 shadow-md hover:shadow-lg"
+                  >
+                    <Mail size={20} />
+                    Enviar código de recuperación
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsRecovering(false)}
+                    className="w-full text-gray-600 py-3.5 px-4 rounded-xl hover:bg-gray-50 transition-colors font-medium flex items-center justify-center gap-2 border border-gray-200"
+                  >
+                    <ArrowLeft size={20} />
+                    Volver al inicio
+                  </button>
+                </div>
+              ) : isRegistering ? (
+                <div className="space-y-5">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <User className="text-gray-400" size={20} />
+                    </div>
+                    <input
+                      type="text"
+                      value={nombre}
+                      onChange={(e) => setNombre(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 focus:bg-white"
+                      placeholder="Nombre completo"
+                      required
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <IdCard className="text-gray-400" size={20} />
+                    </div>
+                    <input
+                      type="text"
+                      value={documento}
+                      onChange={(e) => setDocumento(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 focus:bg-white"
+                      placeholder="Número de documento"
+                      required
+                    />
+                  </div>
+
+                  <div className="flex gap-3">
+                    <div className="w-1/4">
+                      <select
+                        value={telefonoPrefijo}
+                        onChange={(e) => setTelefonoPrefijo(e.target.value)}
+                        className="w-full px-3 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 focus:bg-white"
+                      >
+                        <option value="+57">+57</option>
+                        <option value="+1">+1</option>
+                        <option value="+52">+52</option>
+                        <option value="+34">+34</option>
+                      </select>
+                    </div>
+                    <div className="w-3/4 relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <User className="w-5 h-5 text-[#6EC1E4]" />
+                        <Phone className="text-gray-400" size={20} />
                       </div>
                       <input
-                        type="text"
-                        placeholder="Nombre completo"
-                        value={nombre}
-                        onChange={(e) => setNombre(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E0E5EC] focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 bg-white/50 outline-none transition-all"
+                        type="tel"
+                        value={telefono}
+                        onChange={(e) => setTelefono(e.target.value)}
+                        className="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 focus:bg-white"
+                        placeholder="Número de teléfono"
                         required
                       />
                     </div>
-
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <IdCard className="w-5 h-5 text-[#6EC1E4]" />
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Documento"
-                        value={documento}
-                        onChange={(e) => setDocumento(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E0E5EC] focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 bg-white/50 outline-none transition-all"
-                        required
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3">
-                      <div className="col-span-1 relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <Phone className="w-5 h-5 text-[#6EC1E4]" />
-                        </div>
-                        <select
-                          value={telefonoPrefijo}
-                          onChange={(e) => setTelefonoPrefijo(e.target.value)}
-                          className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E0E5EC] focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 bg-white/50 outline-none appearance-none"
-                          required
-                        >
-                          {/* América Latina */}
-                          <option value="+54">+54 (AR) Argentina</option>
-                          <option value="+591">+591 (BO) Bolivia</option>
-                          <option value="+55">+55 (BR) Brasil</option>
-                          <option value="+56">+56 (CL) Chile</option>
-                          <option value="+57">+57 (CO) Colombia</option>
-                          <option value="+506">+506 (CR) Costa Rica</option>
-                          <option value="+53">+53 (CU) Cuba</option>
-                          <option value="+593">+593 (EC) Ecuador</option>
-                          <option value="+503">+503 (SV) El Salvador</option>
-                          <option value="+502">+502 (GT) Guatemala</option>
-                          <option value="+504">+504 (HN) Honduras</option>
-                          <option value="+52">+52 (MX) México</option>
-                          <option value="+505">+505 (NI) Nicaragua</option>
-                          <option value="+507">+507 (PA) Panamá</option>
-                          <option value="+595">+595 (PY) Paraguay</option>
-                          <option value="+51">+51 (PE) Perú</option>
-                          <option value="+598">+598 (UY) Uruguay</option>
-                          <option value="+58">+58 (VE) Venezuela</option>
-
-                          {/* Europa */}
-                          <option value="+43">+43 (AT) Austria</option>
-                          <option value="+32">+32 (BE) Bélgica</option>
-                          <option value="+359">+359 (BG) Bulgaria</option>
-                          <option value="+420">+420 (CZ) Chequia</option>
-                          <option value="+45">+45 (DK) Dinamarca</option>
-                          <option value="+34">+34 (ES) España</option>
-                          <option value="+33">+33 (FR) Francia</option>
-                          <option value="+49">+49 (DE) Alemania</option>
-                          <option value="+30">+30 (GR) Grecia</option>
-                          <option value="+39">+39 (IT) Italia</option>
-                          <option value="+31">+31 (NL) Países Bajos</option>
-                          <option value="+351">+351 (PT) Portugal</option>
-                          <option value="+40">+40 (RO) Rumanía</option>
-                          <option value="+46">+46 (SE) Suecia</option>
-                          <option value="+44">+44 (UK) Reino Unido</option>
-
-                          {/* Otros comunes */}
-                          <option value="+1">+1 (US/CA) Estados Unidos / Canadá</option>
-                        </select>
-                        <ChevronDown className="w-4 h-4 absolute right-3 top-1/2 transform -translate-y-1/2 text-[#6EC1E4]" />
-                      </div>
-                      <div className="col-span-2 relative">
-                        <input
-                          type="text"
-                          placeholder="Número de teléfono"
-                          value={telefono}
-                          onChange={(e) => setTelefono(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl border border-[#E0E5EC] focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 bg-white/50 outline-none transition-all"
-                          required
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="w-5 h-5 text-[#6EC1E4]" />
                   </div>
-                  <input
-                    type="email"
-                    placeholder="Correo electrónico"
-                    value={correo}
-                    onChange={(e) => setCorreo(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E0E5EC] focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 bg-white/50 outline-none transition-all"
-                    required
-                  />
-                </div>
 
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="w-5 h-5 text-[#6EC1E4]" />
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="text-gray-400" size={20} />
+                    </div>
+                    <input
+                      type="email"
+                      value={correo}
+                      onChange={(e) => setCorreo(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 focus:bg-white"
+                      placeholder="Correo electrónico"
+                      required
+                    />
                   </div>
-                  <input
-                    type="password"
-                    placeholder="Contraseña"
-                    value={contrasena}
-                    onChange={(e) => setContrasena(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#E0E5EC] focus:border-[#6EC1E4] focus:ring-2 focus:ring-[#6EC1E4]/30 bg-white/50 outline-none transition-all"
-                    required
-                  />
-                </div>
 
-                <motion.button
-                  type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="w-full bg-gradient-to-r from-[#6EC1E4] to-[#61CE70] text-white py-3 px-6 rounded-xl font-semibold shadow-md hover:shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  {isRegistering ? (
-                    <>
-                      <UserPlus className="w-5 h-5" />
-                      <span>Registrarse</span>
-                    </>
-                  ) : (
-                    <>
-                      <LogIn className="w-5 h-5" />
-                      <span>Entrar</span>
-                    </>
-                  )}
-                </motion.button>
-              </motion.div>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="text-gray-400" size={20} />
+                    </div>
+                    <input
+                      type={mostrarContrasena ? "text" : "password"}
+                      value={contrasena}
+                      onChange={(e) => setContrasena(e.target.value)}
+                      className="w-full pl-11 pr-11 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 focus:bg-white"
+                      placeholder="Contraseña"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                    >
+                      {mostrarContrasena ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-emerald-600 text-white py-3.5 px-4 rounded-xl hover:bg-emerald-700 transition-all duration-300 font-medium shadow-md hover:shadow-lg"
+                  >
+                    Crear cuenta
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Mail className="text-gray-400" size={20} />
+                    </div>
+                    <input
+                      type="email"
+                      value={correo}
+                      onChange={(e) => setCorreo(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 focus:bg-white"
+                      placeholder="Correo electrónico"
+                      required
+                    />
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <Lock className="text-gray-400" size={20} />
+                    </div>
+                    <input
+                      type={mostrarContrasena ? "text" : "password"}
+                      value={contrasena}
+                      onChange={(e) => setContrasena(e.target.value)}
+                      className="w-full pl-11 pr-11 py-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all duration-200 bg-gray-50/50 focus:bg-white"
+                      placeholder="Contraseña"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setMostrarContrasena(!mostrarContrasena)}
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1"
+                    >
+                      {mostrarContrasena ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input type="checkbox" className="rounded text-emerald-600 focus:ring-emerald-500" />
+                      <span className="text-sm text-gray-600">Recordarme</span>
+                    </label>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsRecovering(true);
+                        setIsRegistering(false);
+                      }}
+                      className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </button>
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-emerald-600 text-white py-3.5 px-4 rounded-xl hover:bg-emerald-700 transition-all duration-300 font-medium shadow-md hover:shadow-lg"
+                  >
+                    Iniciar sesión
+                  </button>
+                </div>
+              )}
+            </form>
+
+            {/* Separador */}
+            {!isRecovering && (
+              <div className="my-6 flex items-center">
+                <div className="flex-grow border-t border-gray-200"></div>
+                <span className="mx-4 text-sm text-gray-500">o</span>
+                <div className="flex-grow border-t border-gray-200"></div>
+              </div>
             )}
-          </form>
 
-          {!isRecovering && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-center space-y-3"
-            >
-              {/* Botón para ver servicios */}
-              <p className="text-sm text-[#5A6D8B]">
+            {/* Footer opciones */}
+            {!isRecovering && (
+              <div className="text-center space-y-4 mt-6 pt-6 border-t border-gray-200">
                 <button
                   onClick={() => navigate(RUTAS.AGENDA.NUEVA)}
-                  className="text-[#6EC1E4] font-medium hover:underline focus:outline-none"
+                  className="flex items-center justify-center gap-2 text-emerald-600 hover:text-emerald-700 font-medium text-sm w-full py-3 rounded-xl hover:bg-emerald-50/50 transition-colors"
                 >
-                  Ver Servicios
+                  <Calendar size={18} />
+                  Ver Servicios y Agendar Cita
                 </button>
-              </p>
 
-              {/* Alternar entre registro/login */}
-              <p className="text-sm text-[#5A6D8B]">
-                {isRegistering ? "¿Ya tienes una cuenta?" : "¿No tienes una cuenta?"}{" "}
-                <button
-                  onClick={() => {
-                    setIsRegistering(!isRegistering);
-                    setIsRecovering(false);
-                  }}
-                  className="text-[#6EC1E4] font-medium hover:underline focus:outline-none"
-                >
-                  {isRegistering ? "Inicia sesión" : "Regístrate"}
-                </button>
-              </p>
-
-              {/* Recuperar contraseña */}
-              <p className="text-sm text-[#5A6D8B]">
-                <button
-                  onClick={() => {
-                    setIsRecovering(true);
-                    setIsRegistering(false);
-                  }}
-                  className="text-[#6EC1E4] font-medium hover:underline focus:outline-none"
-                >
-                  ¿Olvidaste tu contraseña?
-                </button>
-              </p>
-            </motion.div>
-          )}
+                <p className="text-sm text-gray-600">
+                  {isRegistering ? "¿Ya tienes una cuenta?" : "¿No tienes una cuenta?"}{" "}
+                  <button
+                    onClick={() => {
+                      setIsRegistering(!isRegistering);
+                      setIsRecovering(false);
+                    }}
+                    className="text-emerald-600 hover:text-emerald-700 font-medium"
+                  >
+                    {isRegistering ? "Inicia sesión" : "Regístrate"}
+                  </button>
+                </p>
+              </div>
+            )}
+          </div>
         </div>
-      </motion.div>
+      </div>
     </div>
-
   );
 }

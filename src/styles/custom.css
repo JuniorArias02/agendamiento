@@ -102,9 +102,8 @@
 .bg-custom-blue-5-down:hover {
   background-color: #186063;
   transition-duration: 0.6s;
-}w
-
-.text-custom-blue-3 {
+}
+w .text-custom-blue-3 {
   color: #1c7578;
   transition-duration: 0.6s;
 }
@@ -114,53 +113,52 @@
   transition-duration: 0.6s;
 }
 .bg-custom-verDetalles {
-  background-color: #A0A4B8;
+  background-color: #a0a4b8;
   color: white;
 }
 
 .bg-custom-contactar {
-  background-color: #2A6F77;
+  background-color: #2a6f77;
   color: white;
 }
 
 .bg-custom-ingresarCita {
-  background-color: #C97C74;
+  background-color: #c97c74;
   color: white;
 }
 
 .bg-custom-anotaciones {
-  background-color: #D7CFC4;
+  background-color: #d7cfc4;
   color: #333;
 }
 
 /* Hover Effects */
 .bg-custom-verDetalles:hover {
-  background-color: #8F94AB;
+  background-color: #8f94ab;
 }
 
 .bg-custom-contactar:hover {
-  background-color: #225A60;
+  background-color: #225a60;
 }
 
 .bg-custom-ingresarCita:hover {
-  background-color: #B86D65;
+  background-color: #b86d65;
 }
 
 .bg-custom-anotaciones:hover {
-  background-color: #CBBFB1;
+  background-color: #cbbfb1;
 }
 
 /* en tu archivo CSS global */
 .bg-crema {
-  background-color: #FFF8F0;
+  background-color: #fff8f0;
 }
 .text-marron-oscuro {
-  color: #5C4033;
+  color: #5c4033;
 }
 .border-marron-claro {
-  border-color: #A47551;
+  border-color: #a47551;
 }
-
 
 .print-friendly * {
   background-image: none !important;
@@ -169,7 +167,6 @@
   box-shadow: none !important;
   border-color: #000 !important;
 }
-
 
 /* informes vista */
 .custom-redes-container {
@@ -235,36 +232,197 @@
   margin: 0;
 }
 
-
 .prubneas {
   background-color: rgba(97, 172, 206, 0.2);
 }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
   }
-  
-  .animate-fadeIn {
-    animation: fadeIn 0.3s ease-out forwards;
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
+}
 
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out forwards;
+}
 
-  @keyframes bounceIn {
-    0% { opacity: 0; transform: scale(0.8); }
-    50% { opacity: 1; transform: scale(1.05); }
-    100% { transform: scale(1); }
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
   }
-  .animate-bounceIn {
-    animation: bounceIn 0.4s ease-out forwards;
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
   }
+  100% {
+    transform: scale(1);
+  }
+}
+.animate-bounceIn {
+  animation: bounceIn 0.4s ease-out forwards;
+}
 
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20%,
+  60% {
+    transform: translateX(-5px);
+  }
+  40%,
+  80% {
+    transform: translateX(5px);
+  }
+}
+.animate-shake {
+  animation: shake 0.4s ease-in-out;
+}
 
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    20%, 60% { transform: translateX(-5px); }
-    40%, 80% { transform: translateX(5px); }
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
   }
-  .animate-shake {
-    animation: shake 0.4s ease-in-out;
+  50% {
+    transform: translateY(-20px);
   }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0px) rotate(45deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(45deg);
+  }
+}
+
+@keyframes pulse-slow {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@keyframes pulse-medium {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+@keyframes pulse-slower {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+.animate-float-slow {
+  animation: float-slow 12s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse-slow 6s ease-in-out infinite;
+}
+
+.animate-pulse-medium {
+  animation: pulse-medium 4s ease-in-out infinite;
+}
+
+.animate-pulse-slower {
+  animation: pulse-slower 10s ease-in-out infinite;
+}
+@keyframes carrusel {
+  0%,
+  16.6% {
+    transform: translateY(0);
+  }
+  20%,
+  36.6% {
+    transform: translateY(-20%);
+  }
+  40%,
+  56.6% {
+    transform: translateY(-40%);
+  }
+  60%,
+  76.6% {
+    transform: translateY(-60%);
+  }
+  80%,
+  96.6% {
+    transform: translateY(-80%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+.carrusel-container {
+  animation: carrusel 18s infinite ease-in-out;
+}
+
+.carrusel-container:hover {
+  animation-play-state: paused;
+}
+
+.carrusel-item {
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Efecto de pausa al hover y estilos para los dots activos */
+.carrusel-dot:nth-child(1) {
+  animation: dot-active 18s infinite 0s;
+}
+.carrusel-dot:nth-child(2) {
+  animation: dot-active 18s infinite 3s;
+}
+.carrusel-dot:nth-child(3) {
+  animation: dot-active 18s infinite 6s;
+}
+.carrusel-dot:nth-child(4) {
+  animation: dot-active 18s infinite 9s;
+}
+.carrusel-dot:nth-child(5) {
+  animation: dot-active 18s infinite 12s;
+}
+.carrusel-dot:nth-child(6) {
+  animation: dot-active 18s infinite 15s;
+}
+
+@keyframes dot-active {
+  0%,
+  16.6% {
+    background-color: rgba(255, 255, 255, 0.7);
+  }
+  20%,
+  100% {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+}
