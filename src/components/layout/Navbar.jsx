@@ -46,6 +46,25 @@ function Navbar() {
     };
   }, [sidebarOpen]);
 
+  // Efecto para manejar el colapso automático en pantallas pequeñas
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1400) {
+        setCollapsed(true);
+      }
+    };
+    
+    // Verificar al cargar
+    handleResize();
+    
+    // Escuchar cambios de tamaño
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
   const handleLogout = () => {
     logout();
     navigate("/login");
@@ -100,7 +119,12 @@ function Navbar() {
     <motion.div
       animate={{ width: collapsed ? 70 : 250 }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
-     className="fixed top-0 left-0 h-full bg-gradient-to-b from-[#1A535C] to-[#4ECDC4] z-40 shadow-lg hidden lg:flex flex-col"
+      className="fixed top-0 left-0 h-full bg-gradient-to-b from-[#1A535C] to-[#4ECDC4] z-40 shadow-lg hidden lg:flex flex-col"
+      style={{ 
+        height: '100vh',
+        position: 'fixed',
+        overflowY: 'auto'
+      }}
     >
       <div className="p-4 flex flex-col gap-4 h-full">
         {/* Logo y botón de colapsar */}
@@ -113,6 +137,7 @@ function Navbar() {
           <button
             onClick={() => setCollapsed(!collapsed)}
             className="p-1 rounded-full hover:bg-white/10 transition"
+            aria-label={collapsed ? "Expandir menú" : "Contraer menú"}
           >
             {collapsed ? <ChevronRight size={20} color="white" /> : <ChevronLeft size={20} color="white" />}
           </button>
@@ -169,14 +194,16 @@ function Navbar() {
             exit={{ x: "-100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
             className="fixed top-0 left-0 h-full w-70 bg-gradient-to-b from-[#1A535C] to-[#4ECDC4] z-50 shadow-lg lg:hidden"
+            style={{ maxWidth: '280px' }}
           >
-            <div className="p-6 flex flex-col gap-6 h-full">
+            <div className="p-6 flex flex-col gap-6 h-full overflow-y-auto">
               {/* Encabezado */}
               <div className="flex justify-between items-center">
                 <div className="text-lg font-semibold text-white">Menú</div>
                 <button
                   onClick={() => setSidebarOpen(false)}
                   className="focus:outline-none p-1 hover:bg-white/10 rounded-full transition"
+                  aria-label="Cerrar menú"
                 >
                   <X size={24} color="white" />
                 </button>
@@ -249,6 +276,7 @@ function Navbar() {
         <button
           className="text-white focus:outline-none"
           onClick={() => setSidebarOpen(true)}
+          aria-label="Abrir menú"
         >
           <Menu size={28} color="white" />
         </button>
@@ -263,19 +291,30 @@ function Navbar() {
           <button
             onClick={() => navigate("/mi_perfil")}
             className="p-1.5 rounded-full bg-white/20"
+            aria-label="Perfil de usuario"
           >
             <UserRound size={20} className="text-white" />
           </button>
         )}
       </nav>
 
-      {/* Sidebar para desktop */}
+      {/* Sidebar para desktop - Añadimos padding al contenido principal para que no se solape */}
       <Sidebar
         collapsed={collapsed}
         setCollapsed={setCollapsed}
         links={links}
         usuario={usuario}
         handleLogout={handleLogout}
+      />
+
+      {/* Espacio para el sidebar en el contenido principal */}
+      <div 
+        className="hidden lg:block" 
+        style={{ 
+          width: collapsed ? '70px' : '250px',
+          flexShrink: 0,
+          transition: 'width 0.3s ease'
+        }}
       />
 
       {/* Menú móvil */}
