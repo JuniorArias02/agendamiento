@@ -17,6 +17,34 @@ export default function TusCitas() {
   const [loading, setLoading] = useState(true);
   const [clickedStates, setClickedStates] = useState({});
   const [filtroAbierto, setFiltroAbierto] = useState(false);
+  // Convierte "2025-09-18 21:30:00" UTC a Date local según la zona guardada
+  const convertirUTCaLocal = (fechaUtcString) => {
+    if (!fechaUtcString) return null;
+
+    // separar fecha y hora
+    const [fechaParte, horaParte] = fechaUtcString.split(" ");
+    const [year, month, day] = fechaParte.split("-").map(Number);
+    const [hours, minutes, seconds] = horaParte.split(":").map(Number);
+
+    // creamos un Date en UTC
+    const dateUtc = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+
+    // obtener zona horaria del usuario
+    const tz = localStorage.getItem("user_tz") || "UTC";
+
+    // formatear usando Intl.DateTimeFormat en la zona del usuario
+    return new Intl.DateTimeFormat("es-ES", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+      timeZone: tz,
+    }).format(dateUtc);
+  };
+
 
   const [mostrarOpciones, setMostrarOpciones] = useState(null);
   const toggleOpciones = (id) => {
@@ -63,6 +91,33 @@ export default function TusCitas() {
     }
   };
 
+  const formatearFechaHoraSeparado = (fechaUtcString) => {
+    if (!fechaUtcString) return { fecha: "-", hora: "-" };
+
+    const [fechaParte, horaParte] = fechaUtcString.split(" "); // fecha en UTC
+    const [year, month, day] = fechaParte.split("-").map(Number);
+    const [hours, minutes, seconds] = horaParte.split(":").map(Number);
+
+    const dateUtc = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
+    const tz = localStorage.getItem("user_tz") || "UTC";
+
+    const fecha = new Intl.DateTimeFormat("es-ES", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      timeZone: tz,
+    }).format(dateUtc);
+
+    const hora = new Intl.DateTimeFormat("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+      timeZone: tz,
+    }).format(dateUtc);
+
+    return { fecha, hora };
+  };
+
 
 
   const esHoyOMasAntiguo = (fechaCita) => {
@@ -83,6 +138,7 @@ export default function TusCitas() {
       obtenerCitas(usuario.id).then((data) => {
         setCitas(data);
         setLoading(false);
+        console.log("citas", data);
       });
     };
 
@@ -128,6 +184,8 @@ export default function TusCitas() {
     navigate("/reagendar_cita", { state: { cita } });
   };
 
+
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <FiltroCitas
@@ -159,6 +217,7 @@ export default function TusCitas() {
             .map((cita, index) => {
               const nombre = usuario.rol === "paciente" ? cita.psicologa : cita.paciente;
               const telefono = usuario.rol === "paciente" ? cita.telefono_psicologa : cita.telefono_paciente;
+              const { fecha, hora } = formatearFechaHoraSeparado(cita.fecha_hora_utc);
 
               return (
                 <motion.div
@@ -203,7 +262,7 @@ export default function TusCitas() {
                       <svg className="w-5 h-5 text-[#6EC1E4] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                       </svg>
-                      <span className="text-gray-600">{formatearFecha(cita.fecha)}</span>
+                      <span className="text-gray-600">{fecha}</span>
                     </div>
 
                     <TemporizadorCita citaId={cita.id} />
@@ -212,7 +271,7 @@ export default function TusCitas() {
                       <svg className="w-5 h-5 text-[#6EC1E4] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                       </svg>
-                      <span className="text-gray-600">{formatearHora(cita.hora)}</span>
+                      <span className="text-gray-600">{hora}</span>
                     </div>
 
 

@@ -4,6 +4,7 @@ import { LocalizationProvider, MobileTimePicker } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { guardarHorasDisponibles } from "../../services/citas/citas";
 import { useAuth } from "../../context/AuthContext";
+import { toUtcIso } from "../../utils/dates";
 import Swal from 'sweetalert2';
 
 const MiDisponibilidad = () => {
@@ -43,12 +44,24 @@ const MiDisponibilidad = () => {
     setHoraManual(null);
   };
 
-  const guardarDisponibilidad = async () => {
-    const payload = {
-      psicologa_id: usuario.id,
-      fecha,
-      horas: horasSeleccionadas.map(convertirHora24),
+  function splitUtcIso(iso) {
+    const d = new Date(iso);
+    return {
+      fecha: d.toISOString().slice(0, 10),      // "2025-09-08"
+      hora: d.toISOString().slice(11, 19),      // "13:00:00"
     };
+  }
+
+  const guardarDisponibilidad = async () => {
+    const payload = horasSeleccionadas.map((h) => {
+      const utcIso = toUtcIso(fecha, convertirHora24(h));
+
+      return {
+        psicologa_id: usuario.id,
+        fecha_hora_utc: utcIso, // <-- único campo que importa
+        disponible: 1,
+      };
+    });
 
     try {
       const data = await guardarHorasDisponibles(payload);

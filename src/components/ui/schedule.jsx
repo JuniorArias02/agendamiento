@@ -10,16 +10,20 @@ const Schedule = ({ onSelect, isVisible, selectedDate, psicologaId }) => {
   useEffect(() => {
     if (!selectedDate || !psicologaId) return;
 
-    const fecha = selectedDate.toISOString().split("T")[0];
+    // forzamos que sea Date
+    const dateObj = new Date(selectedDate);
+
+    const fecha = dateObj.toISOString().split("T")[0];
 
     obtenerHorasDisponibles(fecha, psicologaId)
       .then((data) => {
+        console.log("data", data);
         if (data.horas_disponibles) {
           const convertidas = data.horas_disponibles.map((hora24) => {
             const [h, m] = hora24.split(":").map(Number);
             let hora = h % 12 || 12;
             const modifier = h >= 12 ? "PM" : "AM";
-            return `${hora}:${m < 10 ? '0' + m : m} ${modifier}`;
+            return `${hora}:${m < 10 ? "0" + m : m} ${modifier}`;
           });
           setHorasDisponibles(convertidas);
         }
@@ -33,14 +37,14 @@ const Schedule = ({ onSelect, isVisible, selectedDate, psicologaId }) => {
             const [h, m] = hora24.split(":").map(Number);
             let hora = h % 12 || 12;
             const modifier = h >= 12 ? "PM" : "AM";
-            return `${hora}:${m < 10 ? '0' + m : m} ${modifier}`;
+            return `${hora}:${m < 10 ? "0" + m : m} ${modifier}`;
           });
           setHorasOcupadas(convertidas);
         }
       })
       .catch((error) => console.error("Error al obtener horas ocupadas:", error));
-
   }, [selectedDate, psicologaId]);
+
 
   const handleSelect = (time) => {
     if (!isPast(time) && !isOcupado(time)) {
@@ -63,11 +67,12 @@ const Schedule = ({ onSelect, isVisible, selectedDate, psicologaId }) => {
     if (modifier === "PM" && hours !== 12) hours += 12;
     if (modifier === "AM" && hours === 12) hours = 0;
 
-    const dateTime = new Date(selectedDate);
+    const dateTime = new Date(selectedDate); // <- aseguramos que sea Date
     dateTime.setHours(hours, minutes, 0, 0);
 
-    return selectedDate.toDateString() === now.toDateString() && dateTime < now;
+    return dateTime.toDateString() === now.toDateString() && dateTime < now;
   };
+
 
   return (
     <AnimatePresence>

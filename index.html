@@ -1,35 +1,37 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>Agendamiento | Psicológicamente Hablando</title>
-    <meta
-      name="description"
-      content="Agenda tus sesiones fácilmente con nuestra plataforma. Psicológicamente Hablando te acompaña en tu bienestar emocional."
-    />
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta name="author" content="Psicológicamente Hablando" />
-    <meta name="theme-color" content="#B68F72" />
+  <title>Agendamiento | Psicológicamente Hablando</title>
+  <meta name="description"
+    content="Agenda tus sesiones fácilmente con nuestra plataforma. Psicológicamente Hablando te acompaña en tu bienestar emocional." />
 
-    <meta
-      property="og:title"
-      content="Agenda tu cita | Psicológicamente Hablando"
-    />
-    <meta
-      property="og:description"
-      content="Plataforma de agendamiento para tus sesiones psicológicas"
-    />
-    <meta property="og:image" content="/og.png" />
+  <meta name="author" content="Psicológicamente Hablando" />
+  <meta name="theme-color" content="#B68F72" />
 
-    <meta property="og:url" content="https://psicologicamentehablando.space/" />
-    <meta property="og:type" content="website" />
-    <script src="https://checkout.wompi.co/widget.js"></script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+  <meta property="og:title" content="Agenda tu cita | Psicológicamente Hablando" />
+  <meta property="og:description" content="Plataforma de agendamiento para tus sesiones psicológicas" />
+  <meta property="og:image" content="/og.png" />
+
+  <meta property="og:url" content="https://psicologicamentehablando.space/" />
+  <meta property="og:type" content="website" />
+  <script src="https://checkout.wompi.co/widget.js"></script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+  <script>
+    (function saveTZ() {
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+      localStorage.setItem('user_tz', tz);
+      console.log('tz saved', tz);
+    })();
+  </script>
+</body>
+
 </html>

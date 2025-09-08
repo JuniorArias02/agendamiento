@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import Schedule from "../ui/schedule";
 import { useAuth } from "../../context/AuthContext";
 import { useLocation } from "react-router-dom";
+import { toUtcIso } from "../../utils/dates";
 
 export default function Agenda() {
   const { usuario } = useAuth();
@@ -40,32 +41,51 @@ export default function Agenda() {
     setSelectedTime(time);
   };
 
+  // Agenda.jsx
   const handleContinue = () => {
     if (selectedDate && selectedTime && servicio?.usuario_id) {
-      localStorage.setItem("fecha", selectedDate);
-      localStorage.setItem("hora", selectedTime);
+      const [time, modifier] = selectedTime.split(" ");
+      let [hours, minutes] = time.split(":").map(Number);
+      if (modifier === "PM" && hours !== 12) hours += 12;
+      if (modifier === "AM" && hours === 12) hours = 0;
+  
+      const combined = new Date(selectedDate); // ya es Date local
+      combined.setHours(hours, minutes, 0, 0);
+  
+      const fechaHoraUtc = toUtcIso(combined);
+  
+      localStorage.setItem("fecha_hora_utc", fechaHoraUtc);
       localStorage.setItem("psicologa_id", servicio.usuario_id);
+  
       navigate("/agenda/confirmar", {
         state: {
-          selectedDate,
+          selectedDate: combined,
           selectedTime,
           servicio,
           monto: servicio.precio,
+          fechaHoraUtc,
         }
       });
-
-    } else {
-      console.error("Datos incompletos: servicio o usuario_id no están disponibles.");
     }
   };
-  const formatFechaBD = (date) => {
-    return new Date(date).toLocaleDateString('es-ES', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric'
-    })
-  }
+  
+  const formatFechaHoraVista = (date) => {
+    const tz = localStorage.getItem("user_tz") || "UTC";
+  
+    // 👇 Si ya es Date, úsalo directo
+    const d = date instanceof Date ? date : new Date(date);
+  
+    return d.toLocaleString("es-ES", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: tz,
+    });
+  };
+  
 
   return (
     <motion.div
@@ -146,7 +166,7 @@ export default function Agenda() {
               <div>
                 <p className="text-xs text-gray-500">Fecha</p>
                 <p className={`text-sm font-medium ${selectedDate ? "text-[#1c7578]" : "text-gray-400"}`}>
-                  {selectedDate ? formatFechaBD(selectedDate) : "No seleccionada"}
+                  {selectedDate ? formatFechaHoraVista(selectedDate) : "No seleccionada"}
                 </p>
               </div>
             </div>

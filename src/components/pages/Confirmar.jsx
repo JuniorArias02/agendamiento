@@ -8,11 +8,13 @@ import { validarCodigoDescuento } from "../../services/descuento/descuento";
 import axios from "axios";
 import { CalendarCheck, Clock, ClipboardList, Tag, AlertCircle, Loader2, ArrowLeftCircle, CheckCircle } from "lucide-react";
 import { VERIFICAR_PAGO_WOMPI } from "../../api/controllers/pagos/pagos";
+import { toUtcIso } from "../../utils/dates"; // 👈 asegurarnos de usar esta función
+
 export default function ConfirmarAgenda() {
   const location = useLocation();
   const navigate = useNavigate();
-  const selectedDate = location.state?.selectedDate;
-  const selectedTime = location.state?.selectedTime;
+  const selectedDate = location.state?.selectedDate; // Date en local
+  const selectedTime = location.state?.selectedTime; // "HH:MM AM/PM"
   const servicio = location.state?.servicio;
   const [codigo, setCodigo] = useState("");
   const [codigoValido, setCodigoValido] = useState(null);
@@ -25,12 +27,11 @@ export default function ConfirmarAgenda() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!selectedDate || !selectedTime) {
-      navigate("/agenda");
-    }
+    if (!selectedDate || !selectedTime) navigate("/agenda");
   }, [selectedDate, selectedTime, navigate]);
 
   useEffect(() => {
+    // Convertir USD a COP
     const convertirUSDaCOP = async () => {
       if (servicio?.precio) {
         try {
@@ -38,7 +39,7 @@ export default function ConfirmarAgenda() {
           const data = await res.json();
           const tasa = data?.rates?.COP;
           if (tasa) setPrecioFinal(servicio.precio * tasa);
-          else setPrecioFinal(servicio.precio * 4000); // fallback
+          else setPrecioFinal(servicio.precio * 4000);
         } catch {
           console.error("Error al obtener tasa de cambio");
           setPrecioFinal(servicio.precio * 4000);
@@ -49,31 +50,54 @@ export default function ConfirmarAgenda() {
   }, [servicio?.precio]);
 
 
+  const formatFechaHoraVista = (date, timeStr) => {
+    if (!date || !timeStr) return "No seleccionaste fecha";
 
-  const formatFechaBD = (fecha) => {
-    const date = new Date(fecha);
-    const año = date.getFullYear();
-    const mes = String(date.getMonth() + 1).padStart(2, "0");
-    const dia = String(date.getDate()).padStart(2, "0");
-    return `${año}-${mes}-${dia}`;
+    const [time, modifier] = timeStr.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+    if (modifier === "PM" && hours !== 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+
+    const combined = new Date(date);
+    combined.setHours(hours, minutes, 0, 0);
+
+    const tz = localStorage.getItem("user_tz") || "UTC";
+    return combined.toLocaleString("es-ES", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      timeZone: tz,
+    });
+
+
+  };
+  const combinedToUtc = (selectedDate, selectedTime) => {
+    if (!selectedDate || !selectedTime) return null;
+
+    const [time, modifier] = selectedTime.split(" ");
+    let [hours, minutes] = time.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+
+    // 🔹 Crear Date local combinando fecha + hora
+    const combined = new Date(selectedDate);
+    combined.setHours(hours, minutes, 0, 0);
+
+    // 🔹 Pasar a UTC sin pasar por ISO de nuevo
+    const year = combined.getUTCFullYear();
+    const month = String(combined.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(combined.getUTCDate()).padStart(2, "0");
+    const hour = String(combined.getUTCHours()).padStart(2, "0");
+    const minute = String(combined.getUTCMinutes()).padStart(2, "0");
+    const second = String(combined.getUTCSeconds()).padStart(2, "0");
+
+    return `${year}-${month}-${day} ${hour}:${minute}:${second}`; // formato MySQL
   };
 
-  const formatHoraBD = (hora) => {
-    if (hora.includes("AM") || hora.includes("PM")) {
-      const [time, modifier] = hora.split(" ");
-      let [hours, minutes] = time.split(":");
-      hours = parseInt(hours, 10);
-      if (modifier === "PM" && hours !== 12) {
-        hours += 12;
-      }
-      if (modifier === "AM" && hours === 12) {
-        hours = 0;
-      }
-      return `${String(hours).padStart(2, "0")}:${minutes}:00`;
-    } else {
-      return `${hora}:00`;
-    }
-  };
 
   const handleConfirmar = async () => {
     if (!selectedDate || !selectedTime) return;
@@ -81,30 +105,34 @@ export default function ConfirmarAgenda() {
     setError(null);
 
     try {
-      if (!usuario || !usuario.id) {
-        throw new Error("Usuario no autenticado.");
-      }
+      if (!usuario || !usuario.id) throw new Error("Usuario no autenticado.");
 
-      const fechaFormateada = formatFechaBD(selectedDate);
-      const horaFormateada = formatHoraBD(selectedTime);
+      // 🔹 Combinar fecha y hora en un Date local
+      const [time, modifier] = selectedTime.split(" ");
+      let [hours, minutes] = time.split(":").map(Number);
+      if (modifier === "PM" && hours !== 12) hours += 12;
+      if (modifier === "AM" && hours === 12) hours = 0;
 
-      // 1️⃣ Guardar cita pendiente
+      const combined = new Date(selectedDate);
+      combined.setHours(hours, minutes, 0, 0);
+
+      // 🔹 Convertir a ISO UTC
+      // const fechaHoraUtc = toUtcIso(combined);
+      const fechaHoraUTC = combinedToUtc(selectedDate, selectedTime);
+      // 1️⃣ Guardar cita pendiente con UTC
       const resCita = await guardarCitaPendientes({
         usuario_id: usuario.id,
         servicio_id: servicio.id,
-        fecha: fechaFormateada,
-        hora: horaFormateada,
+        fecha_hora_utc: fechaHoraUTC, // 👈 ahora enviamos UTC
         codigo_descuento: codigoUsado,
         porcentaje_descuento: porcentajeUsado,
       });
 
-      if (resCita.status !== "ok") {
-        throw new Error(resCita.message || "Error al guardar la cita pendiente");
-      }
+      if (resCita.status !== "ok") throw new Error(resCita.message || "Error al guardar la cita pendiente");
 
       const reference = resCita.reference;
 
-      // 2️⃣ Pedir datos del pago a backend
+      // 2️⃣ Iniciar pago
       const redirectUrl = `${window.location.origin}/agenda/resultado`;
       const response = await iniciarPago({
         monto: Math.round(precioFinal),
@@ -114,14 +142,11 @@ export default function ConfirmarAgenda() {
         redirect_url: redirectUrl,
       });
 
-      if (response.data.status !== "ok") {
-        throw new Error(response.data.message || "Error al iniciar pago con Wompi");
-      }
-
+      if (response.data.status !== "ok") throw new Error(response.data.message || "Error al iniciar pago con Wompi");
 
       const { amount_in_cents, currency, integrity_signature } = response.data;
 
-      // 3️⃣ Abrir el widget de Wompi
+      // 3️⃣ Widget Wompi
       const checkout = new WidgetCheckout({
         currency,
         amountInCents: amount_in_cents,
@@ -132,13 +157,9 @@ export default function ConfirmarAgenda() {
       });
 
       checkout.open(async (result) => {
-
         try {
-          // 4️⃣ Verificar pago con tu backend usando transactionId
           const transactionId = result?.transaction?.id;
-          if (!transactionId) {
-            throw new Error("No se recibió transactionId de Wompi");
-          }
+          if (!transactionId) throw new Error("No se recibió transactionId de Wompi");
 
           const res = await axios.post(
             VERIFICAR_PAGO_WOMPI,
@@ -147,7 +168,6 @@ export default function ConfirmarAgenda() {
           );
 
           if (res.data?.success) {
-            // 5️⃣ Marcar cita como definitiva
             await guardarCita({ reference, transactionId });
             navigate("/agenda/confirmado", { state: { reference } });
           } else {
@@ -160,18 +180,8 @@ export default function ConfirmarAgenda() {
       });
     } catch (err) {
       console.error("Error en handleConfirmar:", err);
-
-      let mensaje = "Ocurrió un error inesperado.";
-
-      if (err.response?.data?.message) {
-        mensaje = err.response.data.message; // viene del backend
-      } else if (err.message) {
-        mensaje = err.message; // viene de un throw new Error()
-      }
-
-      setError(mensaje);
-    }
-    finally {
+      setError(err.response?.data?.message || err.message || "Ocurrió un error inesperado.");
+    } finally {
       setLoading(false);
     }
   };
@@ -179,12 +189,9 @@ export default function ConfirmarAgenda() {
   const aplicarDescuento = async () => {
     try {
       const res = await validarCodigoDescuento({ codigo });
-
       if (res.status === "ok") {
-        const porcentaje = res.porcentaje;
-        const descuento = (servicio.precio * porcentaje) / 100;
+        const descuento = (servicio.precio * res.porcentaje) / 100;
         const nuevoPrecio = servicio.precio - descuento;
-
         setPrecioFinal(nuevoPrecio);
         setCodigoValido(true);
         setCodigoUsado(res.codigo);
@@ -193,12 +200,11 @@ export default function ConfirmarAgenda() {
         setCodigoValido(false);
         setPrecioFinal(servicio.precio);
       }
-    } catch (error) {
+    } catch {
       setCodigoValido(false);
       setPrecioFinal(servicio.precio);
     }
   };
-
 
   return (
     <motion.div
@@ -225,13 +231,12 @@ export default function ConfirmarAgenda() {
               <span>
                 Cita programada para el{" "}
                 <span className="font-bold text-[#64CBA0]">
-                  {selectedDate && selectedTime
-                    ? `${formatFechaBD(selectedDate)} a las ${formatHoraBD(selectedTime).slice(0, 5)}`
-                    : "No seleccionaste fecha"}
+                  {formatFechaHoraVista(selectedDate, selectedTime)}
                 </span>
               </span>
             </p>
           </div>
+
 
           {/* Detalles del servicio */}
           <div className="space-y-4">

@@ -7,14 +7,15 @@ import {
 } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { obtenerFechasDisponbiles } from "../../services/citas/citas";
+import { getUserTZ, utcIsoToUserDate, toUtcIso } from "../../utils/dates";
 
 const Calendar = ({ onDateSelect, confirmedDate, servicioId }) => {
-
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedWeek, setSelectedWeek] = useState(null);
   const [monthKey, setMonthKey] = useState(format(currentDate, "yyyy-MM"));
-  const [availableDates, setAvailableDates] = useState([]); 
+  const [availableDates, setAvailableDates] = useState([]);
+
   useEffect(() => {
     const fetchAvailableDates = async () => {
       try {
@@ -26,12 +27,11 @@ const Calendar = ({ onDateSelect, confirmedDate, servicioId }) => {
           mes,
           anio,
         });
+        console.log("fechas_disponibles (raw)", fechas_disponibles);
 
         if (success) {
-          const fechas = fechas_disponibles.map(f => {
-            const [year, month, day] = f.split("-"); // evita error por zona horaria
-            return new Date(year, month - 1, day);
-          });
+          // 👇 convertimos cada ISO a fecha local "limpia"
+          const fechas = fechas_disponibles.map((f) => utcIsoToUserDate(f));
           setAvailableDates(fechas);
         } else {
           setAvailableDates([]);
@@ -43,8 +43,7 @@ const Calendar = ({ onDateSelect, confirmedDate, servicioId }) => {
     };
 
     fetchAvailableDates();
-  }, [currentDate]);
-
+  }, [currentDate, servicioId]);
 
   const handlePrevMonth = () => {
     if (!confirmedDate) {
@@ -68,16 +67,23 @@ const Calendar = ({ onDateSelect, confirmedDate, servicioId }) => {
     }
   };
 
+  // Calendar.jsx (cuando seleccionas el día)
+  // Calendar.jsx (cuando seleccionas el día)
   const handleSelectDate = (day) => {
     const today = startOfDay(new Date());
     if (isBefore(day, today) || confirmedDate) return;
 
     setSelectedDate(day);
-    onDateSelect(day);
+    setSelectedWeek(weeks.findIndex((week) => week.includes(day)));
 
-    const weekIndex = weeks.findIndex((week) => week.includes(day));
-    setSelectedWeek(weekIndex);
+    // ❌ Antes mandabas el ISO
+    // const fechaIsoUtc = toUtcIso(day);
+    // onDateSelect(fechaIsoUtc);
+
+    // ✅ Ahora mandamos el Date directo (local)
+    onDateSelect(day);
   };
+
 
   const startMonth = startOfMonth(currentDate);
   const endMonth = endOfMonth(currentDate);
@@ -141,7 +147,7 @@ const Calendar = ({ onDateSelect, confirmedDate, servicioId }) => {
           transition={{ duration: 0.3, ease: "easeOut" }}
           className="grid grid-cols-7 gap-1"
         >
-          {weeks.map((week, weekIndex) => (
+          {weeks.map((week, weekIndex) =>
             week.map((day, dayIndex) => {
               const isPast = isBefore(day, startOfDay(new Date()));
               const isSelected = isSameDay(day, selectedDate);
@@ -164,7 +170,7 @@ const Calendar = ({ onDateSelect, confirmedDate, servicioId }) => {
                 </motion.button>
               );
             })
-          ))}
+          )}
         </motion.div>
       </AnimatePresence>
     </div>
