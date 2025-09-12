@@ -41,16 +41,34 @@ export default function Agenda() {
     setSelectedTime(time);
   };
 
+  // Combina fecha (día) + hora seleccionada (ISO de backend) en un solo Date local
+  const combineDateTime = (dateOnly, timeIso) => {
+    if (!dateOnly || !timeIso) return null;
+
+    const base = new Date(dateOnly);   // ej: 2025-10-01 (solo la fecha)
+    const hora = new Date(timeIso);    // ej: 2025-10-01T05:00:00.000Z (hora en UTC)
+
+    if (isNaN(base.getTime()) || isNaN(hora.getTime())) {
+      console.error("❌ Fecha/hora inválida", { base, hora });
+      return null;
+    }
+
+    // extraemos hora y minuto en local
+    base.setHours(hora.getHours(), hora.getMinutes(), 0, 0);
+
+    return base; // devuelve Date local listo para usar
+  };
+
+
   // Agenda.jsx
   const handleContinue = () => {
     if (selectedDate && selectedTime && servicio?.usuario_id) {
-      const [time, modifier] = selectedTime.split(" ");
-      let [hours, minutes] = time.split(":").map(Number);
-      if (modifier === "PM" && hours !== 12) hours += 12;
-      if (modifier === "AM" && hours === 12) hours = 0;
+      const combined = combineDateTime(selectedDate, selectedTime);
   
-      const combined = new Date(selectedDate); // ya es Date local
-      combined.setHours(hours, minutes, 0, 0);
+      if (!combined) {
+        console.error("❌ No se pudo combinar fecha/hora");
+        return;
+      }
   
       const fechaHoraUtc = toUtcIso(combined);
   
@@ -69,12 +87,13 @@ export default function Agenda() {
     }
   };
   
+
   const formatFechaHoraVista = (date) => {
     const tz = localStorage.getItem("user_tz") || "UTC";
-  
+
     // 👇 Si ya es Date, úsalo directo
     const d = date instanceof Date ? date : new Date(date);
-  
+
     return d.toLocaleString("es-ES", {
       weekday: "long",
       day: "numeric",
@@ -85,7 +104,28 @@ export default function Agenda() {
       timeZone: tz,
     });
   };
-  
+
+  // utils/dates.js
+  const formatFechaVista = (date) => {
+    if (!date) return "";
+    const d = new Date(date); // viene Date local del Calendar
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  const formatHoraVista = (isoStr) => {
+    if (!isoStr) return "";
+    const d = new Date(isoStr); // interpreta UTC → convierte a local
+    return d.toLocaleTimeString(undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
+
 
   return (
     <motion.div
@@ -102,7 +142,7 @@ export default function Agenda() {
         className="flex items-center gap-4 mb-6"
       >
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate(-1)}
           className="text-[#1c7578] hover:bg-[#F5FAFC] p-2 rounded-full"
         >
           <ArrowLeftToLine size={24} />
@@ -165,8 +205,11 @@ export default function Agenda() {
               <CalendarDays size={18} className="text-[#3A6280] mt-0.5" />
               <div>
                 <p className="text-xs text-gray-500">Fecha</p>
-                <p className={`text-sm font-medium ${selectedDate ? "text-[#1c7578]" : "text-gray-400"}`}>
-                  {selectedDate ? formatFechaHoraVista(selectedDate) : "No seleccionada"}
+                <p
+                  className={`text-sm font-medium ${selectedDate ? "text-[#1c7578]" : "text-gray-400"
+                    }`}
+                >
+                  {selectedDate ? formatFechaVista(selectedDate) : "No seleccionada"}
                 </p>
               </div>
             </div>
@@ -175,11 +218,15 @@ export default function Agenda() {
               <Clock size={18} className="text-[#3A6280] mt-0.5" />
               <div>
                 <p className="text-xs text-gray-500">Hora</p>
-                <p className={`text-sm font-medium ${selectedTime ? "text-[#1c7578]" : "text-gray-400"}`}>
-                  {selectedTime || "No seleccionada"}
+                <p
+                  className={`text-sm font-medium ${selectedTime ? "text-[#1c7578]" : "text-gray-400"
+                    }`}
+                >
+                  {selectedTime ? formatHoraVista(selectedTime) : "No seleccionada"}
                 </p>
               </div>
             </div>
+
 
             {servicio?.precio && (
               <div className="flex items-start gap-3">

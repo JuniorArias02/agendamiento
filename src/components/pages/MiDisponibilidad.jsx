@@ -11,6 +11,7 @@ const MiDisponibilidad = () => {
   const [fecha, setFecha] = useState("");
   const [horaManual, setHoraManual] = useState(null);
   const [horasSeleccionadas, setHorasSeleccionadas] = useState([]);
+  const [fechasUtc, setFechasUtc] = useState([]);
   const { usuario } = useAuth();
 
   const horas = [
@@ -53,15 +54,40 @@ const MiDisponibilidad = () => {
   }
 
   const guardarDisponibilidad = async () => {
-    const payload = horasSeleccionadas.map((h) => {
-      const utcIso = toUtcIso(fecha, convertirHora24(h));
+    if (!fecha) {
+      Swal.fire({
+        icon: 'warning',
+        title: 'Selecciona una fecha',
+        text: 'Debes elegir una fecha antes de guardar 🗓️',
+        confirmButtonColor: '#d33'
+      });
+      return;
+    }
+
+    const nuevosFechasUtc = [];
+
+    const payload = horasSeleccionadas.map((h12) => {
+      const h24 = convertirHora24(h12);
+      const [horas, minutos] = h24.split(':').map(Number);
+      const [year, month, day] = fecha.split('-').map(Number);
+
+      const dateObj = new Date(year, month - 1, day, horas, minutos, 0, 0); // LOCAL
+      const fecha_hora_utc = dateObj.toISOString();
+
+      // Guardamos para mostrar en el front
+      nuevosFechasUtc.push({
+        hora: h12,
+        utc: fecha_hora_utc
+      });
 
       return {
         psicologa_id: usuario.id,
-        fecha_hora_utc: utcIso, // <-- único campo que importa
+        fecha_hora_utc,
         disponible: 1,
       };
     });
+
+    setFechasUtc(nuevosFechasUtc); // actualizamos el estado con todas las horas
 
     try {
       const data = await guardarHorasDisponibles(payload);
@@ -92,7 +118,6 @@ const MiDisponibilidad = () => {
       });
     }
   };
-
   return (
     <div className="max-w-md mx-auto bg-white rounded-2xl shadow-lg p-6 border border-gray-100 mt-5">
       <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center bg-gradient-to-r from-[#6EC1E4] to-[#61CE70] bg-clip-text text-transparent">
@@ -217,6 +242,18 @@ const MiDisponibilidad = () => {
                 </div>
               ))}
             </div>
+          </div>
+        )}
+        {fechasUtc.length > 0 && (
+          <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+            <h4 className="text-sm font-medium text-gray-600 mb-2">Horas en UTC</h4>
+            <ul className="text-xs text-gray-700">
+              {fechasUtc.map((f, i) => (
+                <li key={i}>
+                  {f.hora} → {new Date(f.utc).toUTCString()}
+                </li>
+              ))}
+            </ul>
           </div>
         )}
 

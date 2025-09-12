@@ -47,12 +47,11 @@ export function getUserTZ() {
 
 // Convierte un ISO UTC a Date local (a medianoche, para no correr días)
 // utils/dates.js
-export function utcIsoToUserDate(isoString) {
-	const d = new Date(isoString);
-	// Ojo: getUTC* en vez de get*
-	return new Date(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate());
-}
-
+export const utcIsoToUserDate = (iso) => {
+	// ISO viene en UTC
+	const d = new Date(iso);
+	return new Date(d.getFullYear(), d.getMonth(), d.getDate()); // solo día, local
+};
 
 // Convierte Date local a ISO UTC (para backend)
 export function toUtcIso(date) {

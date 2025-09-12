@@ -26,6 +26,32 @@ export default function ConfirmarAgenda() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  // Combina fecha (Date) + hora (puede ser ISO o "hh:mm AM/PM")
+  const combineDateTime = (dateOnly, time) => {
+    if (!dateOnly || !time) return null;
+
+    const base = new Date(dateOnly);
+
+    // ⏰ Caso 1: viene como ISO completo
+    if (time.includes("T")) {
+      const hora = new Date(time);
+      if (isNaN(hora)) return null;
+      base.setHours(hora.getHours(), hora.getMinutes(), 0, 0);
+      return base;
+    }
+
+    // ⏰ Caso 2: viene como "10:30 AM"
+    const [timePart, modifier] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) hours += 12;
+    if (modifier === "AM" && hours === 12) hours = 0;
+
+    base.setHours(hours, minutes, 0, 0);
+    return base;
+  };
+
+
   useEffect(() => {
     if (!selectedDate || !selectedTime) navigate("/agenda");
   }, [selectedDate, selectedTime, navigate]);
@@ -51,17 +77,11 @@ export default function ConfirmarAgenda() {
 
 
   const formatFechaHoraVista = (date, timeStr) => {
-    if (!date || !timeStr) return "No seleccionaste fecha";
-
-    const [time, modifier] = timeStr.split(" ");
-    let [hours, minutes] = time.split(":").map(Number);
-    if (modifier === "PM" && hours !== 12) hours += 12;
-    if (modifier === "AM" && hours === 12) hours = 0;
-
-    const combined = new Date(date);
-    combined.setHours(hours, minutes, 0, 0);
+    const combined = combineDateTime(date, timeStr);
+    if (!combined) return "No seleccionaste fecha";
 
     const tz = localStorage.getItem("user_tz") || "UTC";
+
     return combined.toLocaleString("es-ES", {
       weekday: "long",
       day: "numeric",
@@ -71,9 +91,9 @@ export default function ConfirmarAgenda() {
       minute: "2-digit",
       timeZone: tz,
     });
-
-
   };
+
+
   const combinedToUtc = (selectedDate, selectedTime) => {
     if (!selectedDate || !selectedTime) return null;
 
@@ -98,6 +118,13 @@ export default function ConfirmarAgenda() {
     return `${year}-${month}-${day} ${hour}:${minute}:${second}`; // formato MySQL
   };
 
+  const toMySqlUtc = (date, timeStr) => {
+    const combined = combineDateTime(date, timeStr);
+    if (!combined) return null;
+
+    return `${combined.getUTCFullYear()}-${String(combined.getUTCMonth() + 1).padStart(2, "0")}-${String(combined.getUTCDate()).padStart(2, "0")} ${String(combined.getUTCHours()).padStart(2, "0")}:${String(combined.getUTCMinutes()).padStart(2, "0")}:${String(combined.getUTCSeconds()).padStart(2, "0")}`;
+  };
+
 
   const handleConfirmar = async () => {
     if (!selectedDate || !selectedTime) return;
@@ -113,17 +140,16 @@ export default function ConfirmarAgenda() {
       if (modifier === "PM" && hours !== 12) hours += 12;
       if (modifier === "AM" && hours === 12) hours = 0;
 
-      const combined = new Date(selectedDate);
-      combined.setHours(hours, minutes, 0, 0);
+      const fechaHoraUTC = toMySqlUtc(selectedDate, selectedTime);
+      if (!fechaHoraUTC) throw new Error("Fecha/hora inválida");
 
       // 🔹 Convertir a ISO UTC
       // const fechaHoraUtc = toUtcIso(combined);
-      const fechaHoraUTC = combinedToUtc(selectedDate, selectedTime);
       // 1️⃣ Guardar cita pendiente con UTC
       const resCita = await guardarCitaPendientes({
         usuario_id: usuario.id,
         servicio_id: servicio.id,
-        fecha_hora_utc: fechaHoraUTC, // 👈 ahora enviamos UTC
+        fecha_hora_utc: fechaHoraUTC,
         codigo_descuento: codigoUsado,
         porcentaje_descuento: porcentajeUsado,
       });
@@ -212,7 +238,7 @@ export default function ConfirmarAgenda() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="w-full flex flex-col items-center justify-center bg-gradient-to-br from-[#f0f9f5] to-[#e6f4f9] p-5"
+      className="w-full flex flex-col items-center p-5"
     >
       <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-white/30">
         {/* Header con gradiente */}
@@ -321,7 +347,7 @@ export default function ConfirmarAgenda() {
           {/* Botones de acción */}
           <div className="flex justify-between gap-4 pt-4">
             <motion.button
-              onClick={() => navigate("/agenda")}
+              onClick={() => navigate(-1)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-colors flex items-center gap-2"

@@ -8,7 +8,7 @@ export const obtenerHorasDisponibles = async (fecha, psicologa_id) => {
       fecha,
       psicologa_id
     });
-    console.log("Horas disponibles:", response);
+    // console.log("Horas disponibles:", response);
     return response.data;
   } catch (error) {
     console.error("Error obteniendo horas disponibles:", error);

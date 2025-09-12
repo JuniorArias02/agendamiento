@@ -138,7 +138,7 @@ export default function TusCitas() {
       obtenerCitas(usuario.id).then((data) => {
         setCitas(data);
         setLoading(false);
-        console.log("citas", data);
+        // console.log("citas", data);
       });
     };
 
