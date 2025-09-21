@@ -6,7 +6,7 @@ import { iniciarPago } from "../../services/pagos/pago";
 import { guardarCitaPendientes, guardarCita } from "../../services/citas/citas";
 import { validarCodigoDescuento } from "../../services/descuento/descuento";
 import axios from "axios";
-import { CalendarCheck, Clock, ClipboardList, Tag, AlertCircle, Loader2, ArrowLeftCircle, CheckCircle } from "lucide-react";
+import { CalendarCheck, XCircle, Clock, ClipboardList, Tag, AlertCircle, Loader2, ArrowLeftCircle, CheckCircle } from "lucide-react";
 import { VERIFICAR_PAGO_WOMPI } from "../../api/controllers/pagos/pagos";
 import { toUtcIso } from "../../utils/dates"; // 👈 asegurarnos de usar esta función
 
