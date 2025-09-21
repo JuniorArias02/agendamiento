@@ -3,7 +3,7 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { PENDIENTE, RETARDO, EN_PROGRESO, FINALIZADA } from "../../api/estados_citas";
-import { Loader, Repeat, Clock } from "lucide-react";
+import { Loader, Repeat, Clock, CalendarPlus } from "lucide-react";
 import Swal from 'sweetalert2';
 import FiltroCitas from "../ui/FiltroCitas";
 import TemporizadorCita from "../ui/TemporizadorCita";
@@ -24,27 +24,27 @@ export default function TusCitas() {
   // --- Helpers de fechas ---
   const formatearFechaHoraSeparado = (fechaIso) => {
     if (!fechaIso) return { fecha: "-", hora: "-" };
-  
+
     const dateUtc = new Date(fechaIso); // interpreta ISO en UTC
     const tz = localStorage.getItem("user_tz") || "UTC";
-  
+
     const fecha = new Intl.DateTimeFormat("es-ES", {
       day: "2-digit",
       month: "long",
       year: "numeric",
       timeZone: tz,
     }).format(dateUtc);
-  
+
     const hora = new Intl.DateTimeFormat("es-ES", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
       timeZone: tz,
     }).format(dateUtc);
-  
+
     return { fecha, hora };
   };
-  
+
   const formatearFechaHora = (fechaIso) =>
     fechaIso
       ? new Date(fechaIso).toLocaleString("es-ES", {
@@ -233,7 +233,7 @@ export default function TusCitas() {
                   </div>
 
                   <div className="space-y-3 mb-6">
-                      <div className="flex items-center">
+                    <div className="flex items-center">
                       <svg className="w-5 h-5 text-[#6EC1E4] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                       </svg>
@@ -338,9 +338,7 @@ export default function TusCitas() {
                               </>
                             ) : (
                               <>
-                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 10l4.553-2.276..." />
-                                </svg>
+                                <CalendarPlus className="w-5 h-5" />
                                 Ingresar a la Cita
                               </>
                             )}
