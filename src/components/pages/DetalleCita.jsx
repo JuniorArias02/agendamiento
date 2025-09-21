@@ -13,7 +13,7 @@ export default function DetalleCita() {
 
 	const primaryColor = '#61CE70';
 	const secondaryColor = '#6EC1E4';
-	0
+
 
 	useEffect(() => {
 		const cargarCita = async () => {

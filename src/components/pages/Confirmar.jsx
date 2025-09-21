@@ -238,47 +238,47 @@ export default function ConfirmarAgenda() {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
-      className="w-full flex flex-col items-center p-5"
+      className="w-full flex flex-col items-center p-4 sm:p-5"
     >
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg overflow-hidden border border-white/30">
-        {/* Header con gradiente */}
-        <div className="bg-gradient-to-r from-[#64CBA0] to-[#6BC3D7] p-6 text-center">
+      {/* Eliminamos el contenedor con bordes y sombras */}
+      <div className="w-full max-w-lg">
+        {/* Header con gradiente - ahora sin bordes redondeados */}
+        <div className="bg-gradient-to-r from-[#64CBA0] to-[#6BC3D7] p-5 sm:p-6 text-center">
           <div className="flex flex-col items-center">
-            <CalendarCheck className="w-12 h-12 text-white mb-3" />
-            <h2 className="text-3xl font-bold text-white">Confirmar Cita</h2>
+            <CalendarCheck className="w-10 h-10 sm:w-12 sm:h-12 text-white mb-3" />
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">Confirmar Cita</h2>
           </div>
         </div>
 
-        <div className="p-6 space-y-6">
+        <div className="p-4 sm:p-6 space-y-5 sm:space-y-6">
           {/* Detalles de la cita */}
-          <div className="bg-gradient-to-r from-[#64CBA0]/10 to-[#6BC3D7]/10 rounded-xl p-5 border border-[#64CBA0]/20">
-            <p className="text-lg text-gray-700 text-center flex items-center justify-center">
-              <Clock className="mr-2 text-[#64CBA0]" size={20} />
-              <span>
-                Cita programada para el{" "}
-                <span className="font-bold text-[#64CBA0]">
-                  {formatFechaHoraVista(selectedDate, selectedTime)}
-                </span>
+          <div className="bg-gradient-to-r from-[#64CBA0]/10 to-[#6BC3D7]/10 p-4 sm:p-5 border border-[#64CBA0]/20">
+            <p className="text-base sm:text-lg text-gray-700 text-center flex flex-col sm:flex-row items-center justify-center">
+              <span className="flex items-center mb-2 sm:mb-0 sm:mr-2">
+                <Clock className="mr-2 text-[#64CBA0]" size={18} />
+                Cita programada para el
+              </span>
+              <span className="font-bold text-[#64CBA0] text-center">
+                {formatFechaHoraVista(selectedDate, selectedTime)}
               </span>
             </p>
           </div>
-
 
           {/* Detalles del servicio */}
           <div className="space-y-4">
             {servicio && servicio.titulo && (
               <div className="flex items-start">
-                <ClipboardList className="text-[#6BC3D7] mr-3 mt-1" size={20} />
-                <div>
+                <ClipboardList className="text-[#6BC3D7] mr-3 mt-1 flex-shrink-0" size={20} />
+                <div className="min-w-0">
                   <p className="text-sm text-gray-500">Servicio</p>
-                  <p className="text-lg font-medium text-gray-800">{servicio.titulo}</p>
+                  <p className="text-lg font-medium text-gray-800 truncate">{servicio.titulo}</p>
                 </div>
               </div>
             )}
 
             {servicio.precio && (
               <div className="flex items-start">
-                <Tag className="text-[#6BC3D7] mr-3 mt-1" size={20} />
+                <Tag className="text-[#6BC3D7] mr-3 mt-1 flex-shrink-0" size={20} />
                 <div>
                   <p className="text-sm text-gray-500">Precio</p>
                   <p className="text-lg font-medium text-gray-800">
@@ -292,10 +292,10 @@ export default function ConfirmarAgenda() {
             )}
           </div>
 
-          {/* Código de descuento */}
+          {/* Código de descuento - mejorado para móviles */}
           <div className="space-y-3">
             <label className="block text-sm font-medium text-gray-700">Código de descuento</label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={codigo}
@@ -307,7 +307,7 @@ export default function ConfirmarAgenda() {
                 onClick={aplicarDescuento}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-4 py-3 bg-[#64CBA0] text-white rounded-xl font-medium hover:bg-[#5ab790] transition-colors"
+                className="px-4 py-3 bg-[#64CBA0] text-white rounded-xl font-medium hover:bg-[#5ab790] transition-colors whitespace-nowrap"
               >
                 Aplicar
               </motion.button>
@@ -344,13 +344,13 @@ export default function ConfirmarAgenda() {
             </motion.div>
           )}
 
-          {/* Botones de acción */}
-          <div className="flex justify-between gap-4 pt-4">
+          {/* Botones de acción - mejorados para móviles */}
+          <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-3 pt-4">
             <motion.button
               onClick={() => navigate(-1)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-colors flex items-center gap-2"
+              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-colors flex items-center justify-center gap-2"
             >
               <ArrowLeftCircle size={20} /> Regresar
             </motion.button>
@@ -360,7 +360,7 @@ export default function ConfirmarAgenda() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               disabled={loading}
-              className={`px-6 py-3 rounded-xl font-semibold text-white flex items-center gap-2
+              className={`px-6 py-3 rounded-xl font-semibold text-white flex items-center justify-center gap-2
             ${loading ? 'bg-[#64CBA0]/70' : 'bg-gradient-to-r from-[#64CBA0] to-[#6BC3D7] hover:shadow-md'}
           `}
             >

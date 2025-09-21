@@ -45,13 +45,15 @@ export const guardarHorasDisponibles = async (datos) => {
 
 export const obtenerDetalleCita = async (id) => {
   try {
-    const res = await axios.get(`${DETALLE_CITA}?id=${id}`);
+    const res = await axios.post(DETALLE_CITA, { id });
+    console.log(res.data);
     return res.data;
   } catch (error) {
     console.error("Error al obtener detalle de cita:", error);
     throw error;
   }
 };
+
 
 export const obtenerCitas = async (usuarioId, estado = null) => {
   try {
