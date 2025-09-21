@@ -191,7 +191,7 @@ export default function TusCitas() {
             .filter((cita) => !filtroEstado || cita.estado_cita === filtroEstado)
             .map((cita, index) => {
               const nombre = usuario.rol === "paciente" ? cita.psicologa : cita.paciente;
-              const telefono = usuario.rol === "paciente" ? cita.telefono_psicologa : cita.telefono_paciente;
+              const telefono = usuario.rol === "paciente" ? cita.psicologa_telefono : cita.paciente_telefono;
               const { fecha, hora } = formatearFechaHoraSeparado(cita.fecha_hora_utc);
 
               return (
