@@ -13,64 +13,100 @@ import SkeletonCard from "../skeleton/SkeletonCard";
 export default function TusCitas() {
   const navigate = useNavigate();
   const { usuario } = useAuth();
+
   const [citas, setCitas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [clickedStates, setClickedStates] = useState({});
   const [filtroAbierto, setFiltroAbierto] = useState(false);
-  // Convierte "2025-09-18 21:30:00" UTC a Date local según la zona guardada
-  const convertirUTCaLocal = (fechaUtcString) => {
-    if (!fechaUtcString) return null;
+  const [filtroEstado, setFiltroEstado] = useState(null);
+  const [mostrarOpciones, setMostrarOpciones] = useState(null);
 
-    // separar fecha y hora
-    const [fechaParte, horaParte] = fechaUtcString.split(" ");
-    const [year, month, day] = fechaParte.split("-").map(Number);
-    const [hours, minutes, seconds] = horaParte.split(":").map(Number);
-
-    // creamos un Date en UTC
-    const dateUtc = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
-
-    // obtener zona horaria del usuario
+  // --- Helpers de fechas ---
+  const formatearFechaHoraSeparado = (fechaIso) => {
+    if (!fechaIso) return { fecha: "-", hora: "-" };
+  
+    const dateUtc = new Date(fechaIso); // interpreta ISO en UTC
     const tz = localStorage.getItem("user_tz") || "UTC";
-
-    // formatear usando Intl.DateTimeFormat en la zona del usuario
-    return new Intl.DateTimeFormat("es-ES", {
+  
+    const fecha = new Intl.DateTimeFormat("es-ES", {
       day: "2-digit",
       month: "long",
       year: "numeric",
+      timeZone: tz,
+    }).format(dateUtc);
+  
+    const hora = new Intl.DateTimeFormat("es-ES", {
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
       hour12: true,
       timeZone: tz,
     }).format(dateUtc);
+  
+    return { fecha, hora };
+  };
+  
+  const formatearFechaHora = (fechaIso) =>
+    fechaIso
+      ? new Date(fechaIso).toLocaleString("es-ES", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      })
+      : "-";
+
+  const formatearFecha = (fechaIso) =>
+    new Date(fechaIso).toLocaleDateString("es-ES", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+    });
+
+  const formatearHora = (fechaIso) =>
+    new Date(fechaIso).toLocaleTimeString("es-ES", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+  const esHoyOMasAntiguo = (fechaIso) => {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const fechaCita = new Date(fechaIso);
+    fechaCita.setHours(0, 0, 0, 0);
+
+    return fechaCita <= hoy;
   };
 
-
-  const [mostrarOpciones, setMostrarOpciones] = useState(null);
+  // --- Acciones ---
   const toggleOpciones = (id) => {
-    setMostrarOpciones(prev => (prev === id ? null : id));
+    setMostrarOpciones((prev) => (prev === id ? null : id));
   };
+
   const ingresarACita = async (citaId, enlace, tipo = "jitsi", telefono = "") => {
     if (clickedStates[citaId]) return;
 
-    setClickedStates(prev => ({ ...prev, [citaId]: true }));
+    setClickedStates((prev) => ({ ...prev, [citaId]: true }));
 
     const result = await Swal.fire({
-      title: 'Advertencia',
-      text: 'El estado de la cita cambiará a "en progreso". ¿Estás seguro de continuar?',
-      icon: 'warning',
+      title: "Advertencia",
+      text: `El estado de la cita cambiará a "${EN_PROGRESO}". ¿Estás seguro de continuar?`,
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Sí, continuar',
-      cancelButtonText: 'No, cancelar',
+      confirmButtonText: "Sí, continuar",
+      cancelButtonText: "No, cancelar",
     });
 
     if (!result.isConfirmed) {
-      setClickedStates(prev => ({ ...prev, [citaId]: false }));
+      setClickedStates((prev) => ({ ...prev, [citaId]: false }));
       return;
     }
 
     try {
-      await actualizarEstadoCita(citaId, "en progreso");
+      await actualizarEstadoCita(citaId, EN_PROGRESO.valor);
 
       if (tipo === "jitsi") {
         window.open(enlace, "_blank");
@@ -79,58 +115,32 @@ export default function TusCitas() {
         window.open(`https://wa.me/${telefono}?text=${mensaje}`, "_blank");
       }
 
-      setCitas(prev =>
-        prev.map(c =>
-          c.id === citaId ? { ...c, estado_cita: "en progreso" } : c
+      setCitas((prev) =>
+        prev.map((c) =>
+          c.id === citaId ? { ...c, estado_cita: EN_PROGRESO } : c
         )
       );
     } catch (error) {
       console.error("Error al actualizar estado:", error);
     } finally {
-      setClickedStates(prev => ({ ...prev, [citaId]: false }));
+      setClickedStates((prev) => ({ ...prev, [citaId]: false }));
     }
   };
 
-  const formatearFechaHoraSeparado = (fechaUtcString) => {
-    if (!fechaUtcString) return { fecha: "-", hora: "-" };
-
-    const [fechaParte, horaParte] = fechaUtcString.split(" "); // fecha en UTC
-    const [year, month, day] = fechaParte.split("-").map(Number);
-    const [hours, minutes, seconds] = horaParte.split(":").map(Number);
-
-    const dateUtc = new Date(Date.UTC(year, month - 1, day, hours, minutes, seconds));
-    const tz = localStorage.getItem("user_tz") || "UTC";
-
-    const fecha = new Intl.DateTimeFormat("es-ES", {
-      day: "2-digit",
-      month: "long",
-      year: "numeric",
-      timeZone: tz,
-    }).format(dateUtc);
-
-    const hora = new Intl.DateTimeFormat("es-ES", {
-      hour: "2-digit",
-      minute: "2-digit",
-      hour12: true,
-      timeZone: tz,
-    }).format(dateUtc);
-
-    return { fecha, hora };
+  const contactarPorWhatsApp = (telefono) => {
+    const numeroLimpio = telefono.replace(/\D/g, "");
+    window.open(`https://wa.me/${numeroLimpio}`, "_blank");
   };
 
-
-
-  const esHoyOMasAntiguo = (fechaCita) => {
-    const hoy = new Date();
-    const fechaCitaObj = new Date(fechaCita + "T00:00:00");
-
-    hoy.setHours(0, 0, 0, 0);
-    fechaCitaObj.setHours(0, 0, 0, 0);
-
-    return fechaCitaObj.getTime() <= hoy.getTime();
+  const abrirAnotaciones = (idCita) => {
+    navigate(`/informe_psicologico/${idCita}`);
   };
 
+  const reagendarCita = (cita) => {
+    navigate("/reagendar_cita", { state: { cita } });
+  };
 
+  // --- Cargar citas ---
   useEffect(() => {
     if (!usuario) return;
 
@@ -138,7 +148,6 @@ export default function TusCitas() {
       obtenerCitas(usuario.id).then((data) => {
         setCitas(data);
         setLoading(false);
-        // console.log("citas", data);
       });
     };
 
@@ -149,42 +158,8 @@ export default function TusCitas() {
   }, [usuario]);
 
   const verDetalles = (idCita) => {
-    // alert("Ver detalles de la cita con ID: " + idCita);
     navigate(`/cita/${idCita}`);
   };
-
-  const formatearFecha = (fechaString) => {
-    const opciones = { day: "2-digit", month: "long", year: "numeric" };
-    const [year, month, day] = fechaString.split("-");
-    const fecha = new Date(Number(year), Number(month) - 1, Number(day));
-    return fecha.toLocaleDateString("es-ES", opciones);
-  };
-
-  const formatearHora = (horaString) => {
-    const [hora, minutos] = horaString.split(":");
-    const horasEnFormato12 = (hora % 12) || 12; // Convertimos al formato 12 horas
-    const ampm = hora >= 12 ? "PM" : "AM"; // Determinamos si es AM o PM
-    return `${horasEnFormato12}:${minutos} ${ampm}`;
-  };
-
-
-
-  const contactarPorWhatsApp = (telefono) => {
-    const numeroLimpio = telefono.replace(/\D/g, "");
-    window.open(`https://wa.me/${numeroLimpio}`, "_blank");
-  };
-
-  const [filtroEstado, setFiltroEstado] = useState(null);
-
-  const abrirAnotaciones = (idCita) => {
-    navigate(`/informe_psicologico/${idCita}`);
-  };
-
-  const reagendarCita = (cita) => {
-    navigate("/reagendar_cita", { state: { cita } });
-  };
-
-
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -258,7 +233,7 @@ export default function TusCitas() {
                   </div>
 
                   <div className="space-y-3 mb-6">
-                    <div className="flex items-center">
+                      <div className="flex items-center">
                       <svg className="w-5 h-5 text-[#6EC1E4] mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                       </svg>
@@ -349,7 +324,7 @@ export default function TusCitas() {
                       cita.estado_cita === RETARDO.valor ||
                       cita.estado_cita === EN_PROGRESO.valor) &&
                       cita.enlace_cita &&
-                      esHoyOMasAntiguo(cita.fecha) && (
+                      esHoyOMasAntiguo(cita.fecha_hora_utc) && (
                         <div className="mt-6 space-y-3">
                           <button
                             onClick={() => toggleOpciones(cita.id)}
