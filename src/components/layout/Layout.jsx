@@ -3,9 +3,11 @@ import Navbar from "./Navbar";
 import { Sidebar } from "./Sidebar";
 import { useAuth } from "../../context/AuthContext";
 import { RUTAS } from "../../routers/routers";
-import { Calendar, BarChart3, Clock, Key, TicketPercent, CalendarPlus, FileText } from "lucide-react";
+import { Calendar, BarChart3, Clock, Key, TicketPercent, CalendarPlus, FileText, Clock10 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const Layout = ({ children }) => {
+  const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -16,10 +18,10 @@ const Layout = ({ children }) => {
     const checkIsMobile = () => {
       setIsMobile(window.innerWidth < 1024);
     };
-    
+
     checkIsMobile();
     window.addEventListener('resize', checkIsMobile);
-    
+
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
@@ -30,6 +32,7 @@ const Layout = ({ children }) => {
     { label: "Mi Disponibilidad", to: RUTAS.DISPONIBILIDAD, icon: <Clock size={20} /> },
     { label: "Mis Accesos", to: RUTAS.HISTORIAL_ACCESOS, icon: <Key size={20} /> },
     { label: "Generar Código", to: RUTAS.DESCUENTOS, icon: <TicketPercent size={20} /> },
+    { label: "Mi Tiempo", to: RUTAS.MI_TIEMPO, icon: <Clock10 size={20} /> }
   ];
 
   const enlacesPaciente = [
@@ -49,13 +52,14 @@ const Layout = ({ children }) => {
 
   const handleLogout = () => {
     logout();
+    navigate(RUTAS.LOGIN);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navbar fijo */}
       <Navbar usuario={usuario} setSidebarOpen={setSidebarOpen} />
-      
+
       {/* Sidebar (fixed para desktop) */}
       <Sidebar
         collapsed={collapsed}
@@ -66,11 +70,11 @@ const Layout = ({ children }) => {
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
       />
-      
+
       {/* Contenido principal con padding para navbar y margen para sidebar */}
-      <main 
+      <main
         className="min-h-screen pt-16 transition-all duration-300 lg:pt-0"
-        style={!isMobile ? { 
+        style={!isMobile ? {
           marginLeft: collapsed ? '70px' : '250px',
           transition: 'margin-left 0.3s ease'
         } : {}}

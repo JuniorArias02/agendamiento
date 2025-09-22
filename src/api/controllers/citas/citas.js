@@ -10,3 +10,6 @@ export const ACTUALIZAR_ESTADO_CITA = `${URL_ENDPOINT}/controllers/citas/actuali
 export const CREAR_CITA_PENDIENTE = `${URL_ENDPOINT}/controllers/citas/crear_cita_pendiente.php`;
 export const REAGENDAR_CITA = `${URL_ENDPOINT}/controllers/citas/reagendar_cita.php`;
 export const OBTENER_FECHA_DISPONIBLE = `${URL_ENDPOINT}/controllers/citas/obtener_fechas_disponibles.php`;
+
+
+export const MI_TIEMPO = `${URL_ENDPOINT}/controllers/citas/mi_tiempo.php`;

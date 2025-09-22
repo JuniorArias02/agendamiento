@@ -35,6 +35,8 @@ export const RUTAS = {
 
   HISTORIAL_ACCESOS: "/historial_accesos",
 
+  MI_TIEMPO: "/mi_tiempo",
+
   INFORME: {
     PSICOLOGICO: "/informe_psicologico/:idCita",
   },

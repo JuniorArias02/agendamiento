@@ -21,6 +21,7 @@ import VerificarCuenta from "./components/pages/VerificarCuenta";
 import VerificarCodigo from "./components/pages/VerificarCodigo";
 import { InformePsicologico } from "./components/pages/InformePsicologico";
 import ReagendarCita from "./components/pages/reagendarCita";
+import MiTiempo from "./components/pages/MiTiempo";
 // Protecciones
 import PatientRoute from "./context/PatientRoute";
 import PsicologoRoute from "./context/PsicologoRoute";
@@ -76,6 +77,12 @@ function App() {
           <Layout><InformePsicologico /></Layout>
         </PsicologoRoute>
       } />
+      <Route path={RUTAS.MI_TIEMPO} element={
+        <PsicologoRoute>
+          <Layout><MiTiempo /></Layout>
+        </PsicologoRoute>
+      } />
+
 
       <Route path={RUTAS.DESCUENTOS} element={
         <PsicologoRoute>
