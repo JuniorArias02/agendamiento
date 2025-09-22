@@ -18,7 +18,7 @@ export default function TuServicios() {
 		try {
 			const data = await obtenerServiciosPorUsuario(usuario.id);
 			setServicios(data.servicios);
-			console.log(data);
+			// console.log(data);
 		} catch (err) {
 			console.error(err);
 		}
@@ -101,11 +101,13 @@ export default function TuServicios() {
 							className="bg-white/90 backdrop-blur-sm rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden border border-white/20 relative group"
 						>
 							{/* Badge de estado */}
-							<div className={`absolute top-4 right-4 z-10 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow ${serv.activo === 1
-								? 'bg-[#61CE70]/10 text-[#61CE70]'
-								: 'bg-[#FF6B6B]/10 text-[#FF6B6B]'
-								}`}>
-								{serv.activo === 1 ? (
+							<div
+								className={`absolute top-4 right-4 z-10 px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow ${parseInt(serv.activo, 10) === 1
+										? 'bg-[#61CE70]/10 text-[#61CE70]'
+										: 'bg-[#FF6B6B]/10 text-[#FF6B6B]'
+									}`}
+							>
+								{parseInt(serv.activo, 10) === 1 ? (
 									<>
 										<CheckCircle className="w-3.5 h-3.5" />
 										<span>Disponible</span>
@@ -117,6 +119,7 @@ export default function TuServicios() {
 									</>
 								)}
 							</div>
+
 
 							{/* Badge de popular (nuevo) */}
 							{serv.popular && (
