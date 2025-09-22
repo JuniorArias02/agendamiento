@@ -18,6 +18,7 @@ export default function TuServicios() {
 		try {
 			const data = await obtenerServiciosPorUsuario(usuario.id);
 			setServicios(data.servicios);
+			console.log(data);
 		} catch (err) {
 			console.error(err);
 		}
