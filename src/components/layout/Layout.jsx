@@ -3,7 +3,7 @@ import Navbar from "./Navbar";
 import { Sidebar } from "./Sidebar";
 import { useAuth } from "../../context/AuthContext";
 import { RUTAS } from "../../routers/routers";
-import { Calendar, BarChart3, Clock, Key, TicketPercent, CalendarPlus, FileText, Clock10 } from "lucide-react";
+import { Calendar, BarChart3, Clock, Key, TicketPercent, CalendarPlus, FileText, Clock10, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const Layout = ({ children }) => {
@@ -43,7 +43,10 @@ const Layout = ({ children }) => {
 
   let links = [];
   if (!usuario) {
-    links = [{ label: "Nueva Agenda", to: RUTAS.AGENDA.NUEVA, icon: <CalendarPlus size={20} /> }];
+    links = [
+      { label: "Iniciar Sesion", to: RUTAS.LOGIN, icon: <User size={20} /> },
+      { label: "Nueva Agenda", to: RUTAS.AGENDA.NUEVA, icon: <CalendarPlus size={20} /> },
+    ];
   } else if (usuario.rol === "psicologa") {
     links = enlacesPsicologa;
   } else if (usuario.rol === "paciente") {
