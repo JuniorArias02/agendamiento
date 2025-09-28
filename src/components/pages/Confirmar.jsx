@@ -177,7 +177,7 @@ export default function ConfirmarAgenda() {
         currency,
         amountInCents: amount_in_cents,
         reference,
-        publicKey: "pub_test_k5hdWX1ahXc06Pyhu0VEZXOYQIBXGdcg",
+        publicKey: "pub_prod_1ABUXdcyFiaujPY8px0T9uKKqy1goy9X",
         redirectUrl,
         signature: { integrity: integrity_signature },
       });
